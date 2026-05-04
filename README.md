@@ -1,5 +1,7 @@
 # GraphX
 
+![GraphX](img.png)
+
 **GraphX** is a knowledge graph tool that transforms your entire project — code, documentation, papers, images, and videos — into a navigable graph structure you can query instead of searching through files.
 
 ## What is GraphX?
