@@ -1,0 +1,766 @@
+{
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\analyze.py": {
+    "mtime": 1777921857.3769681,
+    "hash": "4cadf3f9069cf08f07a2c02191aac266"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\benchmark.py": {
+    "mtime": 1777921857.3769681,
+    "hash": "ea16ff48502624aaa7d764cae8e3be83"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\build.py": {
+    "mtime": 1777921857.3779664,
+    "hash": "5bf22ec09a9eb993bea871fb02cd7491"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\cache.py": {
+    "mtime": 1777921857.3783545,
+    "hash": "8090364978d2a0a102d77dfce5032b10"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\cluster.py": {
+    "mtime": 1777921857.3783545,
+    "hash": "272cc1e58ad9c04cdf3ba9f16b95f559"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\detect.py": {
+    "mtime": 1777921857.3783545,
+    "hash": "84e3f4110162b8bb850d22f7c2ff0d34"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\export.py": {
+    "mtime": 1777921857.3793516,
+    "hash": "1762de37e5588d7f6a15f8a41fae2f61"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\extract.py": {
+    "mtime": 1777921857.3800828,
+    "hash": "0d04376adea56a2296700fa267d12829"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\hooks.py": {
+    "mtime": 1777921857.3800828,
+    "hash": "f80922a866aaced547ae1a1073d0ab61"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\ingest.py": {
+    "mtime": 1777921857.3800828,
+    "hash": "809d3234528db26921b383d93d7892bc"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\llm.py": {
+    "mtime": 1777921857.3810973,
+    "hash": "1e8b9ad63263b356fc63fb2bf4456fff"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\manifest.py": {
+    "mtime": 1777921857.3814733,
+    "hash": "55144c02f06a65f3ed6d4dc27f368d64"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\report.py": {
+    "mtime": 1777921857.3814733,
+    "hash": "9c6eb7f27835570c55a36ea1829880d7"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\security.py": {
+    "mtime": 1777921857.3814733,
+    "hash": "63aa2bad6380747719f4895785a81317"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\serve.py": {
+    "mtime": 1777921857.3814733,
+    "hash": "2d35b3e0575c2085df844b2c21749c27"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\transcribe.py": {
+    "mtime": 1777921857.3852265,
+    "hash": "faac44f47560572a5ec40b72577d91f0"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\tree_html.py": {
+    "mtime": 1777921857.3852265,
+    "hash": "4ca7dcab7c1d3209e1b1753d8aabd378"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\validate.py": {
+    "mtime": 1777921857.3852265,
+    "hash": "7554867aab56c5e734d71311e72b40ca"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\watch.py": {
+    "mtime": 1777921857.3863113,
+    "hash": "e5b5be2c70d91b2a07467c10893dd518"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\wiki.py": {
+    "mtime": 1777921857.3863113,
+    "hash": "608b0f01fdbaeee404a27e0d8b3cb943"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\__init__.py": {
+    "mtime": 1777921857.376619,
+    "hash": "0952695e95c3bf4f0f014fd99ffce7d1"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\__main__.py": {
+    "mtime": 1777921857.3769681,
+    "hash": "0655662cb0bcb11cb21e581b6b5a58fe"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\analyze.py": {
+    "mtime": 1777908735.9429886,
+    "hash": "5a47f83fe0869b1cdd638ef4d1c16f79"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\benchmark.py": {
+    "mtime": 1777908735.9439847,
+    "hash": "ed3725bb7425f4f47a454c2e2336a357"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\build.py": {
+    "mtime": 1777908735.9439847,
+    "hash": "fda56f141af2ebee9bc5c53cda0d78de"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\cache.py": {
+    "mtime": 1777908735.9448445,
+    "hash": "f898fa344c528012f8c82a43a91cf949"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\changelog.py": {
+    "mtime": 1777920649.6772492,
+    "hash": "8941dd187e4f86ec663fceee00fb0b4b"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\cluster.py": {
+    "mtime": 1777908735.9448445,
+    "hash": "0285660a133220e8e9b4ccbe56ed9a5c"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\detect.py": {
+    "mtime": 1777908735.9458647,
+    "hash": "9b02cc7e9bcd47fe5d2e8cf5608a0701"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\export.py": {
+    "mtime": 1777920903.2822556,
+    "hash": "fd35a22739371197b87ae330211ee822"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\extract.py": {
+    "mtime": 1777908735.947889,
+    "hash": "8c64c7bace592700621880fdae353149"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\hooks.py": {
+    "mtime": 1777921636.9485786,
+    "hash": "887323a642f7dd7e44b0746039d505da"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\ingest.py": {
+    "mtime": 1777908735.9489071,
+    "hash": "3ddd87d795fc539cbece50f691f256b6"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\llm.py": {
+    "mtime": 1777908735.9489071,
+    "hash": "66fd2c2a6d6bba361065401d706814df"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\manifest.py": {
+    "mtime": 1777908735.9498382,
+    "hash": "8adbfe32b6e5009ead10516021ef4b4e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\report.py": {
+    "mtime": 1777908735.9498382,
+    "hash": "2dce79aa5ae16b15d4c239d1ad606be6"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\security.py": {
+    "mtime": 1777908735.9498382,
+    "hash": "b4096d9fcc383ea4f63a809ee0d0ac46"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\serve.py": {
+    "mtime": 1777908735.9508493,
+    "hash": "c5514b4e063ee08b07d275e6973b9291"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\status.py": {
+    "mtime": 1777922373.5025306,
+    "hash": "8d98a143cf4e667ce977ff2bc89243f2"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\transcribe.py": {
+    "mtime": 1777908735.9613104,
+    "hash": "25783b59e34e186361e706b0862ea668"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\tree_html.py": {
+    "mtime": 1777908735.9628334,
+    "hash": "f5bcc013b0d421194dc40288c75618da"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\validate.py": {
+    "mtime": 1777908735.9632611,
+    "hash": "09101c6eaf32c60add8142a00a872fd8"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\watch.py": {
+    "mtime": 1777920032.4746356,
+    "hash": "c903fb61dcd778e3fff01be5224acffe"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\wiki.py": {
+    "mtime": 1777908735.9632611,
+    "hash": "2b1b5431d034519fa3e273c4e186b863"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\__init__.py": {
+    "mtime": 1777908735.9642596,
+    "hash": "31bbe0d6f3831aac7cc4713d38b461ec"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\__main__.py": {
+    "mtime": 1777922578.6596725,
+    "hash": "a2d448b3551d9aaf890eaf8120877f59"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\bench_extract.py": {
+    "mtime": 1777921857.387324,
+    "hash": "135580b43f822e71956d42e71ca6315f"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_analyze.py": {
+    "mtime": 1777921857.3893552,
+    "hash": "7682b4b5647b12cc20c753f2b0028f5b"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_benchmark.py": {
+    "mtime": 1777921857.3893552,
+    "hash": "332d32c7f1c2a62aa15b8f130b449cf7"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_build.py": {
+    "mtime": 1777921857.3893552,
+    "hash": "c02de6b351bdde3abedd89595ba8ef63"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_cache.py": {
+    "mtime": 1777921857.3893552,
+    "hash": "f95c80b6cb2fc2a9137d865a29397313"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_chunking.py": {
+    "mtime": 1777921857.3893552,
+    "hash": "423db0d4cbaa2db65bd7a419280a53b4"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_claude_md.py": {
+    "mtime": 1777921857.3906538,
+    "hash": "397054297299c51b3839c758c9d0ee27"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_cluster.py": {
+    "mtime": 1777921857.3906538,
+    "hash": "f5910705ecfea29543ffdd995188ae49"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_confidence.py": {
+    "mtime": 1777921857.3906538,
+    "hash": "5bfa88dee39cd6e11c04b886c83b5f53"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_detect.py": {
+    "mtime": 1777921857.3906538,
+    "hash": "5efc585d963e655f2efbdaaa970a72d9"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_export.py": {
+    "mtime": 1777921857.3916917,
+    "hash": "6a1b4cc004461394cb37d51d8a15ba97"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_extract.py": {
+    "mtime": 1777921857.392151,
+    "hash": "1c082b506270bccefd6822306b7b5f92"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_hooks.py": {
+    "mtime": 1777921857.392151,
+    "hash": "bc4eeccdc6c58efc715952df10085136"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_hypergraph.py": {
+    "mtime": 1777921857.392151,
+    "hash": "1d00bbd5af35c6c0023230d29f950afe"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_ingest.py": {
+    "mtime": 1777921857.392151,
+    "hash": "cf1cbec0881b30e24d7eee4d77fc1df0"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_install.py": {
+    "mtime": 1777921857.3932188,
+    "hash": "ff2e635b9df3395ecbc8f6f7fcc1212e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_languages.py": {
+    "mtime": 1777921857.3932188,
+    "hash": "a7b313817c6efa3118f0b5a2b4c329d5"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_multilang.py": {
+    "mtime": 1777921857.3932188,
+    "hash": "56d33aaeea64c9e339ec3fc7bfeaab43"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_pipeline.py": {
+    "mtime": 1777921857.3932188,
+    "hash": "e0d142cae89a8c14d75f2cc7b0e671db"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_query_cli.py": {
+    "mtime": 1777921857.3942912,
+    "hash": "14ffd12cd436f02fea434f7e13cd86ec"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_rationale.py": {
+    "mtime": 1777921857.3942912,
+    "hash": "0cc4e8112c6effacbd3a3df1d2edf4bd"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_report.py": {
+    "mtime": 1777921857.3942912,
+    "hash": "27772006d6b1d2ccb25e7f9298f936ca"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_security.py": {
+    "mtime": 1777921857.3942912,
+    "hash": "2261af6fc07e97ce8d3eb99204445cab"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_semantic_similarity.py": {
+    "mtime": 1777921857.3942912,
+    "hash": "15f538f89a2a4d8cf2488b43ecb355bb"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_serve.py": {
+    "mtime": 1777921857.39554,
+    "hash": "ec5d9f7e472f7d591107bf9f143b0ed0"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_transcribe.py": {
+    "mtime": 1777921857.39554,
+    "hash": "14e0b3718cda2e24410c26e7b88c31fe"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_validate.py": {
+    "mtime": 1777921857.39554,
+    "hash": "8814414512b97bb6b16c547d72e1a8e1"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_watch.py": {
+    "mtime": 1777921857.39554,
+    "hash": "f061f602450ba3b6115cd7822c68b506"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\test_wiki.py": {
+    "mtime": 1777921857.39554,
+    "hash": "3ed1702540fb450043d4c5fa2230814a"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\__init__.py": {
+    "mtime": 1777908632.1187575,
+    "hash": "d41d8cd98f00b204e9800998ecf8427e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\dynamic_import.ts": {
+    "mtime": 1777908632.119337,
+    "hash": "cc09d28cc01031fca5318eb84af0936c"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.c": {
+    "mtime": 1777908632.122398,
+    "hash": "d955c883368b708e4f85499b32cd400d"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.cpp": {
+    "mtime": 1777908632.122398,
+    "hash": "c60a22eb0cb12d810e1afc051eb8d68c"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.cs": {
+    "mtime": 1777921857.38834,
+    "hash": "c860dacab57bd6126839dea8a7618100"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.ex": {
+    "mtime": 1777908632.122398,
+    "hash": "6bd40cf265a29bac177752e55ed5016f"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.go": {
+    "mtime": 1777908632.122398,
+    "hash": "327859f90edc491ef84b21c1986096f0"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.java": {
+    "mtime": 1777908632.122398,
+    "hash": "ae11b99aecf79ae8315a06ee71d529fd"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.jl": {
+    "mtime": 1777908632.122398,
+    "hash": "297455fff25e936fcb5e741d9ecc7d88"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.kt": {
+    "mtime": 1777908632.122398,
+    "hash": "c928946a8a8c8281f55628d5e2da4759"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.m": {
+    "mtime": 1777908632.123405,
+    "hash": "de973632d50625d5d20edd42f9af7ec2"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.php": {
+    "mtime": 1777908632.123405,
+    "hash": "f83d77579839df87cfcf0a2b46b4e62a"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.ps1": {
+    "mtime": 1777908632.123405,
+    "hash": "db5387ee9f8caa679bae4a7fef931e45"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.py": {
+    "mtime": 1777908632.123405,
+    "hash": "593ed7c2da295ecd2147456aac236981"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.rb": {
+    "mtime": 1777908632.123405,
+    "hash": "179100a29facc568ff1c833e1dd54878"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.rs": {
+    "mtime": 1777908632.123405,
+    "hash": "2e54c09a533d34386ad02119156506bd"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.scala": {
+    "mtime": 1777908632.123405,
+    "hash": "4a93e200e56dc72387117f198dbb53c3"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.sql": {
+    "mtime": 1777908632.123405,
+    "hash": "55836840117e9437c727e44a145fb3cb"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.swift": {
+    "mtime": 1777908632.1244214,
+    "hash": "5c7a22f601d9a67bc6ccabe3021f7da5"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.ts": {
+    "mtime": 1777908632.1244214,
+    "hash": "fa5cf1c58b5c75a4c98b85a58a1e428d"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.zig": {
+    "mtime": 1777908632.1244214,
+    "hash": "a266e376f765a6bef5ddc000e04b0898"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample_calls.py": {
+    "mtime": 1777908632.1244214,
+    "hash": "74c57bfaf8163167f1cc0d3254a2e33d"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample_php_config.php": {
+    "mtime": 1777908632.1244214,
+    "hash": "482b26ed1756b6a320400275f2f3a7d0"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample_php_container.php": {
+    "mtime": 1777908632.1244214,
+    "hash": "ffaad71d135085277081f114ee44de0e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample_php_listen.php": {
+    "mtime": 1777908632.1254327,
+    "hash": "5cd5ff268d733aa7c22aea7eaeb67672"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample_php_static_prop.php": {
+    "mtime": 1777908632.1254327,
+    "hash": "7e2a863e5680ce62fac745d2c1a2464c"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\example\\raw\\api.py": {
+    "mtime": 1777908632.13241,
+    "hash": "87566a9c77684f4f4530fa4420eee640"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\example\\raw\\parser.py": {
+    "mtime": 1777908632.133279,
+    "hash": "21efea30bab7cca650e151c6f89fd1d7"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\example\\raw\\processor.py": {
+    "mtime": 1777908632.133279,
+    "hash": "cb01f05a605c74b45e245be1bd6ef8ae"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\example\\raw\\storage.py": {
+    "mtime": 1777921857.3965554,
+    "hash": "8b191483593ebfa793bf827c9cf27207"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\example\\raw\\validator.py": {
+    "mtime": 1777908632.1343484,
+    "hash": "afe84a35939f084aa88c0c1fd0f227ce"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\raw\\auth.py": {
+    "mtime": 1777908632.1354156,
+    "hash": "debed2562023af12c4e0924dc14147c2"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\raw\\client.py": {
+    "mtime": 1777908632.1354156,
+    "hash": "ed8321bf745a4a775dbf64beb644dc35"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\raw\\exceptions.py": {
+    "mtime": 1777908632.1354156,
+    "hash": "1c7c959133d39f49ca5036deb8745311"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\raw\\models.py": {
+    "mtime": 1777908632.1354156,
+    "hash": "88e275491dc5e78e168a31d882f35a44"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\raw\\transport.py": {
+    "mtime": 1777908632.1354156,
+    "hash": "b6f8740b5a13c964bdd74d5402e77c43"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\raw\\utils.py": {
+    "mtime": 1777908632.136425,
+    "hash": "e43257d477fdb95f7a8b34502c9b937e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\mixed-corpus\\raw\\analyze.py": {
+    "mtime": 1777908632.1392913,
+    "hash": "5e296206840c58ec5ffa57505943bfef"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\mixed-corpus\\raw\\build.py": {
+    "mtime": 1777921857.3990984,
+    "hash": "b835855c0f6ada427b1cbabf73470d4f"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\mixed-corpus\\raw\\cluster.py": {
+    "mtime": 1777921857.3990984,
+    "hash": "bdc707bb73ee0f3068051b839abf01fc"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\AGENTS.md": {
+    "mtime": 1777921857.3655686,
+    "hash": "f07b9404a71a45b783c9ebe550db4459"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\ARCHITECTURE.md": {
+    "mtime": 1777921857.3655686,
+    "hash": "9d9d676ea5d6e5cfbeae86cf57a64f81"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\CHANGELOG.md": {
+    "mtime": 1777921857.3666558,
+    "hash": "b9fcf0cacbc7ecd0f93bf9bd4172f6af"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\README.md": {
+    "mtime": 1777921857.3666558,
+    "hash": "f7dfc772fdc60bf5f49d0193035552c0"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\SECURITY.md": {
+    "mtime": 1777921857.3666558,
+    "hash": "7f52ed346edf95413a63d4303bfed8e0"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\docker-mcp-sqlite.md": {
+    "mtime": 1777921857.367675,
+    "hash": "97f57f05955e2e8636c59658c22ab8f3"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\how-it-works.md": {
+    "mtime": 1777921857.367675,
+    "hash": "b365887efcf98b6d3b92dd5f5a9de127"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.ar-SA.md": {
+    "mtime": 1777921857.3686912,
+    "hash": "c3e193b6b65efad66a68db47f72d808d"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.cs-CZ.md": {
+    "mtime": 1777921857.3686912,
+    "hash": "8f2c3b3e6daa8c7f00d8f08332dec5c9"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.da-DK.md": {
+    "mtime": 1777921857.3686912,
+    "hash": "c7ae424dc04163d24c272564c5968f8f"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.de-DE.md": {
+    "mtime": 1777921857.3697073,
+    "hash": "1b1224354beee099d6c836d2e7530e8f"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.el-GR.md": {
+    "mtime": 1777921857.3697073,
+    "hash": "f7022aed3517672e0055ad316d77800d"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.es-ES.md": {
+    "mtime": 1777921857.3697073,
+    "hash": "ec6a9a35f10b6081a0b3d3da1a2eb28b"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.fi-FI.md": {
+    "mtime": 1777921857.3697073,
+    "hash": "862557249ce0f10a0c6c53c157c6f6ae"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.fr-FR.md": {
+    "mtime": 1777921857.370723,
+    "hash": "c757d4657a68478d63e861931eb6412d"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.hi-IN.md": {
+    "mtime": 1777921857.370723,
+    "hash": "dd613593793944f3db0628ad19d99bdd"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.hu-HU.md": {
+    "mtime": 1777921857.3713183,
+    "hash": "663d11c6dcfc4f31addac795c664a427"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.id-ID.md": {
+    "mtime": 1777921857.3713183,
+    "hash": "00757295392f7a6492881c53a1fd126c"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.it-IT.md": {
+    "mtime": 1777921857.3713183,
+    "hash": "381de4145f1eeda64a6d8fa1e8c4650b"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.ja-JP.md": {
+    "mtime": 1777921857.3726313,
+    "hash": "9d86adad69083a57f9cbf547a728de49"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.ko-KR.md": {
+    "mtime": 1777921857.3726313,
+    "hash": "09486308eec2a500071aafb8dfe2ed01"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.nl-NL.md": {
+    "mtime": 1777921857.3726313,
+    "hash": "e1f61ba2c29244a51ec75032cd51471c"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.no-NO.md": {
+    "mtime": 1777921857.3736296,
+    "hash": "c59672be0d18e8b2a66f537195a3c335"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.pl-PL.md": {
+    "mtime": 1777921857.3736296,
+    "hash": "8cfffe0acb529d72ab6d82a6bdd160f5"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.pt-BR.md": {
+    "mtime": 1777921857.3736296,
+    "hash": "ac97e4d275149676f89614c7bb4aaa85"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.ro-RO.md": {
+    "mtime": 1777921857.3736296,
+    "hash": "53d1e4502297270bd5c8571c480e51ad"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.ru-RU.md": {
+    "mtime": 1777921857.3746257,
+    "hash": "7564b310305bc7bf89b22e1bea4790ce"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.sv-SE.md": {
+    "mtime": 1777921857.3746257,
+    "hash": "89daf6196ace6f4a5eda42a35f0817e3"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.th-TH.md": {
+    "mtime": 1777921857.3746257,
+    "hash": "42ae341c141a837415d99aa86d11f146"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.tr-TR.md": {
+    "mtime": 1777921857.3746257,
+    "hash": "d158e80878a9c759c8679dbcb2606ea9"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.uk-UA.md": {
+    "mtime": 1777921857.3756223,
+    "hash": "19a311c1f79079143570faf3596c46fe"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.vi-VN.md": {
+    "mtime": 1777921857.3756223,
+    "hash": "e2f4ea044cf69f5ade5ba5da2ae40c24"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.zh-CN.md": {
+    "mtime": 1777921857.3756223,
+    "hash": "c1b95d1ece4708f99403dd14a6fde778"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\translations\\README.zh-TW.md": {
+    "mtime": 1777921857.3756223,
+    "hash": "bd749c7afbe9d6908ff9f9a223549fd4"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-aider.md": {
+    "mtime": 1777921857.382558,
+    "hash": "49f2c45a56e04571c19235a97f5b17b1"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-claw.md": {
+    "mtime": 1777921857.382558,
+    "hash": "2ddde46ba7f5da4331e3d0617b74cb73"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-codex.md": {
+    "mtime": 1777921857.382558,
+    "hash": "790c7bafee6cac8c7fb93107364d96d2"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-copilot.md": {
+    "mtime": 1777921857.3835735,
+    "hash": "cbb8b02bffa0e82faddb455fb260329e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-droid.md": {
+    "mtime": 1777921857.3835735,
+    "hash": "addb3aa979d78a7037adc5d9d04594a8"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-kiro.md": {
+    "mtime": 1777921857.3835735,
+    "hash": "d99375a8e6438147ddf08e313bf8a23d"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-opencode.md": {
+    "mtime": 1777921857.3835735,
+    "hash": "5a7d74220e2c684c5be1bc5b0824d96b"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-pi.md": {
+    "mtime": 1777921857.3835735,
+    "hash": "d99375a8e6438147ddf08e313bf8a23d"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-trae.md": {
+    "mtime": 1777921857.3845701,
+    "hash": "0e922d17babdccdf80bea3b5ee8e08a9"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-vscode.md": {
+    "mtime": 1777921857.3845701,
+    "hash": "ad9ece9fa826e0431fa412aac28c28f6"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill-windows.md": {
+    "mtime": 1777921857.3845701,
+    "hash": "6b07763b44142efbe67e5d41a8d9d234"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphify\\skill.md": {
+    "mtime": 1777921857.3852265,
+    "hash": "aa061fb08b9cbc735e5591ae1c0258a0"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-aider.md": {
+    "mtime": 1777908735.9518046,
+    "hash": "b08782423ac84c499588c281b5718f48"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-claw.md": {
+    "mtime": 1777908735.9527695,
+    "hash": "f322f41eac0475e77f03625e3a66241c"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-codex.md": {
+    "mtime": 1777908735.9537585,
+    "hash": "f514940a725736189b8c3599939d3457"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-copilot.md": {
+    "mtime": 1777908735.9547715,
+    "hash": "c26ddda0b1c9303d6386bce62477c7ea"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-devin.md": {
+    "mtime": 1777911698.8204205,
+    "hash": "cae340803c3929baf51d027723d77c6a"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-droid.md": {
+    "mtime": 1777908735.9557674,
+    "hash": "1e78f01a90a859b50acecf1ea331a847"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-kiro.md": {
+    "mtime": 1777908735.9557674,
+    "hash": "e5539834c2b449b1a2d229d1aafb1351"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-opencode.md": {
+    "mtime": 1777908735.956764,
+    "hash": "5aabdca344ded3bee07a8f473dff1f2f"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-pi.md": {
+    "mtime": 1777908735.9581509,
+    "hash": "e5539834c2b449b1a2d229d1aafb1351"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-trae.md": {
+    "mtime": 1777908735.9597223,
+    "hash": "cb1c772f4566a1faf5c340dc325766d7"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-vscode.md": {
+    "mtime": 1777908735.9597223,
+    "hash": "7529c19fa3a10cb1cc148e3afd9d7b2e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill-windows.md": {
+    "mtime": 1777908735.9608784,
+    "hash": "2e89753657210833247bb8a8334a623a"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\graphx\\skill.md": {
+    "mtime": 1777908735.9613104,
+    "hash": "da4c3593eb71cc4337dc10646ba5fcc1"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\tests\\fixtures\\sample.md": {
+    "mtime": 1777908632.123405,
+    "hash": "0743d4fee74f186429cbb16fd311f8ed"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\example\\README.md": {
+    "mtime": 1777921857.3965554,
+    "hash": "97830758f1c4c54f010a9ff976f625d7"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\example\\raw\\architecture.md": {
+    "mtime": 1777908632.13241,
+    "hash": "45d939d3f3f0b6ed071f159f2470d96f"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\example\\raw\\notes.md": {
+    "mtime": 1777908632.13241,
+    "hash": "1d54a92e595b7a3ed0ac5aa948a0f935"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\GRAPH_REPORT.md": {
+    "mtime": 1777908632.1343484,
+    "hash": "f0b3ddfd3f35ca7126db7c10563af9f3"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\index.html": {
+    "mtime": 1777920905.0847747,
+    "hash": "41a562a5db884d54af00124f2fb176ec"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\README.md": {
+    "mtime": 1777921857.3965554,
+    "hash": "55efb26bf30d3e3538ae09cc4896c09e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\httpx\\review.md": {
+    "mtime": 1777921857.3975663,
+    "hash": "4cb710d1f8770c465eb263d63b36bf69"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\karpathy-repos\\GRAPH_REPORT.md": {
+    "mtime": 1777921857.3975663,
+    "hash": "2d0b4f3371b3f58e54c88225c82b9402"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\karpathy-repos\\README.md": {
+    "mtime": 1777921857.3975663,
+    "hash": "7dcd5db4d3b535fd61c00d8cee99566c"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\karpathy-repos\\review.md": {
+    "mtime": 1777908632.1383321,
+    "hash": "0978e0bd396d642a4db24ccb92f17d6b"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\mixed-corpus\\GRAPH_REPORT.md": {
+    "mtime": 1777908632.1383321,
+    "hash": "5573a6537adda124a4f3dfa319b4b917"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\mixed-corpus\\README.md": {
+    "mtime": 1777921857.3990984,
+    "hash": "6ff08dd64ccef57058fcb850df7ed536"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\mixed-corpus\\review.md": {
+    "mtime": 1777921857.4000957,
+    "hash": "1ff38ab46526bddae260b6c524bb507a"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\worked\\mixed-corpus\\raw\\attention_notes.md": {
+    "mtime": 1777908632.1392913,
+    "hash": "9d6a5c77396725c564a2db7e850a2c8e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\logo-icon.svg": {
+    "mtime": 1777921857.367675,
+    "hash": "d599ecc974285c70dbf5d4fc53d9632e"
+  },
+  "C:\\Users\\Shukhrat\\Desktop\\New folder\\git\\GRAPHX\\GraphX\\docs\\logo-text.svg": {
+    "mtime": 1777921857.367675,
+    "hash": "7dbb208e36d257cae7848dc804291733"
+  }
+}

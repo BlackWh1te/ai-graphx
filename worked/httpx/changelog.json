@@ -1,0 +1,161 @@
+{
+  "sessions": [
+    {
+      "id": "feat-001",
+      "title": "Add authentication system",
+      "description": "Implemented OAuth2 login with Google and GitHub providers including session management and token refresh",
+      "date": "2026-05-04T18:51:49.501763+00:00",
+      "files_changed": [
+        {
+          "file": "src/auth.py",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        },
+        {
+          "file": "src/oauth.py",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        },
+        {
+          "file": "tests/test_auth.py",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        }
+      ],
+      "metrics": {
+        "total_files": 3,
+        "lines_added": 0,
+        "lines_removed": 0,
+        "nodes_added": 0,
+        "nodes_removed": 0
+      },
+      "tags": [
+        "feature",
+        "auth",
+        "security"
+      ]
+    },
+    {
+      "id": "feat-002",
+      "title": "Add user profile page",
+      "description": "Created user profile editing UI with avatar upload and bio fields",
+      "date": "2026-05-04T18:51:51.351950+00:00",
+      "files_changed": [
+        {
+          "file": "src/profile.py",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        },
+        {
+          "file": "templates/profile.html",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        },
+        {
+          "file": "src/routes.py",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        }
+      ],
+      "metrics": {
+        "total_files": 3,
+        "lines_added": 0,
+        "lines_removed": 0,
+        "nodes_added": 0,
+        "nodes_removed": 0
+      },
+      "tags": [
+        "feature",
+        "ui"
+      ]
+    },
+    {
+      "id": "feat-003",
+      "title": "Fix login redirect loop",
+      "description": "Fixed infinite redirect when OAuth callback fails by adding proper error handling",
+      "date": "2026-05-04T18:51:53.450129+00:00",
+      "files_changed": [
+        {
+          "file": "src/auth.py",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        }
+      ],
+      "metrics": {
+        "total_files": 1,
+        "lines_added": 0,
+        "lines_removed": 0,
+        "nodes_added": 0,
+        "nodes_removed": 0
+      },
+      "tags": [
+        "bugfix",
+        "auth"
+      ]
+    },
+    {
+      "id": "feat-004",
+      "title": "Refactor database layer",
+      "description": "Extracted database operations into separate repository pattern for better testability",
+      "date": "2026-05-04T18:51:54.744450+00:00",
+      "files_changed": [
+        {
+          "file": "src/db/repository.py",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        },
+        {
+          "file": "src/db/models.py",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        },
+        {
+          "file": "src/services/user_service.py",
+          "action": "modified",
+          "lines_added": 0,
+          "lines_removed": 0,
+          "nodes_added": 0,
+          "nodes_removed": 0
+        }
+      ],
+      "metrics": {
+        "total_files": 3,
+        "lines_added": 0,
+        "lines_removed": 0,
+        "nodes_added": 0,
+        "nodes_removed": 0
+      },
+      "tags": [
+        "refactor",
+        "db"
+      ]
+    }
+  ]
+}
