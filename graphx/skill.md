@@ -1,7 +1,7 @@
 ---
 name: graphx
 description: "any input (code, docs, papers, images, videos) to knowledge graph. Use when user asks any question about a codebase, documents, or project content - especially if graphx-out/ exists, treat the question as a /graphx query."
-trigger: /graphx
+trigger: [/graphx, /graphx-status]
 version: 0.1.0
 ---
 

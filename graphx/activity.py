@@ -139,8 +139,35 @@ def get_recent_activity(repo_path: str, limit: int = 50) -> dict:
     return {
         "commits": commits_data,
         "total_commits": len(commits_data),
+        "staged": _get_staged_changes(repo_path),
         "generated_at": datetime.now(timezone.utc).isoformat(),
     }
+
+
+def _get_staged_changes(repo_path: str) -> list:
+    """Get files that are staged but not committed."""
+    if not GIT_AVAILABLE:
+        return []
+    try:
+        repo = git.Repo(repo_path)
+        staged = []
+        # Diff HEAD against index to find what's staged
+        diff = repo.index.diff("HEAD")
+        for change in diff:
+            path = change.a_path or change.b_path
+            if not path:
+                continue
+            ctype = change.change_type or "M"
+            action = {"A": "added", "D": "deleted", "R": "renamed", "T": "modified", "M": "modified"}.get(ctype, "modified")
+            staged.append({
+                "file": path,
+                "action": action,
+                "date": datetime.now(timezone.utc).isoformat(),
+                "source": "user"
+            })
+        return staged
+    except Exception:
+        return []
 
 
 def save_activity(repo_path: str, output_dir: str, limit: int = 50) -> Path:

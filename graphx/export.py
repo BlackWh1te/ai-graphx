@@ -1653,14 +1653,44 @@ function renderGitStatus() {{
   }}
 }}
 
-function renderActivityTimeline(commits) {{
-  if (!commits || commits.length === 0) {{
-    document.getElementById('activity-timeline').innerHTML = '<p class="empty-state">No commit history found.</p>';
+function renderActivityTimeline(commits, staged) {{
+  const timelineEl = document.getElementById('activity-timeline');
+  if ((!commits || commits.length === 0) && (!staged || staged.length === 0)) {{
+    timelineEl.innerHTML = '<p class="empty-state">No activity found.</p>';
     return;
   }}
+  
   let html = '<div class="timeline">';
+  
+  // Render staged changes at the top
+  if (staged && staged.length > 0) {{
+    html += `
+      <div class="timeline-item left">
+        <div class="timeline-dot" style="background:#f39c12;"></div>
+        <div class="timeline-card" style="border-left: 4px solid #f39c12;">
+          <div class="tl-header">
+            <span class="tl-hash" style="color:#f39c12; background:rgba(243,156,18,0.1);">STAGED</span>
+            <span class="tl-source user-badge">USER</span>
+            <span class="tl-date">Current Session</span>
+          </div>
+          <div class="tl-author">Uncommitted Changes</div>
+          <div class="tl-msg">Real-time local workspace activity</div>
+          <div class="tl-files">
+            ${{staged.slice(0,10).map(s => `
+              <div class="tl-file">
+                <span class="tl-action ${{esc(s.action)}}">${{esc(s.action.charAt(0).toUpperCase())}}</span>
+                <span class="tl-fpath">${{esc(s.file)}}</span>
+              </div>
+            `).join('')}}
+            ${{staged.length > 10 ? `<div class="tl-file"><span class="tl-more">+${{staged.length - 10}} more files</span></div>` : ''}}
+          </div>
+        </div>
+      </div>
+    `;
+  }}
+
   commits.forEach((commit, i) => {{
-    const side = i % 2 === 0 ? 'left' : 'right';
+    const side = (staged && staged.length > 0 ? i + 1 : i) % 2 === 0 ? 'left' : 'right';
     const hash = esc(commit.short_hash || (commit.hash||'').slice(0,7) || '?');
     const author = esc(commit.author || 'Unknown');
     const date = fmtDate(commit.date);
@@ -1885,13 +1915,15 @@ async function updateActivityFromJson() {{
   }}
 
   const commits = data.commits || [];
+  const staged = data.staged || [];
   // Only update if different from current embedded data
-  if (JSON.stringify(commits) !== JSON.stringify(currentActivity)) {{
+  if (JSON.stringify(commits) !== JSON.stringify(currentActivity) || JSON.stringify(staged) !== JSON.stringify(currentStaged)) {{
     currentActivity = commits;
-    renderActivityTimeline(commits);
+    currentStaged = staged;
+    renderActivityTimeline(commits, staged);
     // Also update related sections if present
     if (data.hot_files) renderHotFiles(data.hot_files);
-    statusEl.textContent = `Updated ${{commits.length}} commits from activity.json`;
+    statusEl.textContent = `Updated ${{commits.length}} commits and ${{staged.length}} staged changes from activity.json`;
     statusEl.className = 'poll-status';
   }} else {{
     statusEl.textContent = 'Up to date. Next check in 30s...';
@@ -1907,7 +1939,8 @@ function renderAll() {{
 
   const act = INITIAL_DATA.activity;
   currentActivity = act.commits;
-  renderActivityTimeline(act.commits);
+  currentStaged = act.staged || [];
+  renderActivityTimeline(act.commits, currentStaged);
   renderHotFiles(act.hot_files);
   renderVelocity(act.velocity);
   renderMergeCommits(act.merge_commits);
