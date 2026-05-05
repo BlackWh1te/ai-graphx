@@ -37,9 +37,9 @@ dependencies = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/safishamsi/graphx"
-Repository = "https://github.com/safishamsi/graphx"
-Issues = "https://github.com/safishamsi/graphx/issues"
+Homepage = "https://github.com/BlackWh1te/Graphx-"
+Repository = "https://github.com/BlackWh1te/Graphx-"
+Issues = "https://github.com/BlackWh1te/Graphx-/issues"
 
 [project.optional-dependencies]
 mcp = ["mcp"]
