@@ -2,6 +2,10 @@
 
 ![Ai-GraphX](img.png)
 
+<p align="center">
+  <a href="docs/translations/README.ru-RU.md"><img src="https://img.shields.io/badge/🇷🇺%20Русский-blue?style=for-the-badge" alt="Russian"></a>
+</p>
+
 **Ai-GraphX** is a knowledge graph tool that transforms your entire project — code, documentation, papers, images, and videos — into a navigable graph structure you can query instead of searching through files.
 
 ## What is Ai-GraphX?

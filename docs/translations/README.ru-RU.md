@@ -1,78 +1,84 @@
-<p align="center">
-  <img src="https://raw.githubusercontent.com/safishamsi/graphx/v4/docs/logo-text.svg" width="260" height="64" alt="GraphX"/>
-</p>
+# Ai-GraphX
+
+![Ai-GraphX](../../img.png)
 
 <p align="center">
-  🇺🇸 <a href="../../README.md">English</a> | 🇨🇳 <a href="README.zh-CN.md">简体中文</a> | 🇯🇵 <a href="README.ja-JP.md">日本語</a> | 🇰🇷 <a href="README.ko-KR.md">한국어</a> | 🇩🇪 <a href="README.de-DE.md">Deutsch</a> | 🇫🇷 <a href="README.fr-FR.md">Français</a> | 🇪🇸 <a href="README.es-ES.md">Español</a> | 🇮🇳 <a href="README.hi-IN.md">हिन्दी</a> | 🇧🇷 <a href="README.pt-BR.md">Português</a> | 🇷🇺 <a href="README.ru-RU.md">Русский</a> | 🇸🇦 <a href="README.ar-SA.md">العربية</a> | 🇮🇹 <a href="README.it-IT.md">Italiano</a> | 🇵🇱 <a href="README.pl-PL.md">Polski</a> | 🇳🇱 <a href="README.nl-NL.md">Nederlands</a> | 🇹🇷 <a href="README.tr-TR.md">Türkçe</a> | 🇺🇦 <a href="README.uk-UA.md">Українська</a> | 🇻🇳 <a href="README.vi-VN.md">Tiếng Việt</a> | 🇮🇩 <a href="README.id-ID.md">Bahasa Indonesia</a> | 🇸🇪 <a href="README.sv-SE.md">Svenska</a> | 🇬🇷 <a href="README.el-GR.md">Ελληνικά</a> | 🇷🇴 <a href="README.ro-RO.md">Română</a> | 🇨🇿 <a href="README.cs-CZ.md">Čeština</a> | 🇫🇮 <a href="README.fi-FI.md">Suomi</a> | 🇩🇰 <a href="README.da-DK.md">Dansk</a> | 🇳🇴 <a href="README.no-NO.md">Norsk</a> | 🇭🇺 <a href="README.hu-HU.md">Magyar</a> | 🇹🇭 <a href="README.th-TH.md">ภาษาไทย</a> | 🇹🇼 <a href="README.zh-TW.md">繁體中文</a>
+  <a href="../../README.md"><img src="https://img.shields.io/badge/🇺🇸%20English-blue?style=for-the-badge" alt="English"></a>
 </p>
 
-<p align="center">
-  <a href="https://github.com/safishamsi/graphx/actions/workflows/ci.yml"><img src="https://github.com/safishamsi/graphx/actions/workflows/ci.yml/badge.svg?branch=v4" alt="CI"/></a>
-  <a href="https://pypi.org/project/graphx/"><img src="https://img.shields.io/pypi/v/graphx" alt="PyPI"/></a>
-  <a href="https://pepy.tech/project/graphx"><img src="https://static.pepy.tech/badge/graphx" alt="Downloads"/></a>
-  <a href="https://github.com/sponsors/safishamsi"><img src="https://img.shields.io/badge/sponsor-safishamsi-ea4aaa?logo=github-sponsors" alt="Sponsor"/></a>
-  <a href="https://www.linkedin.com/in/safi-shamsi"><img src="https://img.shields.io/badge/LinkedIn-Safi%20Shamsi-0077B5?logo=linkedin" alt="LinkedIn"/></a>
-</p>
+**Ai-GraphX** — инструмент для построения графа знаний, который превращает весь ваш проект — код, документацию, статьи, изображения и видео — в навигационную графовую структуру, которую можно запрашивать вместо поиска по файлам.
 
-**Навык для AI-ассистента по написанию кода.** Введите `/graphx` в Claude Code, Codex, OpenCode, Cursor, Gemini CLI, GitHub Copilot CLI, VS Code Copilot Chat, Aider, OpenClaw, Factory Droid, Trae, Hermes, Kiro или Google Antigravity — он прочитает ваши файлы, построит граф знаний и вернёт вам структуру, о существовании которой вы не подозревали. Понимайте кодовую базу быстрее. Находите «почему» за архитектурными решениями.
+## Что такое Ai-GraphX?
 
-Полностью мультимодальный. Добавляйте код, PDF, markdown, скриншоты, диаграммы, фотографии досок, изображения на других языках, видео и аудиофайлы — graphx извлекает концепции и связи из всего этого и объединяет их в один граф. Видео транскрибируются локально с Whisper, используя доменный промпт из вашего корпуса. Поддерживается 25 языков программирования через tree-sitter AST (Python, JS, TS, Go, Rust, Java, C, C++, Ruby, C#, Kotlin, Scala, PHP, Swift, Lua, Zig, PowerShell, Elixir, Objective-C, Julia, Verilog, SystemVerilog, Vue, Svelte, Dart).
+Ai-GraphX анализирует файлы вашего проекта и строит граф знаний, показывая:
+- **Сущности и концепции** — функции, классы, переменные, темы, идеи
+- **Связи** — как вещи соединяются (импорты, вызовы, цитаты, ссылки)
+- **Сообщества** — кластеры связанных файлов и концепций
+- **Междокументные связи** — ссылки между кодом, документами и статьями, о которых вы бы никогда не подумали спросить
 
-> Андрей Карпати ведёт папку `/raw`, куда складывает статьи, твиты, скриншоты и заметки. graphx — ответ на эту проблему: в **71,5 раза** меньше токенов на запрос по сравнению с чтением сырых файлов, сохранение между сессиями, честность относительно того, что найдено, а что выведено.
+Вместо того чтобы искать по сотням файлов через grep, вы задаёте вопросы, и Ai-GraphX проходит по графу, чтобы найти ответы.
+
+## Зачем использовать Ai-GraphX?
+
+**Для новых кодовых баз:**
+- Увидеть архитектуру, прежде чем что-то менять
+- Понять, как модули соединяются
+- Найти точки входа и ключевые компоненты
+
+**Для исследовательских проектов:**
+- Построить граф цитирования из статей
+- Связать концепции между несколькими документами
+- Отследить, как идеи развиваются через корпус
+
+**Для текущей разработки:**
+- Отслеживать, что изменилось между коммитами
+- Видеть "горячие" файлы (наиболее часто изменяемые)
+- Понимать влияние изменений по всему проекту
+
+**Три вещи, которые Ai-GraphX делает, а поиск по файлам — нет:**
+1. **Постоянный граф** — связи сохраняются между сессиями. Задавайте вопросы через недели без повторного чтения всего.
+2. **Честный след аудита** — каждое ребро помечено как `EXTRACTED` (извлечено), `INFERRED` (выведено) или `AMBIGUOUS` (неоднозначно). Вы знаете, что было найдено, а что — предположено.
+3. **Междокументные сюрпризы** — детекция сообществ находит связи между концепциями в разных файлах, о которых вы бы никогда не подумали спросить напрямую.
+
+---
+
+Введите `/graphx` в вашем AI-ассистенте по написанию кода, и он отобразит весь проект — код, документы, PDF, изображения, видео — в граф знаний, который можно запрашивать вместо поиска по файлам.
+
+Работает в Claude Code, Devin, Cursor, Gemini CLI, GitHub Copilot CLI, VS Code Copilot Chat, Aider, OpenClaw, Factory Droid, Trae, Hermes, Kiro, Pi и Google Antigravity.
 
 ```
-/graphx .                        # работает с любой папкой — код, заметки, статьи, всё что угодно
+/graphx .
 ```
+
+Всё. Вы получаете три файла:
 
 ```
 graphx-out/
-├── graph.html       интерактивный граф — открыть в браузере, кликать по узлам, искать, фильтровать
-├── GRAPH_REPORT.md  бог-узлы, неожиданные связи, предлагаемые вопросы
-├── graph.json       постоянный граф — запрашивать через недели без повторного чтения
-└── cache/           SHA256-кэш — повторные запуски обрабатывают только изменённые файлы
+├── graph.html       откройте в любом браузере — кликайте узлы, фильтруйте, ищите
+├── GRAPH_REPORT.md  основные моменты: ключевые концепции, неожиданные связи, предлагаемые вопросы
+└── graph.json       полный граф — запрашивайте в любое время без повторного чтения файлов
 ```
 
-Добавьте файл `.graphxignore` для исключения папок:
-
-```
-# .graphxignore
-vendor/
-node_modules/
-dist/
-*.generated.py
-```
-
-Синтаксис аналогичен `.gitignore`.
-
-## Как это работает
-
-graphx работает в три прохода. Сначала детерминированный AST-проход извлекает структуру из файлов кода (классы, функции, импорты, графы вызовов, docstrings, комментарии с обоснованием) — без LLM. Затем видео и аудиофайлы транскрибируются локально с faster-whisper. Наконец, Claude-субагенты запускаются параллельно над документами, статьями, изображениями и транскриптами для извлечения концепций, связей и обоснований дизайна. Результаты объединяются в граф NetworkX, кластеризуются с помощью Leiden-детекции сообществ и экспортируются как интерактивный HTML, запрашиваемый JSON и аудит-отчёт на естественном языке.
-
-**Кластеризация основана на топологии графа — без эмбеддингов.** Leiden находит сообщества по плотности рёбер. Рёбра семантического сходства, извлечённые Claude (`semantically_similar_to`, помечены как INFERRED), уже в графе. Структура графа — это сигнал сходства. Отдельный шаг с эмбеддингами или векторная база данных не нужны.
-
-Каждая связь помечена как `EXTRACTED` (найдена непосредственно в источнике), `INFERRED` (обоснованный вывод с оценкой уверенности) или `AMBIGUOUS` (помечена для проверки).
+---
 
 ## Установка
 
-**Требования:** Python 3.10+ и одно из: [Claude Code](https://claude.ai/code), [Codex](https://openai.com/codex), [OpenCode](https://opencode.ai), [Cursor](https://cursor.com), [Gemini CLI](https://github.com/google-gemini/gemini-cli), [GitHub Copilot CLI](https://docs.github.com/en/copilot/how-tos/copilot-cli), [VS Code Copilot Chat](https://code.visualstudio.com/docs/copilot/overview), [Aider](https://aider.chat), [OpenClaw](https://openclaw.ai), [Factory Droid](https://factory.ai), [Trae](https://trae.ai), [Kiro](https://kiro.dev), Hermes или [Google Antigravity](https://antigravity.google)
+**Требуется Python 3.10+**
 
 ```bash
-# Рекомендуется — работает на Mac и Linux без настройки PATH
-uv tool install graphx && graphx install
-# или с pipx
-pipx install graphx && graphx install
-# или обычный pip
-pip install graphx && graphx install
+uv tool install ai-graphx && graphx install
+# или: pipx install ai-graphx && graphx install
+# или: pip install ai-graphx && graphx install
 ```
 
-> **Официальный пакет:** Пакет PyPI называется `graphx` (установить через `pip install graphx`). Другие пакеты с именем `graphx*` на PyPI не связаны с этим проектом. Единственный официальный репозиторий — [safishamsi/graphx](https://github.com/safishamsi/graphx).
+> **`graphx: command not found`?** Используйте `uv tool install ai-graphx` или `pipx install ai-graphx` — оба автоматически добавляют CLI в PATH. При обычном `pip` добавьте `~/.local/bin` (Linux) или `~/Library/Python/3.x/bin` (Mac) в PATH, или запустите `python -m graphx`.
 
-### Поддержка платформ
+### Выберите вашу платформу
 
 | Платформа | Команда установки |
 |-----------|-------------------|
 | Claude Code (Linux/Mac) | `graphx install` |
-| Claude Code (Windows) | `graphx install` (авто-определение) или `graphx install --platform windows` |
+| Claude Code (Windows) | `graphx install --platform windows` |
 | Codex | `graphx install --platform codex` |
 | OpenCode | `graphx install --platform opencode` |
 | GitHub Copilot CLI | `graphx install --platform copilot` |
@@ -85,86 +91,232 @@ pip install graphx && graphx install
 | Gemini CLI | `graphx install --platform gemini` |
 | Hermes | `graphx install --platform hermes` |
 | Kiro IDE/CLI | `graphx kiro install` |
+| Pi coding agent | `graphx install --platform pi` |
 | Cursor | `graphx cursor install` |
 | Google Antigravity | `graphx antigravity install` |
 
-Затем откройте AI-ассистент и введите:
+> Пользователи Codex: также добавьте `multi_agent = true` под `[features]` в `~/.codex/config.toml`.
+> Codex использует `$graphx` вместо `/graphx`.
 
-```
-/graphx .
-```
+---
 
-Примечание: Codex использует `$` вместо `/` для навыков, поэтому вводите `$graphx .`.
+## Заставьте ассистента всегда использовать граф
 
-### Заставить ассистента всегда использовать граф (рекомендуется)
-
-После построения графа выполните это один раз в вашем проекте:
+Запустите это один раз в вашем проекте после построения графа:
 
 | Платформа | Команда |
 |-----------|---------|
 | Claude Code | `graphx claude install` |
 | Codex | `graphx codex install` |
 | OpenCode | `graphx opencode install` |
+| GitHub Copilot CLI | `graphx copilot install` |
+| VS Code Copilot Chat | `graphx vscode install` |
+| Aider | `graphx aider install` |
+| OpenClaw | `graphx claw install` |
+| Factory Droid | `graphx droid install` |
+| Trae | `graphx trae install` |
+| Trae CN | `graphx trae-cn install` |
 | Cursor | `graphx cursor install` |
 | Gemini CLI | `graphx gemini install` |
+| Hermes | `graphx hermes install` |
 | Kiro IDE/CLI | `graphx kiro install` |
+| Pi coding agent | `graphx pi install` |
 | Google Antigravity | `graphx antigravity install` |
 
-## Использование
+Это записывает небольшой конфигурационный файл, который сообщает вашему ассистенту читать `GRAPH_REPORT.md` перед ответом на вопросы о кодовой базе. На платформах, поддерживающих хуки (Claude Code, Codex, Gemini CLI), хук срабатывает автоматически перед каждым вызовом чтения файла — ваш ассистент перемещается по графу вместо поиска по всему.
+
+Удалите с помощью соответствующей команды (например, `graphx claude uninstall`).
+
+---
+
+## Что в отчёте
+
+- **Бог-узлы** — наиболее связанные концепции в вашем проекте. Всё проходит через них.
+- **Неожиданные связи** — связи между вещами, которые живут в разных файлах или модулях. Ранжированы по неожиданности.
+- **"Почему"** — встроенные комментарии (`# NOTE:`, `# WHY:`, `# HACK:`), docstrings и обоснования дизайна из документов извлекаются как отдельные узлы, связанные с кодом, который они объясняют.
+- **Предлагаемые вопросы** — 4–5 вопросов, на которые граф уникально способен ответить.
+- **Метки уверенности** — каждая выведенная связь помечена как `EXTRACTED`, `INFERRED` или `AMBIGUOUS`. Вы всегда знаете, что было найдено, а что — предположено.
+
+---
+
+## Какие файлы обрабатываются
+
+| Тип | Расширения |
+|-----|-----------|
+| Код (25 языков) | `.py .ts .js .jsx .tsx .go .rs .java .c .cpp .rb .cs .kt .scala .php .swift .lua .zig .ps1 .ex .exs .m .jl .vue .svelte .sql` |
+| Документы | `.md .mdx .html .txt .rst .yaml .yml` |
+| Office | `.docx .xlsx` (требуется `pip install ai-graphx[office]`) |
+| PDF | `.pdf` |
+| Изображения | `.png .jpg .webp .gif` |
+| Видео / Аудио | `.mp4 .mov .mp3 .wav` и другие (требуется `pip install ai-graphx[video]`) |
+| YouTube / URL | любой URL видео (требуется `pip install ai-graphx[video]`) |
+
+Код извлекается локально без API-вызовов (AST через tree-sitter). Всё остальное проходит через API модели вашего AI-ассистента.
+
+---
+
+## Распространённые команды
+
+```bash
+/graphx .                        # построить граф для текущей папки
+/graphx ./docs --update          # повторно извлечь только изменённые файлы
+/graphx . --cluster-only         # перезапустить кластеризацию без повторного извлечения
+/graphx . --no-viz               # пропустить HTML, только отчёт + JSON
+/graphx . --wiki                 # построить markdown-вики из графа
+
+/graphx query "what connects auth to the database?"
+/graphx path "UserService" "DatabasePool"
+/graphx explain "RateLimiter"
+
+/graphx add https://arxiv.org/abs/1706.03762   # получить статью и добавить её
+/graphx add <youtube-url>                       # транскрибировать и добавить видео
+
+graphx hook install              # авто-пересборка при git commit
+graphx merge-graphs a.json b.json              # объединить два графа
+```
+
+См. [полный справочник команд](#полный-справочник-команд) ниже.
+
+---
+
+## Игнорирование файлов
+
+Создайте `.graphxignore` в корне вашего проекта — тот же синтаксис, что и у `.gitignore`, включая отрицание `!`:
 
 ```
-/graphx                          # текущая директория
-/graphx ./raw                    # конкретная папка
-/graphx ./raw --mode deep        # более агрессивное извлечение INFERRED-рёбер
-/graphx ./raw --update           # повторно извлечь только изменённые файлы
-/graphx ./raw --directed         # направленный граф
-/graphx ./raw --cluster-only     # перезапустить кластеризацию на существующем графе
-/graphx ./raw --no-viz           # без HTML, только отчёт + JSON
-/graphx ./raw --obsidian         # создать Obsidian vault (opt-in)
+# .graphxignore
+node_modules/
+dist/
+*.generated.py
 
-/graphx add https://arxiv.org/abs/1706.03762   # получить статью
-/graphx add <video-url>                         # скачать аудио, транскрибировать, добавить
-/graphx query "что связывает Attention с оптимизатором?"
-/graphx path "DigestAuth" "Response"
-/graphx explain "SwinTransformer"
-
-graphx hook install              # установить Git-хуки
-graphx update ./src              # повторно извлечь файлы кода, без LLM
-graphx watch ./src               # автоматическое обновление графа
+# индексировать только src/, игнорировать всё остальное
+*
+!src/
+!src/**
 ```
 
-## Что вы получаете
+---
 
-**Бог-узлы** — концепции с наибольшей степенью (через которые проходит всё)
+## Настройка для команды
 
-**Неожиданные связи** — отсортированы по составному баллу. Рёбра код-статья получают более высокий рейтинг. Каждый результат содержит объяснение «почему» на естественном языке.
+`graphx-out/` предназначен для коммита в git, чтобы каждый в команде начинал с карты.
 
-**Предлагаемые вопросы** — 4-5 вопросов, на которые граф уникально способен ответить
+**Рекомендуемые дополнения в `.gitignore`:**
+```
+graphx-out/manifest.json    # основан на mtime, ломается после git clone
+graphx-out/cost.json        # только локально
+# graphx-out/cache/         # опционально: закоммитьте для скорости, пропустите чтобы уменьшить размер репозитория
+```
 
-**«Почему»** — docstrings, встроенные комментарии (`# NOTE:`, `# IMPORTANT:`, `# HACK:`, `# WHY:`), и обоснования дизайна из документов извлекаются как узлы `rationale_for`.
+**Рабочий процесс:**
+1. Один человек запускает `/graphx .` и коммитит `graphx-out/`.
+2. Все делают pull — их ассистент сразу читает граф.
+3. Запустите `graphx hook install` для авто-пересборки после каждого коммита (только AST, без затрат на API).
+4. Когда документы или статьи меняются, запустите `/graphx --update` для обновления этих узлов.
 
-**Оценки уверенности** — каждое INFERRED-ребро имеет `confidence_score` (0,0-1,0).
+---
 
-**Бенчмарк токенов** — выводится автоматически после каждого запуска. На смешанном корпусе: **71,5-кратное** сокращение токенов на запрос vs сырые файлы.
+## Использование графа напрямую
 
-**Авто-синхронизация** (`--watch`) — обновляет граф автоматически при изменении кода.
+```bash
+# запросить граф из терминала
+graphx query "show the auth flow"
+graphx query "what connects DigestAuth to Response?" --graph graphx-out/graph.json
 
-**Git-хуки** (`graphx hook install`) — устанавливает post-commit и post-checkout хуки.
+# предоставить граф как MCP сервер (для повторного доступа через tool-call)
+python -m graphx.serve graphx-out/graph.json
+```
+
+MCP сервер даёт вашему ассистенту структурированный доступ: `query_graph`, `get_node`, `get_neighbors`, `shortest_path`.
+
+> **Примечание для WSL / Linux:** В Ubuntu установлен `python3`, а не `python`. Используйте venv чтобы избежать конфликтов:
+> ```bash
+> python3 -m venv .venv && .venv/bin/pip install "ai-graphx[mcp]"
+> ```
+
+---
 
 ## Конфиденциальность
 
-graphx отправляет содержимое файлов в API модели вашего AI-ассистента для семантического извлечения из документов, статей и изображений. Файлы кода обрабатываются локально через tree-sitter AST. Видео и аудиофайлы транскрибируются локально с faster-whisper. Никакой телеметрии, никакого отслеживания использования.
+- **Файлы кода** — обрабатываются локально через tree-sitter. Ничего не покидает вашу машину.
+- **Видео / аудио** — транскрибируются локально с faster-whisper. Ничего не покидает вашу машину.
+- **Документы, PDF, изображения** — отправляются в API модели вашего AI-ассистента (Anthropic, OpenAI и др.) с использованием вашего собственного API-ключа.
+- Никакой телеметрии, никакого отслеживания использования, никакой аналитики.
 
-## Технологический стек
+---
 
-NetworkX + Leiden (graspologic) + tree-sitter + vis.js. Семантическое извлечение через Claude, GPT-4 или модель вашей платформы. Транскрипция видео через faster-whisper + yt-dlp (опционально).
+## Полный справочник команд
 
-## Построено на graphx — Penpax
+```
+/graphx                          # запустить в текущей директории
+/graphx ./raw                    # запустить в конкретной папке
+/graphx ./raw --mode deep        # более агрессивное извлечение связей
+/graphx ./raw --update           # повторно извлечь только изменённые файлы
+/graphx ./raw --directed         # сохранить направление рёбер
+/graphx ./raw --cluster-only     # перезапустить кластеризацию на существующем графе
+/graphx ./raw --no-viz           # пропустить HTML-визуализацию
+/graphx ./raw --obsidian         # сгенерировать Obsidian vault
+/graphx ./raw --wiki             # построить markdown-вики для агентов
+/graphx ./raw --svg              # экспортировать graph.svg
+/graphx ./raw --graphml          # экспорт для Gephi / yEd
+/graphx ./raw --neo4j            # сгенерировать cypher.txt для Neo4j
+/graphx ./raw --neo4j-push bolt://localhost:7687
+/graphx ./raw --watch            # авто-синхронизация при изменении файлов
+/graphx ./raw --mcp              # запустить MCP stdio сервер
 
-[**Penpax**](https://safishamsi.github.io/penpax.ai) — корпоративный слой поверх graphx. Там, где graphx превращает папку с файлами в граф знаний, Penpax применяет тот же граф ко всей вашей рабочей жизни — непрерывно.
+/graphx add https://arxiv.org/abs/1706.03762
+/graphx add <video-url>
+/graphx add https://... --author "Name" --contributor "Name"
 
-**Бесплатный пробный период скоро.** [Вступить в список ожидания →](https://safishamsi.github.io/penpax.ai)
+/graphx query "what connects attention to the optimizer?"
+/graphx query "..." --dfs --budget 1500
+/graphx path "DigestAuth" "Response"
+/graphx explain "SwinTransformer"
 
-## История звёзд
+graphx hook install              # post-commit + post-checkout хуки
+graphx hook uninstall
+graphx hook status
 
-[![Star History Chart](https://api.star-history.com/svg?repos=safishamsi/graphx&type=Date)](https://star-history.com/#safishamsi/graphx&Date)
+graphx claude install / uninstall
+graphx codex install / uninstall
+graphx opencode install
+graphx cursor install / uninstall
+graphx gemini install / uninstall
+graphx copilot install / uninstall
+graphx aider install / uninstall
+graphx claw install / uninstall
+graphx droid install / uninstall
+graphx trae install / uninstall
+graphx trae-cn install / uninstall
+graphx hermes install / uninstall
+graphx kiro install / uninstall
+graphx antigravity install / uninstall
+
+graphx clone https://github.com/karpathy/nanoGPT
+graphx merge-graphs a.json b.json --out merged.json
+graphx watch ./src
+graphx check-update ./src
+graphx update ./src
+graphx cluster-only ./my-project
+```
+
+---
+
+## Узнать больше
+
+- [Как это работает](../../docs/how-it-works.md) — конвейер извлечения, детекция сообществ, оценка уверенности, бенчмарки
+- [ARCHITECTURE.md](../../ARCHITECTURE.md) — разбивка модулей, как добавить язык
+- [Опциональные интеграции](../../docs/docker-mcp-sqlite.md) — Docker MCP Toolkit + SQLite
+
+---
+
+<details>
+<summary>Вклад в проект</summary>
+
+**Рабочие примеры** — самый полезный вклад. Запустите `/graphx` на реальном корпусе, сохраните вывод в `worked/{slug}/`, напишите честный `review.md` о том, что граф понял правильно и неправильно, и откройте PR.
+
+**Ошибки извлечения** — откройте issue с входным файлом, записью кэша (`graphx-out/cache/`) и тем, что было пропущено или неправильно.
+
+См. [ARCHITECTURE.md](../../ARCHITECTURE.md) для описания ответственности модулей и как добавить язык.
+
+</details>
