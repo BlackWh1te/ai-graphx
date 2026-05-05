@@ -1,7 +1,5 @@
 # Ai-GraphX
 
-![Ai-GraphX](img.png)
-
 <p align="center">
   <a href="docs/translations/README.ru-RU.md"><img src="https://img.shields.io/badge/🇷🇺%20Русский-blue?style=for-the-badge" alt="Russian"></a>
 </p>

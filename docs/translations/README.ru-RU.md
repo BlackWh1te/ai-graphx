@@ -1,7 +1,5 @@
 # Ai-GraphX
 
-![Ai-GraphX](../../img.png)
-
 <p align="center">
   <a href="../../README.md"><img src="https://img.shields.io/badge/🇺🇸%20English-blue?style=for-the-badge" alt="English"></a>
 </p>
