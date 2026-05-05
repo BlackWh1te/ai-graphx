@@ -1,20 +1,20 @@
-# GraphX
+# Ai-GraphX
 
-![GraphX](img.png)
+![Ai-GraphX](img.png)
 
-**GraphX** is a knowledge graph tool that transforms your entire project — code, documentation, papers, images, and videos — into a navigable graph structure you can query instead of searching through files.
+**Ai-GraphX** is a knowledge graph tool that transforms your entire project — code, documentation, papers, images, and videos — into a navigable graph structure you can query instead of searching through files.
 
-## What is GraphX?
+## What is Ai-GraphX?
 
-GraphX analyzes your project files and builds a knowledge graph showing:
+Ai-GraphX analyzes your project files and builds a knowledge graph showing:
 - **Entities and concepts** — functions, classes, variables, topics, ideas
 - **Relationships** — how things connect (imports, calls, citations, references)
 - **Communities** — clusters of related files and concepts
 - **Cross-document connections** — links between code, docs, and papers you'd never think to ask about
 
-Instead of grepping through hundreds of files, you ask questions and GraphX traverses the graph to find answers.
+Instead of grepping through hundreds of files, you ask questions and Ai-GraphX traverses the graph to find answers.
 
-## Why use GraphX?
+## Why use Ai-GraphX?
 
 **For codebases you're new to:**
 - See the architecture before touching anything
@@ -31,7 +31,7 @@ Instead of grepping through hundreds of files, you ask questions and GraphX trav
 - See hot files (most frequently changed)
 - Understand the impact of changes across the entire project
 
-**Three things GraphX does that file search cannot:**
+**Three things Ai-GraphX does that file search cannot:**
 1. **Persistent graph** — relationships survive across sessions. Ask questions weeks later without re-reading everything.
 2. **Honest audit trail** — every edge is tagged `EXTRACTED`, `INFERRED`, or `AMBIGUOUS`. You know what was found vs guessed.
 3. **Cross-document surprise** — community detection finds connections between concepts in different files that you would never think to ask about directly.
@@ -62,12 +62,12 @@ graphx-out/
 **Requires Python 3.10+**
 
 ```bash
-uv tool install graphx && graphx install
-# or: pipx install graphx && graphx install
-# or: pip install graphx && graphx install
+uv tool install ai-graphx && graphx install
+# or: pipx install ai-graphx && graphx install
+# or: pip install ai-graphx && graphx install
 ```
 
-> **`graphx: command not found`?** Use `uv tool install graphx` or `pipx install graphx` — both put the CLI on PATH automatically. With plain `pip`, add `~/.local/bin` (Linux) or `~/Library/Python/3.x/bin` (Mac) to your PATH, or run `python -m graphx`.
+> **`graphx: command not found`?** Use `uv tool install ai-graphx` or `pipx install ai-graphx` — both put the CLI on PATH automatically. With plain `pip`, add `~/.local/bin` (Linux) or `~/Library/Python/3.x/bin` (Mac) to your PATH, or run `python -m graphx`.
 
 ### Pick your platform
 
@@ -141,11 +141,11 @@ Uninstall with the matching command (e.g. `graphx claude uninstall`).
 |------|-----------|
 | Code (25 languages) | `.py .ts .js .jsx .tsx .go .rs .java .c .cpp .rb .cs .kt .scala .php .swift .lua .zig .ps1 .ex .exs .m .jl .vue .svelte .sql` |
 | Docs | `.md .mdx .html .txt .rst .yaml .yml` |
-| Office | `.docx .xlsx` (requires `pip install graphxy[office]`) |
+| Office | `.docx .xlsx` (requires `pip install ai-graphx[office]`) |
 | PDFs | `.pdf` |
 | Images | `.png .jpg .webp .gif` |
-| Video / Audio | `.mp4 .mov .mp3 .wav` and more (requires `pip install graphxy[video]`) |
-| YouTube / URLs | any video URL (requires `pip install graphxy[video]`) |
+| Video / Audio | `.mp4 .mov .mp3 .wav` and more (requires `pip install ai-graphx[video]`) |
+| YouTube / URLs | any video URL (requires `pip install ai-graphx[video]`) |
 
 Code is extracted locally with no API calls (AST via tree-sitter). Everything else goes through your AI assistant's model API.
 
@@ -227,7 +227,7 @@ The MCP server gives your assistant structured access: `query_graph`, `get_node`
 
 > **WSL / Linux note:** Ubuntu ships `python3`, not `python`. Use a venv to avoid conflicts:
 > ```bash
-> python3 -m venv .venv && .venv/bin/pip install "graphxy[mcp]"
+> python3 -m venv .venv && .venv/bin/pip install "ai-graphx[mcp]"
 > ```
 
 ---
