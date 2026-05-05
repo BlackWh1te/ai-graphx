@@ -158,6 +158,18 @@ _PLATFORM_CONFIG: dict[str, dict] = {
         "claude_md": True,
         "detect_dir": Path(".claude"),
     },
+    "vscode": {
+        "skill_file": "skill-vscode.md",
+        "skill_dst": Path(".copilot") / "skills" / "graphx" / "SKILL.md",
+        "claude_md": False,
+        "detect_dir": Path(".copilot"),
+    },
+    "qwen": {
+        "skill_file": "skill.md",
+        "skill_dst": Path(".qwen") / "skills" / "graphx" / "SKILL.md",
+        "claude_md": False,
+        "detect_dir": Path(".qwen"),
+    },
 }
 
 
@@ -184,11 +196,9 @@ def _detect_installed_platforms() -> list[str]:
             continue
         # Resolve conflicts: same detect_dir used by multiple platforms
         if detect_dir in seen_dirs:
-            # claude vs windows: pick based on OS
+            # claude vs windows: on Windows keep both so user sees claude too
             if name == "windows" and platform.system() == "Windows":
-                # Replace claude with windows on Windows
-                if "claude" in detected:
-                    detected = [p for p in detected if p != "claude"]
+                if "claude" in detected and "windows" not in detected:
                     detected.append(name)
             elif name == "claude" and platform.system() != "Windows":
                 # Prefer claude on non-Windows (already there, skip windows)
@@ -211,6 +221,9 @@ def _detect_installed_platforms() -> list[str]:
     if platform.system() == "Windows":
         if (home / ".agents" / "skills").exists() and "gemini" not in detected:
             detected.append("gemini")
+        # Fallback: some Windows Gemini installs use ~/.gemini
+        if (home / ".gemini").exists() and "gemini" not in detected:
+            detected.append("gemini")
     else:
         if (home / ".gemini").exists() and "gemini" not in detected:
             detected.append("gemini")
@@ -222,6 +235,22 @@ def _detect_installed_platforms() -> list[str]:
     )
     if devin_config.exists() and "devin" not in detected:
         detected.append("devin")
+    # VS Code Copilot Chat (shares ~/.copilot with copilot CLI; detect separately)
+    if (home / ".copilot" / "skills").exists() and "vscode" not in detected:
+        detected.append("vscode")
+    # Claude Code on Windows (uses %LOCALAPPDATA%/claude, not ~/.claude)
+    if platform.system() == "Windows":
+        localappdata = os.environ.get("LOCALAPPDATA", "")
+        claude_win = Path(localappdata) / "claude" if localappdata else None
+        if claude_win and claude_win.exists() and "claude" not in detected:
+            detected.append("claude")
+        # Also respect CLAUDE_CONFIG_DIR if set
+        claude_env = os.environ.get("CLAUDE_CONFIG_DIR", "")
+        if claude_env and Path(claude_env).exists() and "claude" not in detected:
+            detected.append("claude")
+    # Qwen CLI
+    if (home / ".qwen").exists() and "qwen" not in detected:
+        detected.append("qwen")
 
     return detected
 
@@ -1514,6 +1543,8 @@ def main() -> None:
         print("  kiro uninstall          remove skill + steering file")
         print("  pi install              write skill to ~/.pi/agent/skills/graphx/ (Pi coding agent)")
         print("  pi uninstall            remove skill from ~/.pi/agent/skills/graphx/")
+        print("  qwen install            write skill to ~/.qwen/skills/graphx/ (Qwen CLI)")
+        print("  qwen uninstall          remove skill from ~/.qwen/skills/graphx/")
         print()
         return
 
@@ -1648,7 +1679,7 @@ def main() -> None:
         else:
             print("Usage: graphx pi [install|uninstall]", file=sys.stderr)
             sys.exit(1)
-    elif cmd in ("aider", "codex", "opencode", "claw", "droid", "trae", "trae-cn", "hermes"):
+    elif cmd in ("aider", "codex", "opencode", "claw", "droid", "trae", "trae-cn", "hermes", "qwen"):
         subcmd = sys.argv[2] if len(sys.argv) > 2 else ""
         if subcmd == "install":
             _agents_install(Path("."), cmd)
