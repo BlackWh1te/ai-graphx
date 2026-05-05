@@ -821,18 +821,24 @@ def to_index_html(
     cohesion: dict[int, float] | None = None,
     god_nodes_data: list[dict] | None = None,
     project_name: str | None = None,
+    status_report: dict | None = None,
 ) -> None:
-    """Generate a beautiful dashboard HTML index page for graphx outputs.
+    """Generate a status dashboard HTML index page for graphx outputs.
     
-    Creates a modern, dark-themed landing page with:
-    - Hero section with graph statistics
-    - Navigation cards for all outputs (graph.html, tree, wiki, report)
-    - Community preview with colored badges
+    Creates a modern, dark-themed dashboard with:
+    - Activity timeline with commits, file changes, timestamps
+    - Git status (branch, staged changes, untracked files)
+    - Graph statistics and build info
+    - Hot files (most frequently changed)
+    - External/untracked files
+    - Large files detection
+    - Change velocity (commits per day)
+    - Community preview
     - God nodes preview
-    - Audit trail visualization
-    - Responsive design
+    - Audit trail
     """
     from collections import Counter
+    from datetime import datetime
     
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
@@ -841,18 +847,14 @@ def to_index_html(
     degree = dict(G.degree())
     max_deg = max(degree.values(), default=1) or 1
     
-    # Build community stats
     community_stats = []
     for cid in sorted(communities.keys(), key=lambda x: -len(communities[x])):
         label = (community_labels or {}).get(cid, f"Community {cid}")
         coh_val = cohesion.get(cid) if cohesion else None
         color = COMMUNITY_COLORS[cid % len(COMMUNITY_COLORS)]
         members = communities[cid]
-        
-        # Find top node in this community
         top_node = max(members, key=lambda n: degree.get(n, 0)) if members else None
         top_label = G.nodes[top_node].get("label", "") if top_node else ""
-        
         community_stats.append({
             "cid": cid,
             "label": label,
@@ -862,10 +864,8 @@ def to_index_html(
             "top_node": top_label,
         })
     
-    # Build god nodes preview (top 10)
     gods_preview = (god_nodes_data or [])[:10]
     
-    # Build audit trail from edge confidences
     conf_counts = Counter()
     for _, _, data in G.edges(data=True):
         conf_counts[data.get("confidence", "EXTRACTED")] += 1
@@ -876,7 +876,6 @@ def to_index_html(
         {"type": "AMBIGUOUS", "count": conf_counts.get("AMBIGUOUS", 0), "pct": round(conf_counts.get("AMBIGUOUS", 0) / total_edges * 100)},
     ]
     
-    # Check which outputs exist
     outputs_exist = {
         "graph.html": (out / "graph.html").exists(),
         "GRAPH_TREE.html": (out / "GRAPH_TREE.html").exists(),
@@ -887,12 +886,255 @@ def to_index_html(
         "graph.graphml": (out / "graph.graphml").exists(),
     }
     
-    # Build HTML
-    title = f"{project_name or 'GraphX'} Knowledge Graph"
-    stats_html = f"{G.number_of_nodes()} nodes · {G.number_of_edges()} edges · {len(communities)} communities"
+    sr = status_report or {}
     
-    def _js_safe(obj) -> str:
-        return json.dumps(obj).replace("</", "<\\/")
+    git_info = sr.get("branch_status", {})
+    current_branch = git_info.get("current", "unknown")
+    staged = sr.get("staged_changes", [])
+    merge_commits = sr.get("merge_commits", [])[:5]
+    all_commits = sr.get("commits", [])[:20]
+    grouped = sr.get("grouped_commits", {})
+    hot_files = sr.get("hot_files", [])[:10]
+    external_files = sr.get("external_files", [])[:10]
+    large_files = sr.get("large_files", [])[:5]
+    velocity = sr.get("velocity", {})
+    daily_counts = velocity.get("daily_counts", {})
+    graph_status = sr.get("graph_status", {})
+    last_build = graph_status.get("last_build", "")
+    total_runs = graph_status.get("total_runs", 0)
+    needs_update = graph_status.get("needs_update", False)
+    
+    def _fmt_date(iso_str: str) -> str:
+        if not iso_str:
+            return "N/A"
+        try:
+            dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
+            return dt.strftime("%Y-%m-%d %H:%M")
+        except:
+            return iso_str[:16]
+    
+    def _esc(s) -> str:
+        return _html.escape(str(s))
+    
+    title = f"{project_name or 'Ai-GraphX'} Dashboard"
+    
+    # Activity Timeline HTML
+    timeline_html = ""
+    if all_commits:
+        timeline_html += '<div class="timeline">'
+        for i, commit in enumerate(all_commits):
+            side = "left" if i % 2 == 0 else "right"
+            commit_hash = commit.get("hash", "?")[:8]
+            author = _esc(commit.get("author", "Unknown"))
+            date_str = _fmt_date(commit.get("date", ""))
+            msg = _esc(commit.get("message", "")[:80])
+            source = commit.get("source", "user")
+            source_badge = "ai-badge" if source == "ai" else "user-badge"
+            source_label = "AI" if source == "ai" else "USER"
+            files_changed = commit.get("files_changed", [])
+            
+            files_html = ""
+            for fc in files_changed[:8]:
+                action = fc.get("action", "modified")
+                fpath = _esc(fc.get("file", "?"))
+                files_html += f'<div class="tl-file"><span class="tl-action {action}">{action[:1].upper()}</span><span class="tl-fpath">{fpath}</span></div>'
+            if len(files_changed) > 8:
+                files_html += f'<div class="tl-file"><span class="tl-more">+{len(files_changed) - 8} more files</span></div>'
+            
+            timeline_html += f'''
+        <div class="timeline-item {side}">
+          <div class="timeline-dot"></div>
+          <div class="timeline-card">
+            <div class="tl-header">
+              <span class="tl-hash">{commit_hash}</span>
+              <span class="tl-source {source_badge}">{source_label}</span>
+              <span class="tl-date">{date_str}</span>
+            </div>
+            <div class="tl-author">{author}</div>
+            <div class="tl-msg">{msg}</div>
+            <div class="tl-files">{files_html}</div>
+          </div>
+        </div>
+            '''
+        timeline_html += "</div>"
+    else:
+        timeline_html = '<p class="empty-state">No commit history found. Run inside a git repository to see activity.</p>'
+    
+    # Git Status HTML
+    git_status_html = ""
+    if sr.get("is_git_repo"):
+        git_status_html += f'''
+    <div class="git-status-grid">
+      <div class="git-card">
+        <div class="git-label">Current Branch</div>
+        <div class="git-value branch">{_esc(current_branch)}</div>
+      </div>
+      <div class="git-card">
+        <div class="git-label">Total Branches</div>
+        <div class="git-value">{len(git_info.get("all", []))}</div>
+      </div>
+      <div class="git-card">
+        <div class="git-label">Untracked Branches</div>
+        <div class="git-value">{len(git_info.get("untracked", []))}</div>
+      </div>
+      <div class="git-card">
+        <div class="git-label">Staged Changes</div>
+        <div class="git-value {'staged-yes' if staged else 'staged-no'}">{len(staged)}</div>
+      </div>
+    </div>
+        '''
+        
+        if staged:
+            git_status_html += '<div class="staged-list"><h4>Staged Files (Not Committed)</h4>'
+            for s in staged[:10]:
+                action = s.get("action", "modified")
+                fpath = _esc(s.get("file", "?"))
+                size = s.get("size", 0)
+                git_status_html += f'<div class="staged-item"><span class="staged-action {action}">{action.upper()}</span> <span class="staged-path">{fpath}</span> <span class="staged-size">{size:,} bytes</span></div>'
+            if len(staged) > 10:
+                git_status_html += f'<div class="staged-more">... and {len(staged) - 10} more</div>'
+            git_status_html += "</div>"
+        
+        if git_info.get("untracked"):
+            git_status_html += '<div class="untracked-list"><h4>Untracked Branches</h4>'
+            for b in git_info["untracked"][:5]:
+                commits_count = git_info.get("commits_per_branch", {}).get(b, 0)
+                git_status_html += f'<div class="untracked-item">{_esc(b)} <span class="untracked-commits">({commits_count} commits)</span></div>'
+            git_status_html += "</div>"
+    else:
+        git_status_html = '<p class="empty-state">Not a git repository. Initialize git to track changes.</p>'
+    
+    # Hot Files HTML
+    hot_html = ""
+    if hot_files:
+        hot_html += '<div class="hot-files-list">'
+        for hf in hot_files:
+            fpath = _esc(hf.get("file", "?"))
+            count = hf.get("commit_count", 0)
+            last = hf.get("last_commit")
+            if last:
+                last_hash = last.get("hash", "?")[:8]
+                last_date = _fmt_date(last.get("date", ""))
+                last_source = last.get("source", "user")
+                src_icon = "&#129302;" if last_source == "ai" else "&#128100;"
+            else:
+                last_hash = "?"
+                last_date = "N/A"
+                src_icon = "?"
+            hot_html += f'''
+      <div class="hot-file-item">
+        <div class="hot-rank">{count}</div>
+        <div class="hot-info">
+          <div class="hot-path">{fpath}</div>
+          <div class="hot-meta">Last: {last_hash} &middot; {last_date} &middot; {src_icon}</div>
+        </div>
+      </div>
+            '''
+        hot_html += "</div>"
+    else:
+        hot_html = '<p class="empty-state">No hot files detected yet.</p>'
+    
+    # External Files HTML
+    ext_html = ""
+    if external_files:
+        ext_html += '<div class="file-table"><table><thead><tr><th>File</th><th>Created</th><th>Modified</th><th>Size</th></tr></thead><tbody>'
+        for ef in external_files:
+            fpath = _esc(ef.get("file", "?"))
+            created = _fmt_date(ef.get("created", ""))
+            modified = _fmt_date(ef.get("modified", ""))
+            size = ef.get("size", 0)
+            size_mb = size / (1024 * 1024)
+            ext_html += f'<tr><td>{fpath}</td><td>{created}</td><td>{modified}</td><td>{size_mb:.2f} MB</td></tr>'
+        ext_html += "</tbody></table></div>"
+    else:
+        ext_html = '<p class="empty-state">No external (untracked) files detected.</p>'
+    
+    # Large Files HTML
+    large_html = ""
+    if large_files:
+        large_html += '<div class="file-table"><table><thead><tr><th>File</th><th>Size</th></tr></thead><tbody>'
+        for lf in large_files:
+            fpath = _esc(lf.get("file", "?"))
+            size_mb = lf.get("size_mb", 0)
+            large_html += f'<tr><td>{fpath}</td><td>{size_mb:.2f} MB</td></tr>'
+        large_html += "</tbody></table></div>"
+    else:
+        large_html = '<p class="empty-state">No large files (&gt;10MB) detected.</p>'
+    
+    # Velocity HTML
+    velo_html = ""
+    if daily_counts:
+        max_count = max(daily_counts.values()) if daily_counts else 1
+        velo_html += '<div class="velocity-chart">'
+        for date, count in sorted(daily_counts.items(), reverse=True)[:14]:
+            bar_width = (count / max_count * 100) if max_count else 0
+            velo_html += f'''
+      <div class="velocity-row">
+        <div class="velocity-date">{date}</div>
+        <div class="velocity-bar-wrap"><div class="velocity-bar" style="width:{bar_width:.0f}%"></div></div>
+        <div class="velocity-count">{count}</div>
+      </div>
+            '''
+        velo_html += "</div>"
+        velo_html += f'<div class="velocity-summary">Total: {velocity.get("total_commits", 0)} commits &middot; Avg: {velocity.get("average_per_day", 0):.1f}/day</div>'
+    else:
+        velo_html = '<p class="empty-state">No velocity data available.</p>'
+    
+    # Merge Commits HTML
+    merge_html = ""
+    if merge_commits:
+        merge_html += '<div class="merge-list">'
+        for mc in merge_commits:
+            mhash = mc.get("hash", "?")
+            author = _esc(mc.get("author", "?"))
+            date_str = _fmt_date(mc.get("date", ""))
+            msg = _esc(mc.get("message", "")[:60])
+            parents = ", ".join(mc.get("parents", []))
+            merge_html += f'''
+      <div class="merge-item">
+        <span class="merge-hash">{mhash}</span>
+        <span class="merge-author">{author}</span>
+        <span class="merge-date">{date_str}</span>
+        <div class="merge-msg">{msg}</div>
+        <div class="merge-parents">merged: {parents}</div>
+      </div>
+            '''
+        merge_html += "</div>"
+    else:
+        merge_html = '<p class="empty-state">No merge commits found.</p>'
+    
+    # Build Info HTML
+    build_status = "NEEDS UPDATE" if needs_update else "OK"
+    build_color = "status-warn" if needs_update else "status-ok"
+    
+    build_info_html = f'''
+    <div class="build-info-grid">
+      <div class="build-card">
+        <div class="build-label">Status</div>
+        <div class="build-value {build_color}">{build_status}</div>
+      </div>
+      <div class="build-card">
+        <div class="build-label">Nodes</div>
+        <div class="build-value">{G.number_of_nodes()}</div>
+      </div>
+      <div class="build-card">
+        <div class="build-label">Edges</div>
+        <div class="build-value">{G.number_of_edges()}</div>
+      </div>
+      <div class="build-card">
+        <div class="build-label">Communities</div>
+        <div class="build-value">{len(communities)}</div>
+      </div>
+      <div class="build-card">
+        <div class="build-label">Total Runs</div>
+        <div class="build-value">{total_runs}</div>
+      </div>
+      <div class="build-card">
+        <div class="build-label">Last Build</div>
+        <div class="build-value">{_fmt_date(last_build)}</div>
+      </div>
+    </div>
+    '''
     
     html = f"""<!DOCTYPE html>
 <html lang="en">
@@ -904,497 +1146,459 @@ def to_index_html(
   * {{ box-sizing: border-box; margin: 0; padding: 0; }}
   body {{
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: linear-gradient(135deg, #0f0f1a 0%, #1a1a2e 100%);
+    background: #0a0a12;
     color: #e0e0e0;
     min-height: 100vh;
     line-height: 1.6;
   }}
+  .container {{ max-width: 1400px; margin: 0 auto; padding: 20px; }}
   
-  .container {{
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 40px 20px;
+  .header {{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 0;
+    border-bottom: 1px solid #1a1a2e;
+    margin-bottom: 30px;
+    flex-wrap: wrap;
+    gap: 10px;
   }}
-  
-  /* Hero Section */
-  .hero {{
-    text-align: center;
-    padding: 60px 20px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 20px;
-    margin-bottom: 40px;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-  }}
-  
-  .hero h1 {{
-    font-size: 3rem;
-    font-weight: 700;
-    margin-bottom: 15px;
+  .header h1 {{
+    font-size: 1.8rem;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
   }}
+  .header-stats {{ font-size: 0.9rem; color: #888; }}
   
-  .hero .stats {{
-    font-size: 1.2rem;
-    color: #a0a0a0;
-    margin-top: 10px;
-  }}
-  
-  .hero .subtitle {{
-    color: #888;
-    margin-top: 20px;
-    font-size: 1rem;
-  }}
-  
-  /* Navigation Cards */
-  .nav-grid {{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 20px;
-    margin-bottom: 40px;
-  }}
-  
-  .nav-card {{
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 16px;
-    padding: 30px;
-    text-decoration: none;
-    color: inherit;
-    transition: all 0.3s ease;
-    display: block;
-  }}
-  
-  .nav-card:hover {{
-    background: rgba(255, 255, 255, 0.1);
-    transform: translateY(-5px);
-    border-color: rgba(102, 126, 234, 0.5);
-  }}
-  
-  .nav-card.disabled {{
-    opacity: 0.4;
-    pointer-events: none;
-  }}
-  
-  .nav-card .icon {{
-    font-size: 2.5rem;
-    margin-bottom: 15px;
-  }}
-  
-  .nav-card h3 {{
-    font-size: 1.3rem;
-    margin-bottom: 10px;
-    color: #fff;
-  }}
-  
-  .nav-card p {{
-    color: #a0a0a0;
-    font-size: 0.95rem;
-  }}
-  
-  /* Section Headers */
-  .section {{
-    margin-bottom: 40px;
-  }}
-  
+  .section {{ margin-bottom: 40px; }}
   .section h2 {{
-    font-size: 1.8rem;
-    margin-bottom: 25px;
+    font-size: 1.3rem;
+    margin-bottom: 20px;
     color: #fff;
     display: flex;
     align-items: center;
     gap: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1a1a2e;
   }}
-  
   .section h2::before {{
     content: '';
     width: 4px;
-    height: 30px;
+    height: 24px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 2px;
   }}
   
-  /* Communities Grid */
-  .communities-grid {{
+  .build-info-grid {{
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-    gap: 20px;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
   }}
+  .build-card {{
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }}
+  .build-label {{ font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
+  .build-value {{ font-size: 1.4rem; font-weight: 700; color: #fff; }}
+  .status-ok {{ color: #2ecc71; }}
+  .status-warn {{ color: #f39c12; }}
   
-  .community-card {{
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
+  .nav-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }}
+  .nav-card {{
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
     padding: 20px;
-    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: all 0.2s;
   }}
+  .nav-card:hover {{ background: rgba(255,255,255,0.06); border-color: #667eea; transform: translateY(-2px); }}
+  .nav-card.disabled {{ opacity: 0.4; pointer-events: none; }}
+  .nav-card h3 {{ font-size: 1rem; margin-bottom: 6px; color: #fff; }}
+  .nav-card p {{ font-size: 0.8rem; color: #888; }}
   
-  .community-card:hover {{
-    background: rgba(255, 255, 255, 0.08);
-    transform: translateY(-3px);
+  .git-status-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
   }}
+  .git-card {{
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }}
+  .git-label {{ font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
+  .git-value {{ font-size: 1.3rem; font-weight: 700; color: #fff; }}
+  .git-value.branch {{ color: #667eea; }}
+  .staged-yes {{ color: #f39c12; }}
+  .staged-no {{ color: #2ecc71; }}
   
-  .community-header {{
+  .staged-list, .untracked-list {{
+    background: rgba(255,255,255,0.02);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 12px;
+  }}
+  .staged-list h4, .untracked-list h4 {{ font-size: 0.9rem; color: #aaa; margin-bottom: 12px; }}
+  .staged-item, .untracked-item {{
     display: flex;
     align-items: center;
     gap: 12px;
-    margin-bottom: 15px;
+    padding: 6px 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #1a1a2e;
   }}
+  .staged-item:last-child, .untracked-item:last-child {{ border-bottom: none; }}
+  .staged-action {{
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    min-width: 60px;
+    text-align: center;
+  }}
+  .staged-action.added {{ background: #2ecc71; color: #fff; }}
+  .staged-action.modified {{ background: #f39c12; color: #fff; }}
+  .staged-action.deleted {{ background: #e74c3c; color: #fff; }}
+  .staged-path {{ flex: 1; font-family: monospace; font-size: 0.8rem; color: #ccc; }}
+  .staged-size {{ color: #666; font-size: 0.75rem; }}
+  .untracked-commits {{ color: #666; font-size: 0.8rem; }}
+  .staged-more {{ color: #888; font-size: 0.8rem; margin-top: 8px; font-style: italic; }}
   
-  .community-dot {{
+  .timeline {{
+    position: relative;
+    max-width: 1200px;
+    margin: 0 auto;
+  }}
+  .timeline::after {{
+    content: '';
+    position: absolute;
+    width: 3px;
+    background: #1a1a2e;
+    top: 0;
+    bottom: 0;
+    left: 50%;
+    margin-left: -1.5px;
+  }}
+  .timeline-item {{
+    padding: 10px 40px;
+    position: relative;
+    width: 50%;
+  }}
+  .timeline-item.left {{ left: 0; }}
+  .timeline-item.right {{ left: 50%; }}
+  .timeline-item::after {{
+    content: '';
+    position: absolute;
     width: 16px;
     height: 16px;
+    right: -8px;
+    background: #667eea;
+    border: 3px solid #0a0a12;
+    top: 20px;
     border-radius: 50%;
-    flex-shrink: 0;
+    z-index: 1;
   }}
-  
-  .community-name {{
-    font-weight: 600;
-    color: #fff;
-    flex: 1;
+  .timeline-item.right::after {{ left: -8px; }}
+  .timeline-card {{
+    padding: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    position: relative;
   }}
-  
-  .community-count {{
-    font-size: 0.9rem;
-    color: #888;
-  }}
-  
-  .community-meta {{
-    font-size: 0.85rem;
-    color: #a0a0a0;
-    margin-top: 10px;
-  }}
-  
-  .cohesion-badge {{
-    display: inline-block;
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    margin-top: 8px;
-  }}
-  
-  .cohesion-high {{ background: rgba(46, 204, 113, 0.2); color: #2ecc71; }}
-  .cohesion-med {{ background: rgba(241, 196, 15, 0.2); color: #f1c40f; }}
-  .cohesion-low {{ background: rgba(231, 76, 60, 0.2); color: #e74c3c; }}
-  
-  /* God Nodes List */
-  .god-nodes-list {{
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }}
-  
-  .god-node-item {{
+  .timeline-card:hover {{ border-color: #667eea; }}
+  .tl-header {{
     display: flex;
     align-items: center;
-    gap: 15px;
-    padding: 15px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 10px;
-    transition: all 0.3s ease;
+    gap: 10px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
   }}
-  
-  .god-node-item:hover {{
-    background: rgba(255, 255, 255, 0.08);
+  .tl-hash {{
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #667eea;
+    background: rgba(102,126,234,0.1);
+    padding: 2px 8px;
+    border-radius: 4px;
   }}
+  .tl-source {{
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 700;
+  }}
+  .ai-badge {{ background: rgba(155,89,182,0.2); color: #9b59b6; }}
+  .user-badge {{ background: rgba(46,204,113,0.2); color: #2ecc71; }}
+  .tl-date {{ font-size: 0.8rem; color: #888; margin-left: auto; }}
+  .tl-author {{ font-size: 0.85rem; color: #aaa; margin-bottom: 6px; }}
+  .tl-msg {{ font-size: 0.85rem; color: #ccc; margin-bottom: 10px; word-break: break-word; }}
+  .tl-files {{ margin-top: 8px; }}
+  .tl-file {{
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 3px 0;
+    font-size: 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
+  }}
+  .tl-file:last-child {{ border-bottom: none; }}
+  .tl-action {{
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }}
+  .tl-action.added {{ background: #2ecc71; }}
+  .tl-action.modified {{ background: #f39c12; }}
+  .tl-action.deleted {{ background: #e74c3c; }}
+  .tl-fpath {{ font-family: monospace; color: #bbb; flex: 1; overflow: hidden; text-overflow: ellipsis; }}
+  .tl-more {{ color: #888; font-size: 0.75rem; font-style: italic; }}
   
-  .god-rank {{
-    width: 30px;
-    height: 30px;
+  .hot-files-list {{ display: flex; flex-direction: column; gap: 8px; }}
+  .hot-file-item {{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    transition: all 0.2s;
+  }}
+  .hot-file-item:hover {{ border-color: #667eea; }}
+  .hot-rank {{
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
     align-items: center;
     justify-content: center;
-    font-weight: bold;
-    font-size: 0.9rem;
+    font-weight: 700;
+    font-size: 0.85rem;
     flex-shrink: 0;
   }}
+  .hot-info {{ flex: 1; }}
+  .hot-path {{ font-family: monospace; font-size: 0.85rem; color: #ccc; }}
+  .hot-meta {{ font-size: 0.75rem; color: #888; margin-top: 2px; }}
   
-  .god-info {{
-    flex: 1;
+  .file-table {{ overflow-x: auto; }}
+  .file-table table {{
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
   }}
-  
-  .god-name {{
+  .file-table th {{
+    text-align: left;
+    padding: 10px;
+    color: #888;
     font-weight: 600;
-    color: #fff;
-    margin-bottom: 4px;
-  }}
-  
-  .god-degree {{
-    font-size: 0.85rem;
-    color: #888;
-  }}
-  
-  /* Audit Trail */
-  .audit-trail {{
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-  }}
-  
-  .audit-item {{
-    flex: 1;
-    min-width: 200px;
-    padding: 20px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 12px;
-    text-align: center;
-  }}
-  
-  .audit-value {{
-    font-size: 2rem;
-    font-weight: 700;
-    margin-bottom: 5px;
-  }}
-  
-  .audit-value.extracted {{ color: #2ecc71; }}
-  .audit-value.inferred {{ color: #f39c12; }}
-  .audit-value.ambiguous {{ color: #e74c3c; }}
-  
-  .audit-label {{
-    font-size: 0.9rem;
-    color: #a0a0a0;
     text-transform: uppercase;
-    letter-spacing: 1px;
-  }}
-  
-  .audit-pct {{
-    font-size: 0.85rem;
-    color: #888;
-    margin-top: 5px;
-  }}
-  
-  /* Programmer Summary */
-  .programmer-summary {{
-    margin-top: 40px;
-    padding: 30px;
-    background: rgba(26, 26, 46, 0.5);
-    border-radius: 12px;
-    border: 1px solid #2a2a4e;
-  }}
-  
-  .summary-controls {{
-    display: flex;
-    gap: 20px;
-    margin-bottom: 24px;
-    flex-wrap: wrap;
-  }}
-  
-  .filter-group {{
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }}
-  
-  .filter-group label {{
-    color: #aaa;
-    font-size: 0.85rem;
-  }}
-  
-  .filter-select {{
-    padding: 6px 10px;
-    border-radius: 6px;
-    background: #0f0f1a;
-    border: 1px solid #3a3a5e;
-    color: #e0e0e0;
-    font-size: 0.85rem;
-    cursor: pointer;
-  }}
-  
-  .filter-select:hover {{
-    border-color: #667eea;
-  }}
-  
-  .summary-stats {{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-    gap: 16px;
-    margin-bottom: 24px;
-  }}
-  
-  .stat-card {{
-    padding: 16px;
-    background: rgba(15, 15, 26, 0.8);
-    border-radius: 8px;
-    border: 1px solid #2a2a4e;
-    text-align: center;
-  }}
-  
-  .stat-value {{
-    font-size: 1.5rem;
-    font-weight: bold;
-    color: #667eea;
-    margin-bottom: 4px;
-  }}
-  
-  .stat-label {{
     font-size: 0.75rem;
-    color: #888;
-    text-transform: uppercase;
     letter-spacing: 1px;
+    border-bottom: 1px solid #1a1a2e;
   }}
-  
-  .roadmap-timeline {{
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-  }}
-  
-  .session-card {{
-    padding: 20px;
-    background: rgba(15, 15, 26, 0.8);
-    border-radius: 8px;
-    border: 1px solid #2a2a4e;
-    transition: all 0.2s;
-  }}
-  
-  .session-card:hover {{
-    border-color: #667eea;
-    transform: translateY(-2px);
-  }}
-  
-  .session-header {{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }}
-  
-  .session-title {{
-    font-size: 1rem;
-    font-weight: bold;
-    color: #e0e0e0;
-  }}
-  
-  .session-date {{
-    font-size: 0.8rem;
-    color: #888;
-  }}
-  
-  .session-description {{
+  .file-table td {{
+    padding: 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.03);
     color: #ccc;
-    font-size: 0.85rem;
-    line-height: 1.5;
-    margin-bottom: 12px;
-  }}
-  
-  .session-tags {{
-    display: flex;
-    gap: 8px;
-    margin-bottom: 12px;
-    flex-wrap: wrap;
-  }}
-  
-  .tag {{
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.7rem;
-    background: #2a2a4e;
-    color: #aaa;
-  }}
-  
-  .tag-feature {{ background: #667eea; color: #fff; }}
-  .tag-bugfix {{ background: #e74c3c; color: #fff; }}
-  .tag-refactor {{ background: #2ecc71; color: #fff; }}
-  .tag-auth {{ background: #f39c12; color: #fff; }}
-  .tag-security {{ background: #9b59b6; color: #fff; }}
-  
-  .session-metrics {{
-    display: flex;
-    gap: 16px;
-    margin-bottom: 16px;
+    font-family: monospace;
     font-size: 0.8rem;
-    color: #888;
-    flex-wrap: wrap;
   }}
+  .file-table tr:hover td {{ background: rgba(255,255,255,0.02); }}
   
-  .metric {{
-    display: flex;
-    align-items: center;
-    gap: 4px;
-  }}
-  
-  .session-files {{
-    padding-top: 12px;
-    border-top: 1px solid #2a2a4e;
-  }}
-  
-  .file-item {{
+  .velocity-chart {{ display: flex; flex-direction: column; gap: 8px; }}
+  .velocity-row {{
     display: flex;
     align-items: center;
     gap: 12px;
-    padding: 6px 0;
+    font-size: 0.85rem;
+  }}
+  .velocity-date {{ width: 100px; color: #888; font-family: monospace; font-size: 0.8rem; flex-shrink: 0; }}
+  .velocity-bar-wrap {{
+    flex: 1;
+    height: 20px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 4px;
+    overflow: hidden;
+  }}
+  .velocity-bar {{
+    height: 100%;
+    background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }}
+  .velocity-count {{ width: 30px; text-align: right; color: #aaa; }}
+  .velocity-summary {{
+    margin-top: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 8px;
+    font-size: 0.9rem;
+    color: #aaa;
+    text-align: center;
+  }}
+  
+  .merge-list {{ display: flex; flex-direction: column; gap: 8px; }}
+  .merge-item {{
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    font-size: 0.85rem;
+  }}
+  .merge-item:hover {{ border-color: #667eea; }}
+  .merge-hash {{
+    font-family: monospace;
+    color: #667eea;
+    background: rgba(102,126,234,0.1);
+    padding: 2px 6px;
+    border-radius: 4px;
     font-size: 0.8rem;
   }}
+  .merge-author {{ color: #aaa; margin-left: 8px; }}
+  .merge-date {{ color: #888; margin-left: 8px; font-size: 0.8rem; }}
+  .merge-msg {{ color: #ccc; margin-top: 6px; word-break: break-word; }}
+  .merge-parents {{ color: #666; font-size: 0.75rem; margin-top: 4px; font-family: monospace; }}
   
-  .file-action {{
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    min-width: 60px;
-    text-align: center;
-    font-weight: 600;
+  .communities-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 12px;
   }}
-  
-  .file-action.modified {{ background: #f39c12; color: #fff; }}
-  .file-action.added {{ background: #2ecc71; color: #fff; }}
-  .file-action.deleted {{ background: #e74c3c; color: #fff; }}
-  
-  .file-path {{
-    flex: 1;
-    color: #ccc;
-    font-family: 'Courier New', monospace;
+  .community-card {{
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    padding: 16px;
+    transition: all 0.2s;
+  }}
+  .community-card:hover {{ background: rgba(255,255,255,0.05); border-color: #667eea; }}
+  .community-header {{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 10px;
+  }}
+  .community-dot {{ width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }}
+  .community-name {{ font-weight: 600; color: #fff; font-size: 0.95rem; flex: 1; overflow: hidden; text-overflow: ellipsis; }}
+  .community-count {{ font-size: 0.8rem; color: #888; }}
+  .community-meta {{ font-size: 0.8rem; color: #aaa; }}
+  .cohesion-badge {{
+    display: inline-block;
+    padding: 3px 8px;
+    border-radius: 10px;
     font-size: 0.75rem;
+    margin-top: 6px;
   }}
+  .cohesion-high {{ background: rgba(46,204,113,0.15); color: #2ecc71; }}
+  .cohesion-med {{ background: rgba(241,196,15,0.15); color: #f1c40f; }}
+  .cohesion-low {{ background: rgba(231,76,60,0.15); color: #e74c3c; }}
   
-  .file-metrics {{
-    color: #666;
-    font-size: 0.7rem;
+  .god-nodes-list {{ display: flex; flex-direction: column; gap: 8px; }}
+  .god-node-item {{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 8px;
+    transition: all 0.2s;
   }}
+  .god-node-item:hover {{ border-color: #667eea; }}
+  .god-rank {{
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 0.8rem;
+    flex-shrink: 0;
+  }}
+  .god-info {{ flex: 1; }}
+  .god-name {{ font-weight: 600; color: #fff; font-size: 0.9rem; }}
+  .god-degree {{ font-size: 0.8rem; color: #888; }}
+  
+  .audit-trail {{
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+  }}
+  .audit-item {{
+    flex: 1;
+    min-width: 160px;
+    padding: 16px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    text-align: center;
+  }}
+  .audit-value {{ font-size: 1.6rem; font-weight: 700; margin-bottom: 4px; }}
+  .audit-value.extracted {{ color: #2ecc71; }}
+  .audit-value.inferred {{ color: #f39c12; }}
+  .audit-value.ambiguous {{ color: #e74c3c; }}
+  .audit-label {{ font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }}
+  .audit-pct {{ font-size: 0.75rem; color: #666; margin-top: 4px; }}
   
   .empty-state {{
     color: #666;
     font-style: italic;
     text-align: center;
-    padding: 40px;
+    padding: 30px;
+    font-size: 0.9rem;
   }}
   
-  .empty-state code {{
-    background: #2a2a4e;
-    padding: 2px 6px;
-    border-radius: 4px;
-    color: #667eea;
-  }}
-  
-  /* Footer */
   .footer {{
     text-align: center;
-    padding: 40px 20px;
+    padding: 30px 20px;
     color: #666;
-    font-size: 0.9rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    margin-top: 60px;
+    font-size: 0.85rem;
+    border-top: 1px solid #1a1a2e;
+    margin-top: 40px;
   }}
+  .footer a {{ color: #667eea; text-decoration: none; }}
+  .footer a:hover {{ text-decoration: underline; }}
   
-  .footer a {{
-    color: #667eea;
-    text-decoration: none;
-  }}
-  
-  .footer a:hover {{
-    text-decoration: underline;
-  }}
-  
-  /* Responsive */
   @media (max-width: 768px) {{
-    .hero h1 {{ font-size: 2rem; }}
+    .timeline::after {{ left: 20px; }}
+    .timeline-item {{ width: 100%; padding-left: 50px; padding-right: 10px; }}
+    .timeline-item.right {{ left: 0; }}
+    .timeline-item::after {{ left: 12px !important; right: auto !important; }}
+    .header {{ flex-direction: column; align-items: flex-start; gap: 10px; }}
     .nav-grid {{ grid-template-columns: 1fr; }}
+    .git-status-grid {{ grid-template-columns: repeat(2, 1fr); }}
+    .build-info-grid {{ grid-template-columns: repeat(2, 1fr); }}
     .communities-grid {{ grid-template-columns: 1fr; }}
     .audit-trail {{ flex-direction: column; }}
   }}
@@ -1402,72 +1606,94 @@ def to_index_html(
 </head>
 <body>
 <div class="container">
-  <div class="hero">
+
+  <div class="header">
     <h1>{title}</h1>
-    <div class="stats">{stats_html}</div>
-    <div class="subtitle">Interactive knowledge graph with community detection and audit trail</div>
+    <div class="header-stats">{G.number_of_nodes()} nodes &middot; {G.number_of_edges()} edges &middot; {len(communities)} communities &middot; Branch: {_esc(current_branch)}</div>
   </div>
   
-  <!-- Navigation Cards -->
   <div class="section">
-    <h2>📊 Outputs</h2>
+    <h2>&#128202; Graph Status</h2>
+    {build_info_html}
     <div class="nav-grid">
       <a href="graph.html" class="nav-card{' disabled' if not outputs_exist['graph.html'] else ''}">
-        <div class="icon">🕸️</div>
-        <h3>Interactive Graph</h3>
-        <p>Force-directed visualization with search, filters, and node inspection</p>
+        <h3>&#128376; Interactive Graph</h3>
+        <p>Force-directed visualization with search and filters</p>
       </a>
       <a href="GRAPH_TREE.html" class="nav-card{' disabled' if not outputs_exist['GRAPH_TREE.html'] else ''}">
-        <div class="icon">🌳</div>
-        <h3>Tree View</h3>
-        <p>Collapsible directory tree with file structure and symbol hierarchy</p>
+        <h3>&#127795; Tree View</h3>
+        <p>Collapsible directory tree with symbol hierarchy</p>
       </a>
       <a href="wiki/index.md" class="nav-card{' disabled' if not outputs_exist['wiki'] else ''}">
-        <div class="icon">📚</div>
-        <h3>Knowledge Wiki</h3>
-        <p>Wikipedia-style articles for each community and god node</p>
+        <h3>&#128218; Knowledge Wiki</h3>
+        <p>Wikipedia-style articles for each community</p>
       </a>
       <a href="GRAPH_REPORT.md" class="nav-card{' disabled' if not outputs_exist['GRAPH_REPORT.md'] else ''}">
-        <div class="icon">📋</div>
-        <h3>Audit Report</h3>
-        <p>Detailed analysis with god nodes, surprising connections, and questions</p>
+        <h3>&#128203; Audit Report</h3>
+        <p>God nodes, surprising connections, questions</p>
       </a>
       <a href="graph.json" class="nav-card{' disabled' if not outputs_exist['graph.json'] else ''}" download>
-        <div class="icon">📦</div>
-        <h3>Raw Graph (JSON)</h3>
-        <p>Download the complete graph data for custom analysis</p>
+        <h3>&#128230; Raw Graph JSON</h3>
+        <p>Download complete graph data</p>
       </a>
       <a href="graph.svg" class="nav-card{' disabled' if not outputs_exist['graph.svg'] else ''}" download>
-        <div class="icon">🖼️</div>
-        <h3>SVG Export</h3>
-        <p>Vector graphic for embedding in documents or websites</p>
-      </a>
-      <a href="graph.graphml" class="nav-card{' disabled' if not outputs_exist['graph.graphml'] else ''}" download>
-        <div class="icon">🔬</div>
-        <h3>GraphML Export</h3>
-        <p>Open in Gephi, yEd, or other graph analysis tools</p>
+        <h3>&#128444; SVG Export</h3>
+        <p>Vector graphic for documents</p>
       </a>
     </div>
   </div>
   
-  <!-- Communities -->
   <div class="section">
-    <h2>🎨 Communities ({len(communities)})</h2>
+    <h2>&#127807; Git Status</h2>
+    {git_status_html}
+  </div>
+  
+  <div class="section">
+    <h2>&#128220; Activity Timeline</h2>
+    {timeline_html}
+  </div>
+  
+  <div class="section">
+    <h2>&#128293; Hot Files (Most Changed)</h2>
+    {hot_html}
+  </div>
+  
+  <div class="section">
+    <h2>&#128200; Change Velocity (Last 7 Days)</h2>
+    {velo_html}
+  </div>
+  
+  <div class="section">
+    <h2>&#128256; Recent Merge Commits</h2>
+    {merge_html}
+  </div>
+  
+  <div class="section">
+    <h2>&#128206; External Files (Untracked)</h2>
+    {ext_html}
+  </div>
+  
+  <div class="section">
+    <h2>&#128230; Large Files (&gt;10MB)</h2>
+    {large_html}
+  </div>
+  
+  <div class="section">
+    <h2>&#127912; Communities ({len(communities)})</h2>
     <div class="communities-grid">
 """
-
-    # Add community cards
-    for comm in community_stats[:12]:  # Show top 12
+    
+    for comm in community_stats[:12]:
         cohesion_class = "cohesion-high" if comm["cohesion"] and comm["cohesion"] >= 0.7 else "cohesion-med" if comm["cohesion"] and comm["cohesion"] >= 0.4 else "cohesion-low"
         cohesion_text = f"Cohesion: {comm['cohesion']:.2f}" if comm["cohesion"] else "Cohesion: N/A"
         html += f"""
       <div class="community-card">
         <div class="community-header">
           <div class="community-dot" style="background: {comm['color']}"></div>
-          <div class="community-name">{_html.escape(comm['label'])}</div>
+          <div class="community-name">{_esc(comm['label'])}</div>
           <div class="community-count">{comm['count']} nodes</div>
         </div>
-        <div class="community-meta">Top: {_html.escape(comm['top_node'][:40]) + '...' if len(comm['top_node']) > 40 else _html.escape(comm['top_node'])}</div>
+        <div class="community-meta">Top: {_esc(comm['top_node'][:40]) + '...' if len(comm['top_node']) > 40 else _esc(comm['top_node'])}</div>
         <span class="cohesion-badge {cohesion_class}">{cohesion_text}</span>
       </div>
 """
@@ -1483,9 +1709,8 @@ def to_index_html(
     </div>
   </div>
   
-  <!-- God Nodes -->
   <div class="section">
-    <h2>⭐ God Nodes (Top Connected)</h2>
+    <h2>&#11088; God Nodes (Top Connected)</h2>
     <div class="god-nodes-list">
 """
     
@@ -1494,7 +1719,7 @@ def to_index_html(
       <div class="god-node-item">
         <div class="god-rank">{idx}</div>
         <div class="god-info">
-          <div class="god-name">{_html.escape(god.get('label', 'Unknown'))}</div>
+          <div class="god-name">{_esc(god.get('label', 'Unknown'))}</div>
           <div class="god-degree">{god.get('degree', 0)} connections</div>
         </div>
       </div>
@@ -1504,10 +1729,9 @@ def to_index_html(
     </div>
   </div>
   
-  <!-- Audit Trail -->
   <div class="section">
-    <h2>🔍 Audit Trail</h2>
-    <div class="audit-trail>
+    <h2>&#128269; Audit Trail</h2>
+    <div class="audit-trail">
 """
     
     for audit in audit_trail:
@@ -1519,183 +1743,20 @@ def to_index_html(
       </div>
 """
     
-    html += f"""
-    </div>
-  </div>
-  
-  <!-- Programmer Summary -->
-  <div class="section programmer-summary">
-    <h2>🎯 Programmer Summary</h2>
-    
-    <div class="summary-controls">
-      <div class="filter-group">
-        <label>Type:</label>
-        <select id="typeFilter" class="filter-select">
-          <option value="all">All</option>
-          <option value="feature">Features</option>
-          <option value="bugfix">Bug Fixes</option>
-          <option value="refactor">Refactoring</option>
-        </select>
-      </div>
-      
-      <div class="filter-group">
-        <label>Time:</label>
-        <select id="timeFilter" class="filter-select">
-          <option value="7">Last 7 days</option>
-          <option value="30">Last 30 days</option>
-          <option value="90">Last 90 days</option>
-          <option value="all">All time</option>
-        </select>
-      </div>
-    </div>
-    
-    <div class="summary-stats" id="summaryStats">
-      <!-- Populated by JavaScript -->
-    </div>
-    
-    <div class="roadmap-timeline" id="roadmapTimeline">
-      <!-- Populated by JavaScript -->
+    html += """
     </div>
   </div>
   
   <div class="footer">
-    <p>Generated by <a href="https://github.com/safishamsi/graphx" target="_blank">GraphX</a> · Knowledge Graph Visualization</p>
+    <p>Generated by <a href="https://pypi.org/project/ai-graphx/" target="_blank">Ai-GraphX</a> &middot; Knowledge Graph Dashboard</p>
   </div>
 </div>
-
-<script>
-// Load and render changelog
-async function loadChangelog() {{
-  try {{
-    const response = await fetch('changelog.json');
-    const changelog = await response.json();
-    renderProgrammerSummary(changelog);
-  }} catch (e) {{
-    console.log('No changelog found');
-    document.getElementById('roadmapTimeline').innerHTML = 
-      '<p class="empty-state">No work sessions logged yet. Use <code>graphx log</code> to track your progress.</p>';
-  }}
-}}
-
-function renderProgrammerSummary(changelog) {{
-  let sessions = changelog.sessions || [];
-  
-  // Apply filters
-  const typeFilter = document.getElementById('typeFilter').value;
-  const timeFilter = document.getElementById('timeFilter').value;
-  
-  if (typeFilter !== 'all') {{
-    sessions = sessions.filter(s => s.tags.includes(typeFilter));
-  }}
-  
-  if (timeFilter !== 'all') {{
-    const cutoff = new Date();
-    cutoff.setDate(cutoff.getDate() - parseInt(timeFilter));
-    sessions = sessions.filter(s => new Date(s.date) > cutoff);
-  }}
-  
-  // Sort by date descending
-  sessions.sort((a, b) => new Date(b.date) - new Date(a.date));
-  
-  // Render stats
-  renderSummaryStats(sessions);
-  
-  // Render timeline
-  renderRoadmapTimeline(sessions);
-}}
-
-function renderSummaryStats(sessions) {{
-  const stats = {{
-    totalSessions: sessions.length,
-    totalFiles: sessions.reduce((sum, s) => sum + s.metrics.total_files, 0),
-    linesAdded: sessions.reduce((sum, s) => sum + s.metrics.lines_added, 0),
-    linesRemoved: sessions.reduce((sum, s) => sum + s.metrics.lines_removed, 0),
-    nodesAdded: sessions.reduce((sum, s) => sum + s.metrics.nodes_added, 0),
-  }};
-  
-  document.getElementById('summaryStats').innerHTML = `
-    <div class="stat-card">
-      <div class="stat-value">${{stats.totalSessions}}</div>
-      <div class="stat-label">Features</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">${{stats.totalFiles}}</div>
-      <div class="stat-label">Files Changed</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">${{stats.linesAdded.toLocaleString()}}</div>
-      <div class="stat-label">Lines Added</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-value">${{stats.nodesAdded}}</div>
-      <div class="stat-label">Nodes Added</div>
-    </div>
-  `;
-}}
-
-function renderRoadmapTimeline(sessions) {{
-  const timeline = document.getElementById('roadmapTimeline');
-  timeline.innerHTML = '';
-  
-  if (sessions.length === 0) {{
-    timeline.innerHTML = '<p class="empty-state">No sessions match the current filters.</p>';
-    return;
-  }}
-  
-  sessions.forEach(session => {{
-    const date = new Date(session.date).toLocaleDateString('en-US', {{
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric'
-    }});
-    
-    const tags = session.tags.map(t => 
-      `<span class="tag tag-${{t}}">${{t}}</span>`
-    ).join('');
-    
-    const sessionDiv = document.createElement('div');
-    sessionDiv.className = 'session-card';
-    sessionDiv.innerHTML = `
-      <div class="session-header">
-        <div class="session-title">${{session.title}}</div>
-        <div class="session-date">${{date}}</div>
-      </div>
-      <div class="session-description">${{session.description}}</div>
-      <div class="session-tags">${{tags}}</div>
-      <div class="session-metrics">
-        <span class="metric">📁 ${{session.metrics.total_files}} files</span>
-        <span class="metric">📊 +${{session.metrics.lines_added}} / -${{session.metrics.lines_removed}} lines</span>
-        <span class="metric">🔗 +${{session.metrics.nodes_added}} nodes</span>
-      </div>
-      <div class="session-files">
-        ${{session.files_changed.map(f => `
-          <div class="file-item">
-            <span class="file-action ${{f.action}}">${{f.action}}</span>
-            <span class="file-path">${{f.file}}</span>
-            <span class="file-metrics">+${{f.lines_added}}/-${{f.lines_removed}}</span>
-          </div>
-        `).join('')}}
-      </div>
-    `;
-    
-    timeline.appendChild(sessionDiv);
-  }});
-}}
-
-// Add event listeners for filters
-document.getElementById('typeFilter').addEventListener('change', loadChangelog);
-document.getElementById('timeFilter').addEventListener('change', loadChangelog);
-
-// Load changelog on page load
-loadChangelog();
-</script>
 
 </body>
 </html>
 """
     
     (out / "index.html").write_text(html, encoding="utf-8")
-
 
 def to_canvas(
     G: nx.Graph,

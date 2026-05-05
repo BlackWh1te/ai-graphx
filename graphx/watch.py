@@ -138,9 +138,18 @@ def _rebuild_code(watch_path: Path, *, follow_symlinks: bool = False, force: boo
             if stale.exists():
                 stale.unlink()
 
-        # Generate index.html dashboard
+        # Generate index.html dashboard with status data
         try:
-            to_index_html(G, communities, str(out), community_labels=labels or None, cohesion=cohesion, god_nodes_data=gods)
+            from graphx.status import generate_status_report
+            status_report = generate_status_report(project_root)
+            to_index_html(
+                G, communities, str(out),
+                community_labels=labels or None,
+                cohesion=cohesion,
+                god_nodes_data=gods,
+                status_report=status_report,
+                project_name=report_root,
+            )
             print(f"[graphx watch] index.html written")
         except Exception as idx_err:
             print(f"[graphx watch] Skipped index.html: {idx_err}")
