@@ -149,7 +149,7 @@ def get_staged_changes(repo_path):
     staged = []
     
     try:
-        # Get staged changes
+        # Get staged changes: difference between HEAD and Index
         diff = repo.index.diff("HEAD")
         
         for change in diff:
@@ -176,6 +176,82 @@ def get_staged_changes(repo_path):
         pass
     
     return staged
+
+def get_unstaged_changes(repo_path):
+    """Get files that are modified in working tree but not staged."""
+    if not GIT_AVAILABLE:
+        return []
+    
+    try:
+        repo = git.Repo(repo_path)
+    except:
+        return []
+    
+    unstaged = []
+    
+    try:
+        # Get unstaged changes: difference between Index and Working Tree
+        diff = repo.index.diff(None)
+        
+        for change in diff:
+            file_path = change.a_path if change.a_path else change.b_path
+            if not file_path:
+                continue
+            
+            action = 'modified'
+            if change.new_file:
+                action = 'added'
+            elif change.deleted_file:
+                action = 'deleted'
+            
+            # Get file size
+            full_path = Path(repo_path) / file_path
+            file_size = full_path.stat().st_size if full_path.exists() else 0
+            
+            unstaged.append({
+                'file': file_path,
+                'action': action,
+                'size': file_size
+            })
+    except:
+        pass
+    
+    return unstaged
+
+def get_untracked_files(repo_path):
+    """Get files that are not tracked by git."""
+    if not GIT_AVAILABLE:
+        return []
+    
+    try:
+        repo = git.Repo(repo_path)
+    except:
+        return []
+    
+    untracked = []
+    
+    try:
+        for file_path in repo.untracked_files:
+            # Skip graphx-out
+            if file_path.startswith('graphx-out'):
+                continue
+                
+            full_path = Path(repo_path) / file_path
+            try:
+                stat = full_path.stat()
+                untracked.append({
+                    'file': file_path,
+                    'size': stat.st_size
+                })
+            except:
+                untracked.append({
+                    'file': file_path,
+                    'size': 0
+                })
+    except:
+        pass
+    
+    return untracked
 
 def get_merge_commits(repo_path, limit=20):
     """Get recent merge commits."""
@@ -363,8 +439,10 @@ def generate_status_report(repo_path):
     # Get branch status
     branch_status = get_branch_status(repo_path)
 
-    # Get staged changes
+    # Get git changes
     staged_changes = get_staged_changes(repo_path)
+    unstaged_changes = get_unstaged_changes(repo_path)
+    untracked_files = get_untracked_files(repo_path)
 
     # Get merge commits
     merge_commits = get_merge_commits(repo_path)
@@ -390,6 +468,8 @@ def generate_status_report(repo_path):
         'large_files': large_files,
         'branch_status': branch_status,
         'staged_changes': staged_changes,
+        'unstaged_changes': unstaged_changes,
+        'untracked_files': untracked_files,
         'merge_commits': merge_commits,
         'hot_files': hot_files,
         'velocity': velocity,
@@ -464,6 +544,62 @@ def print_status_dashboard(report):
     
     print("+-" + "-" * 63 + "-+")
     print()
+
+    # Staged Changes
+    if report.get('staged_changes'):
+        print("+-" + "-" * 63 + "-+")
+        print("| [STAGED] Staged Changes (Not Committed)".ljust(63) + "|")
+        print("+-" + "-" * 63 + "-+")
+        
+        for staged in report['staged_changes'][:10]:
+            action_emoji = {'added': '[+]', 'modified': '[M]', 'deleted': '[D]'}[staged['action']]
+            print(f"| {action_emoji} {staged['file']:<50}")
+            print(f"|    Action: {staged['action']:<20} Size: {staged['size']:,} bytes")
+            print()
+        
+        if len(report['staged_changes']) > 10:
+            print(f"| ... and {len(report['staged_changes']) - 10} more staged files")
+            print()
+        
+        print("+-" + "-" * 63 + "-+")
+        print()
+
+    # Unstaged Changes
+    if report.get('unstaged_changes'):
+        print("+-" + "-" * 63 + "-+")
+        print("| [UNSTAGED] Unstaged Changes".ljust(63) + "|")
+        print("+-" + "-" * 63 + "-+")
+        
+        for unstaged in report['unstaged_changes'][:10]:
+            action_emoji = {'added': '[+]', 'modified': '[M]', 'deleted': '[D]'}[unstaged['action']]
+            print(f"| {action_emoji} {unstaged['file']:<50}")
+            print(f"|    Action: {unstaged['action']:<20} Size: {unstaged['size']:,} bytes")
+            print()
+        
+        if len(report['unstaged_changes']) > 10:
+            print(f"| ... and {len(report['unstaged_changes']) - 10} more unstaged files")
+            print()
+        
+        print("+-" + "-" * 63 + "-+")
+        print()
+
+    # Untracked Files
+    if report.get('untracked_files'):
+        print("+-" + "-" * 63 + "-+")
+        print("| [UNTRACKED] Untracked Files".ljust(63) + "|")
+        print("+-" + "-" * 63 + "-+")
+        
+        for untracked in report['untracked_files'][:10]:
+            print(f"| [?] {untracked['file']:<50}")
+            print(f"|    Size: {untracked['size']:,} bytes")
+            print()
+        
+        if len(report['untracked_files']) > 10:
+            print(f"| ... and {len(report['untracked_files']) - 10} more untracked files")
+            print()
+        
+        print("+-" + "-" * 63 + "-+")
+        print()
     
     # External Files
     if report['external_files']:
