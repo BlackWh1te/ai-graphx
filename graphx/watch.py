@@ -138,6 +138,14 @@ def _rebuild_code(watch_path: Path, *, follow_symlinks: bool = False, force: boo
             if stale.exists():
                 stale.unlink()
 
+        # Generate activity.json for live dashboard updates
+        try:
+            from graphx.activity import save_activity
+            activity_path = save_activity(str(project_root), str(out), limit=50)
+            print(f"[graphx watch] activity.json written ({activity_path})")
+        except Exception as act_err:
+            print(f"[graphx watch] activity.json skipped: {act_err}")
+
         # Generate index.html dashboard with status data
         try:
             from graphx.status import generate_status_report

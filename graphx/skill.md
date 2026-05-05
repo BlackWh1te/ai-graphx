@@ -54,6 +54,7 @@ Three things it does that Claude alone cannot:
 1. **Persistent graph** - relationships are stored in `graphx-out/graph.json` and survive across sessions. Ask questions weeks later without re-reading everything.
 2. **Honest audit trail** - every edge is tagged EXTRACTED, INFERRED, or AMBIGUOUS. You know what was found vs invented.
 3. **Cross-document surprise** - community detection finds connections between concepts in different files that you would never think to ask about directly.
+4. **Live activity tracking** - `graphx-out/activity.json` tracks every commit (AI vs human) with timestamps, file changes, and commit hashes. The `index.html` dashboard polls it for real-time updates.
 
 Use it for:
 - A codebase you're new to (understand architecture before touching anything)

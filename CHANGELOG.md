@@ -2,6 +2,17 @@
 
 Full release notes with details on each version: [GitHub Releases](https://github.com/safishamsi/graphx/releases)
 
+## 0.2.0 (2026-05-05)
+
+- **Feat**: Live activity tracking dashboard — `graphx-out/activity.json` is generated from git history with AI vs human commit detection
+- **Feat**: Dynamic SPA `index.html` that polls `activity.json` every 30 seconds for real-time updates
+- **Feat**: Activity timeline shows commit hash, author, timestamp, message, and file changes with A/M/D badges
+- **Feat**: Git status section showing current branch, staged changes, untracked branches
+- **Feat**: Hot files ranking, change velocity bar chart, merge commits, external files, large files
+- **Feat**: New `activity.py` module with `_is_ai_commit()` heuristic for AI-authored commit detection
+- **Feat**: `index.html` renders entirely from `window.INITIAL_DATA` with no build-time dependencies on page load
+- **Fix**: skill.md updated to document live activity tracking capability
+
 ## 0.1.2 (2026-05-05)
 
 - **BREAKING**: Renamed package from `graphify` to `graphx` across the entire codebase

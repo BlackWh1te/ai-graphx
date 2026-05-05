@@ -823,30 +823,26 @@ def to_index_html(
     project_name: str | None = None,
     status_report: dict | None = None,
 ) -> None:
-    """Generate a status dashboard HTML index page for graphx outputs.
-    
-    Creates a modern, dark-themed dashboard with:
-    - Activity timeline with commits, file changes, timestamps
-    - Git status (branch, staged changes, untracked files)
-    - Graph statistics and build info
-    - Hot files (most frequently changed)
-    - External/untracked files
-    - Large files detection
-    - Change velocity (commits per day)
-    - Community preview
-    - God nodes preview
-    - Audit trail
+    """Generate a dynamic SPA dashboard HTML that renders from embedded data
+    and polls activity.json for live updates.
+
+    The page works as a standalone file (file://) with all graph data embedded
+    in window.INITIAL_DATA.  The activity timeline section additionally polls
+    activity.json every 30 s so users see new commits without regenerating the
+    HTML.
     """
     from collections import Counter
     from datetime import datetime
-    
+    import json as _json
+
     out = Path(output_dir)
     out.mkdir(parents=True, exist_ok=True)
-    
+
     node_community = _node_community_map(communities)
     degree = dict(G.degree())
     max_deg = max(degree.values(), default=1) or 1
-    
+
+    # --- Build community stats ---
     community_stats = []
     for cid in sorted(communities.keys(), key=lambda x: -len(communities[x])):
         label = (community_labels or {}).get(cid, f"Community {cid}")
@@ -855,27 +851,44 @@ def to_index_html(
         members = communities[cid]
         top_node = max(members, key=lambda n: degree.get(n, 0)) if members else None
         top_label = G.nodes[top_node].get("label", "") if top_node else ""
-        community_stats.append({
-            "cid": cid,
-            "label": label,
-            "count": len(members),
-            "color": color,
-            "cohesion": coh_val,
-            "top_node": top_label,
-        })
-    
+        community_stats.append(
+            {
+                "cid": cid,
+                "label": label,
+                "count": len(members),
+                "color": color,
+                "cohesion": coh_val,
+                "top_node": top_label,
+            }
+        )
+
+    # --- God nodes ---
     gods_preview = (god_nodes_data or [])[:10]
-    
+
+    # --- Audit trail ---
     conf_counts = Counter()
     for _, _, data in G.edges(data=True):
         conf_counts[data.get("confidence", "EXTRACTED")] += 1
     total_edges = sum(conf_counts.values()) or 1
     audit_trail = [
-        {"type": "EXTRACTED", "count": conf_counts.get("EXTRACTED", 0), "pct": round(conf_counts.get("EXTRACTED", 0) / total_edges * 100)},
-        {"type": "INFERRED", "count": conf_counts.get("INFERRED", 0), "pct": round(conf_counts.get("INFERRED", 0) / total_edges * 100)},
-        {"type": "AMBIGUOUS", "count": conf_counts.get("AMBIGUOUS", 0), "pct": round(conf_counts.get("AMBIGUOUS", 0) / total_edges * 100)},
+        {
+            "type": "EXTRACTED",
+            "count": conf_counts.get("EXTRACTED", 0),
+            "pct": round(conf_counts.get("EXTRACTED", 0) / total_edges * 100),
+        },
+        {
+            "type": "INFERRED",
+            "count": conf_counts.get("INFERRED", 0),
+            "pct": round(conf_counts.get("INFERRED", 0) / total_edges * 100),
+        },
+        {
+            "type": "AMBIGUOUS",
+            "count": conf_counts.get("AMBIGUOUS", 0),
+            "pct": round(conf_counts.get("AMBIGUOUS", 0) / total_edges * 100),
+        },
     ]
-    
+
+    # --- Output file existence ---
     outputs_exist = {
         "graph.html": (out / "graph.html").exists(),
         "GRAPH_TREE.html": (out / "GRAPH_TREE.html").exists(),
@@ -885,15 +898,14 @@ def to_index_html(
         "graph.svg": (out / "graph.svg").exists(),
         "graph.graphml": (out / "graph.graphml").exists(),
     }
-    
+
+    # --- Status report data (for embedded initial render) ---
     sr = status_report or {}
-    
     git_info = sr.get("branch_status", {})
     current_branch = git_info.get("current", "unknown")
     staged = sr.get("staged_changes", [])
     merge_commits = sr.get("merge_commits", [])[:5]
     all_commits = sr.get("commits", [])[:20]
-    grouped = sr.get("grouped_commits", {})
     hot_files = sr.get("hot_files", [])[:10]
     external_files = sr.get("external_files", [])[:10]
     large_files = sr.get("large_files", [])[:5]
@@ -903,7 +915,7 @@ def to_index_html(
     last_build = graph_status.get("last_build", "")
     total_runs = graph_status.get("total_runs", 0)
     needs_update = graph_status.get("needs_update", False)
-    
+
     def _fmt_date(iso_str: str) -> str:
         if not iso_str:
             return "N/A"
@@ -911,231 +923,54 @@ def to_index_html(
             dt = datetime.fromisoformat(iso_str.replace("Z", "+00:00"))
             return dt.strftime("%Y-%m-%d %H:%M")
         except:
-            return iso_str[:16]
-    
+            return str(iso_str)[:16]
+
     def _esc(s) -> str:
         return _html.escape(str(s))
-    
-    title = f"{project_name or 'Ai-GraphX'} Dashboard"
-    
-    # Activity Timeline HTML
-    timeline_html = ""
-    if all_commits:
-        timeline_html += '<div class="timeline">'
-        for i, commit in enumerate(all_commits):
-            side = "left" if i % 2 == 0 else "right"
-            commit_hash = commit.get("hash", "?")[:8]
-            author = _esc(commit.get("author", "Unknown"))
-            date_str = _fmt_date(commit.get("date", ""))
-            msg = _esc(commit.get("message", "")[:80])
-            source = commit.get("source", "user")
-            source_badge = "ai-badge" if source == "ai" else "user-badge"
-            source_label = "AI" if source == "ai" else "USER"
-            files_changed = commit.get("files_changed", [])
-            
-            files_html = ""
-            for fc in files_changed[:8]:
-                action = fc.get("action", "modified")
-                fpath = _esc(fc.get("file", "?"))
-                files_html += f'<div class="tl-file"><span class="tl-action {action}">{action[:1].upper()}</span><span class="tl-fpath">{fpath}</span></div>'
-            if len(files_changed) > 8:
-                files_html += f'<div class="tl-file"><span class="tl-more">+{len(files_changed) - 8} more files</span></div>'
-            
-            timeline_html += f'''
-        <div class="timeline-item {side}">
-          <div class="timeline-dot"></div>
-          <div class="timeline-card">
-            <div class="tl-header">
-              <span class="tl-hash">{commit_hash}</span>
-              <span class="tl-source {source_badge}">{source_label}</span>
-              <span class="tl-date">{date_str}</span>
-            </div>
-            <div class="tl-author">{author}</div>
-            <div class="tl-msg">{msg}</div>
-            <div class="tl-files">{files_html}</div>
-          </div>
-        </div>
-            '''
-        timeline_html += "</div>"
-    else:
-        timeline_html = '<p class="empty-state">No commit history found. Run inside a git repository to see activity.</p>'
-    
-    # Git Status HTML
-    git_status_html = ""
-    if sr.get("is_git_repo"):
-        git_status_html += f'''
-    <div class="git-status-grid">
-      <div class="git-card">
-        <div class="git-label">Current Branch</div>
-        <div class="git-value branch">{_esc(current_branch)}</div>
-      </div>
-      <div class="git-card">
-        <div class="git-label">Total Branches</div>
-        <div class="git-value">{len(git_info.get("all", []))}</div>
-      </div>
-      <div class="git-card">
-        <div class="git-label">Untracked Branches</div>
-        <div class="git-value">{len(git_info.get("untracked", []))}</div>
-      </div>
-      <div class="git-card">
-        <div class="git-label">Staged Changes</div>
-        <div class="git-value {'staged-yes' if staged else 'staged-no'}">{len(staged)}</div>
-      </div>
-    </div>
-        '''
-        
-        if staged:
-            git_status_html += '<div class="staged-list"><h4>Staged Files (Not Committed)</h4>'
-            for s in staged[:10]:
-                action = s.get("action", "modified")
-                fpath = _esc(s.get("file", "?"))
-                size = s.get("size", 0)
-                git_status_html += f'<div class="staged-item"><span class="staged-action {action}">{action.upper()}</span> <span class="staged-path">{fpath}</span> <span class="staged-size">{size:,} bytes</span></div>'
-            if len(staged) > 10:
-                git_status_html += f'<div class="staged-more">... and {len(staged) - 10} more</div>'
-            git_status_html += "</div>"
-        
-        if git_info.get("untracked"):
-            git_status_html += '<div class="untracked-list"><h4>Untracked Branches</h4>'
-            for b in git_info["untracked"][:5]:
-                commits_count = git_info.get("commits_per_branch", {}).get(b, 0)
-                git_status_html += f'<div class="untracked-item">{_esc(b)} <span class="untracked-commits">({commits_count} commits)</span></div>'
-            git_status_html += "</div>"
-    else:
-        git_status_html = '<p class="empty-state">Not a git repository. Initialize git to track changes.</p>'
-    
-    # Hot Files HTML
-    hot_html = ""
-    if hot_files:
-        hot_html += '<div class="hot-files-list">'
-        for hf in hot_files:
-            fpath = _esc(hf.get("file", "?"))
-            count = hf.get("commit_count", 0)
-            last = hf.get("last_commit")
-            if last:
-                last_hash = last.get("hash", "?")[:8]
-                last_date = _fmt_date(last.get("date", ""))
-                last_source = last.get("source", "user")
-                src_icon = "&#129302;" if last_source == "ai" else "&#128100;"
-            else:
-                last_hash = "?"
-                last_date = "N/A"
-                src_icon = "?"
-            hot_html += f'''
-      <div class="hot-file-item">
-        <div class="hot-rank">{count}</div>
-        <div class="hot-info">
-          <div class="hot-path">{fpath}</div>
-          <div class="hot-meta">Last: {last_hash} &middot; {last_date} &middot; {src_icon}</div>
-        </div>
-      </div>
-            '''
-        hot_html += "</div>"
-    else:
-        hot_html = '<p class="empty-state">No hot files detected yet.</p>'
-    
-    # External Files HTML
-    ext_html = ""
-    if external_files:
-        ext_html += '<div class="file-table"><table><thead><tr><th>File</th><th>Created</th><th>Modified</th><th>Size</th></tr></thead><tbody>'
-        for ef in external_files:
-            fpath = _esc(ef.get("file", "?"))
-            created = _fmt_date(ef.get("created", ""))
-            modified = _fmt_date(ef.get("modified", ""))
-            size = ef.get("size", 0)
-            size_mb = size / (1024 * 1024)
-            ext_html += f'<tr><td>{fpath}</td><td>{created}</td><td>{modified}</td><td>{size_mb:.2f} MB</td></tr>'
-        ext_html += "</tbody></table></div>"
-    else:
-        ext_html = '<p class="empty-state">No external (untracked) files detected.</p>'
-    
-    # Large Files HTML
-    large_html = ""
-    if large_files:
-        large_html += '<div class="file-table"><table><thead><tr><th>File</th><th>Size</th></tr></thead><tbody>'
-        for lf in large_files:
-            fpath = _esc(lf.get("file", "?"))
-            size_mb = lf.get("size_mb", 0)
-            large_html += f'<tr><td>{fpath}</td><td>{size_mb:.2f} MB</td></tr>'
-        large_html += "</tbody></table></div>"
-    else:
-        large_html = '<p class="empty-state">No large files (&gt;10MB) detected.</p>'
-    
-    # Velocity HTML
-    velo_html = ""
-    if daily_counts:
-        max_count = max(daily_counts.values()) if daily_counts else 1
-        velo_html += '<div class="velocity-chart">'
-        for date, count in sorted(daily_counts.items(), reverse=True)[:14]:
-            bar_width = (count / max_count * 100) if max_count else 0
-            velo_html += f'''
-      <div class="velocity-row">
-        <div class="velocity-date">{date}</div>
-        <div class="velocity-bar-wrap"><div class="velocity-bar" style="width:{bar_width:.0f}%"></div></div>
-        <div class="velocity-count">{count}</div>
-      </div>
-            '''
-        velo_html += "</div>"
-        velo_html += f'<div class="velocity-summary">Total: {velocity.get("total_commits", 0)} commits &middot; Avg: {velocity.get("average_per_day", 0):.1f}/day</div>'
-    else:
-        velo_html = '<p class="empty-state">No velocity data available.</p>'
-    
-    # Merge Commits HTML
-    merge_html = ""
-    if merge_commits:
-        merge_html += '<div class="merge-list">'
-        for mc in merge_commits:
-            mhash = mc.get("hash", "?")
-            author = _esc(mc.get("author", "?"))
-            date_str = _fmt_date(mc.get("date", ""))
-            msg = _esc(mc.get("message", "")[:60])
-            parents = ", ".join(mc.get("parents", []))
-            merge_html += f'''
-      <div class="merge-item">
-        <span class="merge-hash">{mhash}</span>
-        <span class="merge-author">{author}</span>
-        <span class="merge-date">{date_str}</span>
-        <div class="merge-msg">{msg}</div>
-        <div class="merge-parents">merged: {parents}</div>
-      </div>
-            '''
-        merge_html += "</div>"
-    else:
-        merge_html = '<p class="empty-state">No merge commits found.</p>'
-    
-    # Build Info HTML
-    build_status = "NEEDS UPDATE" if needs_update else "OK"
-    build_color = "status-warn" if needs_update else "status-ok"
-    
-    build_info_html = f'''
-    <div class="build-info-grid">
-      <div class="build-card">
-        <div class="build-label">Status</div>
-        <div class="build-value {build_color}">{build_status}</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Nodes</div>
-        <div class="build-value">{G.number_of_nodes()}</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Edges</div>
-        <div class="build-value">{G.number_of_edges()}</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Communities</div>
-        <div class="build-value">{len(communities)}</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Total Runs</div>
-        <div class="build-value">{total_runs}</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Last Build</div>
-        <div class="build-value">{_fmt_date(last_build)}</div>
-      </div>
-    </div>
-    '''
-    
+
+    # Prepare initial data JSON for embedding
+    initial_data = {
+        "project_name": project_name or "Ai-GraphX",
+        "graph": {
+            "nodes": G.number_of_nodes(),
+            "edges": G.number_of_edges(),
+            "communities": len(communities),
+            "last_build": _fmt_date(last_build),
+            "total_runs": total_runs,
+            "needs_update": needs_update,
+        },
+        "branch": current_branch,
+        "git": {
+            "current_branch": current_branch,
+            "total_branches": len(git_info.get("all", [])),
+            "untracked_branches": len(git_info.get("untracked", [])),
+            "staged_count": len(staged),
+            "staged": staged[:10],
+            "is_git_repo": bool(sr.get("is_git_repo", False)),
+        },
+        "activity": {
+            "commits": all_commits,
+            "merge_commits": merge_commits,
+            "hot_files": hot_files,
+            "external_files": external_files,
+            "large_files": large_files,
+            "velocity": {
+                "daily_counts": daily_counts,
+                "total_commits": velocity.get("total_commits", 0),
+                "average_per_day": velocity.get("average_per_day", 0),
+            },
+        },
+        "community_stats": community_stats[:12],
+        "total_communities": len(community_stats),
+        "god_nodes": gods_preview[:8],
+        "audit_trail": audit_trail,
+        "outputs_exist": outputs_exist,
+    }
+
+    initial_json = _json.dumps(initial_data, default=str)
+
+    title = f"{_esc(project_name or 'Ai-GraphX')} Dashboard"
+
     html = f"""<!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1152,7 +987,8 @@ def to_index_html(
     line-height: 1.6;
   }}
   .container {{ max-width: 1400px; margin: 0 auto; padding: 20px; }}
-  
+
+  /* Header */
   .header {{
     display: flex;
     justify-content: space-between;
@@ -1171,7 +1007,30 @@ def to_index_html(
     background-clip: text;
   }}
   .header-stats {{ font-size: 0.9rem; color: #888; }}
-  
+  .live-badge {{
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(46,204,113,0.1);
+    color: #2ecc71;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }}
+  .live-dot {{
+    width: 8px; height: 8px;
+    background: #2ecc71;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }}
+  @keyframes pulse {{
+    0% {{ opacity: 1; transform: scale(1); }}
+    50% {{ opacity: 0.5; transform: scale(1.2); }}
+    100% {{ opacity: 1; transform: scale(1); }}
+  }}
+
+  /* Section */
   .section {{ margin-bottom: 40px; }}
   .section h2 {{
     font-size: 1.3rem;
@@ -1185,30 +1044,31 @@ def to_index_html(
   }}
   .section h2::before {{
     content: '';
-    width: 4px;
-    height: 24px;
+    width: 4px; height: 24px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 2px;
   }}
-  
-  .build-info-grid {{
+
+  /* Build info */
+  .info-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;
     margin-bottom: 20px;
   }}
-  .build-card {{
+  .info-card {{
     background: rgba(255,255,255,0.03);
     border: 1px solid #1a1a2e;
     border-radius: 10px;
     padding: 16px;
     text-align: center;
   }}
-  .build-label {{ font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
-  .build-value {{ font-size: 1.4rem; font-weight: 700; color: #fff; }}
+  .info-label {{ font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
+  .info-value {{ font-size: 1.4rem; font-weight: 700; color: #fff; }}
   .status-ok {{ color: #2ecc71; }}
   .status-warn {{ color: #f39c12; }}
-  
+
+  /* Nav cards */
   .nav-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -1229,60 +1089,8 @@ def to_index_html(
   .nav-card.disabled {{ opacity: 0.4; pointer-events: none; }}
   .nav-card h3 {{ font-size: 1rem; margin-bottom: 6px; color: #fff; }}
   .nav-card p {{ font-size: 0.8rem; color: #888; }}
-  
-  .git-status-grid {{
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }}
-  .git-card {{
-    background: rgba(255,255,255,0.03);
-    border: 1px solid #1a1a2e;
-    border-radius: 10px;
-    padding: 16px;
-    text-align: center;
-  }}
-  .git-label {{ font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
-  .git-value {{ font-size: 1.3rem; font-weight: 700; color: #fff; }}
-  .git-value.branch {{ color: #667eea; }}
-  .staged-yes {{ color: #f39c12; }}
-  .staged-no {{ color: #2ecc71; }}
-  
-  .staged-list, .untracked-list {{
-    background: rgba(255,255,255,0.02);
-    border: 1px solid #1a1a2e;
-    border-radius: 10px;
-    padding: 16px;
-    margin-top: 12px;
-  }}
-  .staged-list h4, .untracked-list h4 {{ font-size: 0.9rem; color: #aaa; margin-bottom: 12px; }}
-  .staged-item, .untracked-item {{
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 0;
-    font-size: 0.85rem;
-    border-bottom: 1px solid #1a1a2e;
-  }}
-  .staged-item:last-child, .untracked-item:last-child {{ border-bottom: none; }}
-  .staged-action {{
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    font-weight: 700;
-    min-width: 60px;
-    text-align: center;
-  }}
-  .staged-action.added {{ background: #2ecc71; color: #fff; }}
-  .staged-action.modified {{ background: #f39c12; color: #fff; }}
-  .staged-action.deleted {{ background: #e74c3c; color: #fff; }}
-  .staged-path {{ flex: 1; font-family: monospace; font-size: 0.8rem; color: #ccc; }}
-  .staged-size {{ color: #666; font-size: 0.75rem; }}
-  .untracked-commits {{ color: #666; font-size: 0.8rem; }}
-  .staged-more {{ color: #888; font-size: 0.8rem; margin-top: 8px; font-style: italic; }}
-  
+
+  /* Activity timeline */
   .timeline {{
     position: relative;
     max-width: 1200px;
@@ -1293,8 +1101,7 @@ def to_index_html(
     position: absolute;
     width: 3px;
     background: #1a1a2e;
-    top: 0;
-    bottom: 0;
+    top: 0; bottom: 0;
     left: 50%;
     margin-left: -1.5px;
   }}
@@ -1308,8 +1115,7 @@ def to_index_html(
   .timeline-item::after {{
     content: '';
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 16px; height: 16px;
     right: -8px;
     background: #667eea;
     border: 3px solid #0a0a12;
@@ -1364,8 +1170,7 @@ def to_index_html(
   }}
   .tl-file:last-child {{ border-bottom: none; }}
   .tl-action {{
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1380,7 +1185,8 @@ def to_index_html(
   .tl-action.deleted {{ background: #e74c3c; }}
   .tl-fpath {{ font-family: monospace; color: #bbb; flex: 1; overflow: hidden; text-overflow: ellipsis; }}
   .tl-more {{ color: #888; font-size: 0.75rem; font-style: italic; }}
-  
+
+  /* Hot files */
   .hot-files-list {{ display: flex; flex-direction: column; gap: 8px; }}
   .hot-file-item {{
     display: flex;
@@ -1394,8 +1200,7 @@ def to_index_html(
   }}
   .hot-file-item:hover {{ border-color: #667eea; }}
   .hot-rank {{
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
@@ -1408,7 +1213,8 @@ def to_index_html(
   .hot-info {{ flex: 1; }}
   .hot-path {{ font-family: monospace; font-size: 0.85rem; color: #ccc; }}
   .hot-meta {{ font-size: 0.75rem; color: #888; margin-top: 2px; }}
-  
+
+  /* File tables */
   .file-table {{ overflow-x: auto; }}
   .file-table table {{
     width: 100%;
@@ -1433,7 +1239,8 @@ def to_index_html(
     font-size: 0.8rem;
   }}
   .file-table tr:hover td {{ background: rgba(255,255,255,0.02); }}
-  
+
+  /* Velocity */
   .velocity-chart {{ display: flex; flex-direction: column; gap: 8px; }}
   .velocity-row {{
     display: flex;
@@ -1465,7 +1272,8 @@ def to_index_html(
     color: #aaa;
     text-align: center;
   }}
-  
+
+  /* Merge commits */
   .merge-list {{ display: flex; flex-direction: column; gap: 8px; }}
   .merge-item {{
     padding: 12px;
@@ -1487,7 +1295,59 @@ def to_index_html(
   .merge-date {{ color: #888; margin-left: 8px; font-size: 0.8rem; }}
   .merge-msg {{ color: #ccc; margin-top: 6px; word-break: break-word; }}
   .merge-parents {{ color: #666; font-size: 0.75rem; margin-top: 4px; font-family: monospace; }}
-  
+
+  /* Git status */
+  .git-status-grid {{
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }}
+  .git-card {{
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }}
+  .git-label {{ font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }}
+  .git-value {{ font-size: 1.3rem; font-weight: 700; color: #fff; }}
+  .git-value.branch {{ color: #667eea; }}
+  .staged-yes {{ color: #f39c12; }}
+  .staged-no {{ color: #2ecc71; }}
+  .staged-list {{
+    background: rgba(255,255,255,0.02);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 12px;
+  }}
+  .staged-list h4 {{ font-size: 0.9rem; color: #aaa; margin-bottom: 12px; }}
+  .staged-item {{
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #1a1a2e;
+  }}
+  .staged-item:last-child {{ border-bottom: none; }}
+  .staged-action {{
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    min-width: 60px;
+    text-align: center;
+  }}
+  .staged-action.added {{ background: #2ecc71; color: #fff; }}
+  .staged-action.modified {{ background: #f39c12; color: #fff; }}
+  .staged-action.deleted {{ background: #e74c3c; color: #fff; }}
+  .staged-path {{ flex: 1; font-family: monospace; font-size: 0.8rem; color: #ccc; }}
+  .staged-size {{ color: #666; font-size: 0.75rem; }}
+
+  /* Communities */
   .communities-grid {{
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -1521,7 +1381,8 @@ def to_index_html(
   .cohesion-high {{ background: rgba(46,204,113,0.15); color: #2ecc71; }}
   .cohesion-med {{ background: rgba(241,196,15,0.15); color: #f1c40f; }}
   .cohesion-low {{ background: rgba(231,76,60,0.15); color: #e74c3c; }}
-  
+
+  /* God nodes */
   .god-nodes-list {{ display: flex; flex-direction: column; gap: 8px; }}
   .god-node-item {{
     display: flex;
@@ -1535,8 +1396,7 @@ def to_index_html(
   }}
   .god-node-item:hover {{ border-color: #667eea; }}
   .god-rank {{
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
@@ -1549,7 +1409,8 @@ def to_index_html(
   .god-info {{ flex: 1; }}
   .god-name {{ font-weight: 600; color: #fff; font-size: 0.9rem; }}
   .god-degree {{ font-size: 0.8rem; color: #888; }}
-  
+
+  /* Audit trail */
   .audit-trail {{
     display: flex;
     gap: 12px;
@@ -1570,7 +1431,8 @@ def to_index_html(
   .audit-value.ambiguous {{ color: #e74c3c; }}
   .audit-label {{ font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }}
   .audit-pct {{ font-size: 0.75rem; color: #666; margin-top: 4px; }}
-  
+
+  /* Empty state */
   .empty-state {{
     color: #666;
     font-style: italic;
@@ -1578,7 +1440,19 @@ def to_index_html(
     padding: 30px;
     font-size: 0.9rem;
   }}
-  
+
+  /* Polling status */
+  .poll-status {{
+    text-align: center;
+    padding: 8px;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 10px;
+  }}
+  .poll-status.updating {{ color: #667eea; }}
+  .poll-status.error {{ color: #e74c3c; }}
+
+  /* Footer */
   .footer {{
     text-align: center;
     padding: 30px 20px;
@@ -1589,7 +1463,7 @@ def to_index_html(
   }}
   .footer a {{ color: #667eea; text-decoration: none; }}
   .footer a:hover {{ text-decoration: underline; }}
-  
+
   @media (max-width: 768px) {{
     .timeline::after {{ left: 20px; }}
     .timeline-item {{ width: 100%; padding-left: 50px; padding-right: 10px; }}
@@ -1598,7 +1472,7 @@ def to_index_html(
     .header {{ flex-direction: column; align-items: flex-start; gap: 10px; }}
     .nav-grid {{ grid-template-columns: 1fr; }}
     .git-status-grid {{ grid-template-columns: repeat(2, 1fr); }}
-    .build-info-grid {{ grid-template-columns: repeat(2, 1fr); }}
+    .info-grid {{ grid-template-columns: repeat(2, 1fr); }}
     .communities-grid {{ grid-template-columns: 1fr; }}
     .audit-trail {{ flex-direction: column; }}
   }}
@@ -1608,154 +1482,455 @@ def to_index_html(
 <div class="container">
 
   <div class="header">
-    <h1>{title}</h1>
-    <div class="header-stats">{G.number_of_nodes()} nodes &middot; {G.number_of_edges()} edges &middot; {len(communities)} communities &middot; Branch: {_esc(current_branch)}</div>
-  </div>
-  
-  <div class="section">
-    <h2>&#128202; Graph Status</h2>
-    {build_info_html}
-    <div class="nav-grid">
-      <a href="graph.html" class="nav-card{' disabled' if not outputs_exist['graph.html'] else ''}">
-        <h3>&#128376; Interactive Graph</h3>
-        <p>Force-directed visualization with search and filters</p>
-      </a>
-      <a href="GRAPH_TREE.html" class="nav-card{' disabled' if not outputs_exist['GRAPH_TREE.html'] else ''}">
-        <h3>&#127795; Tree View</h3>
-        <p>Collapsible directory tree with symbol hierarchy</p>
-      </a>
-      <a href="wiki/index.md" class="nav-card{' disabled' if not outputs_exist['wiki'] else ''}">
-        <h3>&#128218; Knowledge Wiki</h3>
-        <p>Wikipedia-style articles for each community</p>
-      </a>
-      <a href="GRAPH_REPORT.md" class="nav-card{' disabled' if not outputs_exist['GRAPH_REPORT.md'] else ''}">
-        <h3>&#128203; Audit Report</h3>
-        <p>God nodes, surprising connections, questions</p>
-      </a>
-      <a href="graph.json" class="nav-card{' disabled' if not outputs_exist['graph.json'] else ''}" download>
-        <h3>&#128230; Raw Graph JSON</h3>
-        <p>Download complete graph data</p>
-      </a>
-      <a href="graph.svg" class="nav-card{' disabled' if not outputs_exist['graph.svg'] else ''}" download>
-        <h3>&#128444; SVG Export</h3>
-        <p>Vector graphic for documents</p>
-      </a>
+    <h1 id="page-title">{title}</h1>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="live-badge"><span class="live-dot"></span>Live</span>
+      <div class="header-stats" id="header-stats">loading...</div>
     </div>
   </div>
-  
+
   <div class="section">
-    <h2>&#127807; Git Status</h2>
-    {git_status_html}
+    <h2>Graph Status</h2>
+    <div class="info-grid" id="graph-status-grid"></div>
+    <div class="nav-grid" id="output-nav"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128220; Activity Timeline</h2>
-    {timeline_html}
+    <h2>Git Status</h2>
+    <div class="git-status-grid" id="git-status-grid"></div>
+    <div id="staged-files"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128293; Hot Files (Most Changed)</h2>
-    {hot_html}
+    <h2>Activity Timeline</h2>
+    <div id="activity-timeline"></div>
+    <div class="poll-status" id="poll-status">Auto-refreshing every 30s...</div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128200; Change Velocity (Last 7 Days)</h2>
-    {velo_html}
+    <h2>Hot Files (Most Changed)</h2>
+    <div id="hot-files"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128256; Recent Merge Commits</h2>
-    {merge_html}
+    <h2>Change Velocity (Last 7 Days)</h2>
+    <div id="velocity-chart"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128206; External Files (Untracked)</h2>
-    {ext_html}
+    <h2>Recent Merge Commits</h2>
+    <div id="merge-commits"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128230; Large Files (&gt;10MB)</h2>
-    {large_html}
+    <h2>External Files (Untracked)</h2>
+    <div id="external-files"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#127912; Communities ({len(communities)})</h2>
-    <div class="communities-grid">
-"""
-    
-    for comm in community_stats[:12]:
-        cohesion_class = "cohesion-high" if comm["cohesion"] and comm["cohesion"] >= 0.7 else "cohesion-med" if comm["cohesion"] and comm["cohesion"] >= 0.4 else "cohesion-low"
-        cohesion_text = f"Cohesion: {comm['cohesion']:.2f}" if comm["cohesion"] else "Cohesion: N/A"
-        html += f"""
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: {comm['color']}"></div>
-          <div class="community-name">{_esc(comm['label'])}</div>
-          <div class="community-count">{comm['count']} nodes</div>
-        </div>
-        <div class="community-meta">Top: {_esc(comm['top_node'][:40]) + '...' if len(comm['top_node']) > 40 else _esc(comm['top_node'])}</div>
-        <span class="cohesion-badge {cohesion_class}">{cohesion_text}</span>
-      </div>
-"""
-    
-    if len(community_stats) > 12:
-        html += f"""
-      <div class="community-card" style="display: flex; align-items: center; justify-content: center; color: #888;">
-        <div>+{len(community_stats) - 12} more communities</div>
-      </div>
-"""
-    
-    html += """
-    </div>
+    <h2>Large Files (&gt;10MB)</h2>
+    <div id="large-files"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#11088; God Nodes (Top Connected)</h2>
-    <div class="god-nodes-list">
-"""
-    
-    for idx, god in enumerate(gods_preview[:8], 1):
-        html += f"""
-      <div class="god-node-item">
-        <div class="god-rank">{idx}</div>
-        <div class="god-info">
-          <div class="god-name">{_esc(god.get('label', 'Unknown'))}</div>
-          <div class="god-degree">{god.get('degree', 0)} connections</div>
-        </div>
-      </div>
-"""
-    
-    html += """
-    </div>
+    <h2 id="communities-title">Communities</h2>
+    <div class="communities-grid" id="communities-grid"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128269; Audit Trail</h2>
-    <div class="audit-trail">
-"""
-    
-    for audit in audit_trail:
-        html += f"""
-      <div class="audit-item">
-        <div class="audit-value {audit['type'].lower()}">{audit['count']}</div>
-        <div class="audit-label">{audit['type']}</div>
-        <div class="audit-pct">{audit['pct']}%</div>
-      </div>
-"""
-    
-    html += """
-    </div>
+    <h2>God Nodes (Top Connected)</h2>
+    <div class="god-nodes-list" id="god-nodes"></div>
   </div>
-  
+
+  <div class="section">
+    <h2>Audit Trail</h2>
+    <div class="audit-trail" id="audit-trail"></div>
+  </div>
+
   <div class="footer">
-    <p>Generated by <a href="https://pypi.org/project/ai-graphx/" target="_blank">Ai-GraphX</a> &middot; Knowledge Graph Dashboard</p>
+    <p>Generated by <a href="https://pypi.org/project/ai-graphx/" target="_blank">Ai-GraphX</a> &middot; <a href="#" onclick="location.reload();return false;">Refresh Dashboard</a></p>
   </div>
 </div>
 
+<script>
+// Embedded initial data from graph generation
+const INITIAL_DATA = {initial_json};
+
+// State for live updates
+let currentActivity = null;
+let pollTimer = null;
+
+// --- Utility functions ---
+function esc(s) {{
+  const div = document.createElement('div');
+  div.textContent = String(s);
+  return div.innerHTML;
+}}
+
+function fmtDate(isoStr) {{
+  if (!isoStr || isoStr === 'N/A') return 'N/A';
+  try {{
+    const d = new Date(isoStr);
+    if (isNaN(d)) return isoStr.slice(0,16);
+    return d.toISOString().slice(0,16).replace('T',' ');
+  }} catch(e) {{ return isoStr.slice(0,16); }}
+}}
+
+function timeAgo(isoStr) {{
+  if (!isoStr) return '';
+  try {{
+    const d = new Date(isoStr);
+    const now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return Math.floor(diff/86400) + 'd ago';
+  }} catch(e) {{ return ''; }}
+}}
+
+// --- Renderers ---
+function renderGraphStatus() {{
+  const g = INITIAL_DATA.graph;
+  const statusClass = g.needs_update ? 'status-warn' : 'status-ok';
+  const statusText = g.needs_update ? 'NEEDS UPDATE' : 'OK';
+  const html = `
+    <div class="info-card"><div class="info-label">Status</div><div class="info-value ${{statusClass}}">${{esc(statusText)}}</div></div>
+    <div class="info-card"><div class="info-label">Nodes</div><div class="info-value">${{esc(g.nodes)}}</div></div>
+    <div class="info-card"><div class="info-label">Edges</div><div class="info-value">${{esc(g.edges)}}</div></div>
+    <div class="info-card"><div class="info-label">Communities</div><div class="info-value">${{esc(g.communities)}}</div></div>
+    <div class="info-card"><div class="info-label">Total Runs</div><div class="info-value">${{esc(g.total_runs)}}</div></div>
+    <div class="info-card"><div class="info-label">Last Build</div><div class="info-value">${{esc(g.last_build)}}</div></div>
+  `;
+  document.getElementById('graph-status-grid').innerHTML = html;
+  document.getElementById('header-stats').textContent = `${{g.nodes}} nodes \u00b7 ${{g.edges}} edges \u00b7 ${{g.communities}} communities \u00b7 Branch: ${{esc(INITIAL_DATA.branch)}}`;
+}}
+
+function renderOutputNav() {{
+  const o = INITIAL_DATA.outputs_exist;
+  const items = [
+    {{key:'graph.html', icon:'🕸', title:'Interactive Graph', desc:'Force-directed visualization'}},
+    {{key:'GRAPH_TREE.html', icon:'🌳', title:'Tree View', desc:'Collapsible directory tree'}},
+    {{key:'wiki', icon:'📚', title:'Knowledge Wiki', desc:'Wikipedia-style articles'}},
+    {{key:'GRAPH_REPORT.md', icon:'📋', title:'Audit Report', desc:'God nodes, connections'}},
+    {{key:'graph.json', icon:'📦', title:'Raw Graph JSON', desc:'Download complete data', dl:true}},
+    {{key:'graph.svg', icon:'🖼', title:'SVG Export', desc:'Vector graphic', dl:true}},
+  ];
+  const html = items.map(item => {{
+    const disabled = !o[item.key] ? 'disabled' : '';
+    const dl = item.dl ? 'download' : '';
+    const href = item.key === 'wiki' ? 'wiki/index.md' : item.key;
+    return `<a href="${{esc(href)}}" class="nav-card ${{disabled}}" ${{dl}}><h3>${{item.icon}} ${{esc(item.title)}}</h3><p>${{esc(item.desc)}}</p></a>`;
+  }}).join('');
+  document.getElementById('output-nav').innerHTML = html;
+}}
+
+function renderGitStatus() {{
+  const g = INITIAL_DATA.git;
+  if (!g.is_git_repo) {{
+    document.getElementById('git-status-grid').innerHTML = '<p class="empty-state">Not a git repository.</p>';
+    document.getElementById('staged-files').innerHTML = '';
+    return;
+  }}
+  const stagedClass = g.staged_count > 0 ? 'staged-yes' : 'staged-no';
+  let html = `
+    <div class="git-card"><div class="git-label">Current Branch</div><div class="git-value branch">${{esc(g.current_branch)}}</div></div>
+    <div class="git-card"><div class="git-label">Total Branches</div><div class="git-value">${{esc(g.total_branches)}}</div></div>
+    <div class="git-card"><div class="git-label">Untracked Branches</div><div class="git-value">${{esc(g.untracked_branches)}}</div></div>
+    <div class="git-card"><div class="git-label">Staged Changes</div><div class="git-value ${{stagedClass}}">${{esc(g.staged_count)}}</div></div>
+  `;
+  document.getElementById('git-status-grid').innerHTML = html;
+
+  if (g.staged && g.staged.length > 0) {{
+    let stagedHtml = '<div class="staged-list"><h4>Staged Files (Not Committed)</h4>';
+    g.staged.forEach(s => {{
+      stagedHtml += `<div class="staged-item"><span class="staged-action ${{esc(s.action||'modified')}}">${{esc((s.action||'modified').toUpperCase())}}</span> <span class="staged-path">${{esc(s.file)}}</span> <span class="staged-size">${{Number(s.size||0).toLocaleString()}} bytes</span></div>`;
+    }});
+    stagedHtml += '</div>';
+    document.getElementById('staged-files').innerHTML = stagedHtml;
+  }} else {{
+    document.getElementById('staged-files').innerHTML = '';
+  }}
+}}
+
+function renderActivityTimeline(commits) {{
+  if (!commits || commits.length === 0) {{
+    document.getElementById('activity-timeline').innerHTML = '<p class="empty-state">No commit history found.</p>';
+    return;
+  }}
+  let html = '<div class="timeline">';
+  commits.forEach((commit, i) => {{
+    const side = i % 2 === 0 ? 'left' : 'right';
+    const hash = esc(commit.short_hash || (commit.hash||'').slice(0,7) || '?');
+    const author = esc(commit.author || 'Unknown');
+    const date = fmtDate(commit.date);
+    const msg = esc((commit.message||'').slice(0,80));
+    const source = commit.source === 'ai' ? 'ai' : 'user';
+    const badgeClass = source === 'ai' ? 'ai-badge' : 'user-badge';
+    const badgeLabel = source === 'ai' ? 'AI' : 'USER';
+    const files = commit.files_changed || [];
+    let filesHtml = '';
+    files.slice(0,8).forEach(fc => {{
+      const action = fc.action || 'modified';
+      filesHtml += `<div class="tl-file"><span class="tl-action ${{esc(action)}}">${{esc(action.charAt(0).toUpperCase())}}</span><span class="tl-fpath">${{esc(fc.file)}}</span></div>`;
+    }});
+    if (files.length > 8) {{
+      filesHtml += `<div class="tl-file"><span class="tl-more">+${{files.length - 8}} more files</span></div>`;
+    }}
+    html += `
+      <div class="timeline-item ${{side}}">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="tl-header">
+            <span class="tl-hash">${{hash}}</span>
+            <span class="tl-source ${{badgeClass}}">${{badgeLabel}}</span>
+            <span class="tl-date">${{date}}</span>
+          </div>
+          <div class="tl-author">${{author}}</div>
+          <div class="tl-msg">${{msg}}</div>
+          <div class="tl-files">${{filesHtml}}</div>
+        </div>
+      </div>
+    `;
+  }});
+  html += '</div>';
+  document.getElementById('activity-timeline').innerHTML = html;
+}}
+
+function renderHotFiles(hotFiles) {{
+  if (!hotFiles || hotFiles.length === 0) {{
+    document.getElementById('hot-files').innerHTML = '<p class="empty-state">No hot files detected yet.</p>';
+    return;
+  }}
+  let html = '<div class="hot-files-list">';
+  hotFiles.forEach(hf => {{
+    const fpath = esc(hf.file || '?');
+    const count = hf.commit_count || 0;
+    const last = hf.last_commit || {{}};
+    const lastHash = esc((last.hash||'').slice(0,7) || '?');
+    const lastDate = fmtDate(last.date);
+    const srcIcon = last.source === 'ai' ? '&#129302;' : '&#128100;';
+    html += `
+      <div class="hot-file-item">
+        <div class="hot-rank">${{esc(count)}}</div>
+        <div class="hot-info">
+          <div class="hot-path">${{fpath}}</div>
+          <div class="hot-meta">Last: ${{lastHash}} &middot; ${{lastDate}} &middot; ${{srcIcon}}</div>
+        </div>
+      </div>
+    `;
+  }});
+  html += '</div>';
+  document.getElementById('hot-files').innerHTML = html;
+}}
+
+function renderVelocity(velocity) {{
+  const daily = velocity.daily_counts || {{}};
+  const entries = Object.entries(daily).sort().reverse().slice(0,14);
+  if (entries.length === 0) {{
+    document.getElementById('velocity-chart').innerHTML = '<p class="empty-state">No velocity data available.</p>';
+    return;
+  }}
+  const maxCount = Math.max(...entries.map(e => e[1]), 1);
+  let html = '<div class="velocity-chart">';
+  entries.forEach(([date, count]) => {{
+    const pct = (count / maxCount * 100).toFixed(0);
+    html += `
+      <div class="velocity-row">
+        <div class="velocity-date">${{esc(date)}}</div>
+        <div class="velocity-bar-wrap"><div class="velocity-bar" style="width:${{pct}}%"></div></div>
+        <div class="velocity-count">${{esc(count)}}</div>
+      </div>
+    `;
+  }});
+  html += '</div>';
+  html += `<div class="velocity-summary">Total: ${{esc(velocity.total_commits||0)}} commits &middot; Avg: ${{Number(velocity.average_per_day||0).toFixed(1)}}/day</div>`;
+  document.getElementById('velocity-chart').innerHTML = html;
+}}
+
+function renderMergeCommits(merges) {{
+  if (!merges || merges.length === 0) {{
+    document.getElementById('merge-commits').innerHTML = '<p class="empty-state">No merge commits found.</p>';
+    return;
+  }}
+  let html = '<div class="merge-list">';
+  merges.forEach(mc => {{
+    const hash = esc(mc.hash || '?');
+    const author = esc(mc.author || '?');
+    const date = fmtDate(mc.date);
+    const msg = esc((mc.message||'').slice(0,60));
+    const parents = (mc.parents || []).join(', ');
+    html += `
+      <div class="merge-item">
+        <span class="merge-hash">${{hash}}</span>
+        <span class="merge-author">${{author}}</span>
+        <span class="merge-date">${{date}}</span>
+        <div class="merge-msg">${{msg}}</div>
+        <div class="merge-parents">merged: ${{esc(parents)}}</div>
+      </div>
+    `;
+  }});
+  html += '</div>';
+  document.getElementById('merge-commits').innerHTML = html;
+}}
+
+function renderExternalFiles(files) {{
+  if (!files || files.length === 0) {{
+    document.getElementById('external-files').innerHTML = '<p class="empty-state">No external (untracked) files detected.</p>';
+    return;
+  }}
+  let html = '<div class="file-table"><table><thead><tr><th>File</th><th>Created</th><th>Modified</th><th>Size</th></tr></thead><tbody>';
+  files.forEach(ef => {{
+    const size = Number(ef.size || 0) / (1024*1024);
+    html += `<tr><td>${{esc(ef.file||'')}}</td><td>${{fmtDate(ef.created)}}</td><td>${{fmtDate(ef.modified)}}</td><td>${{size.toFixed(2)}} MB</td></tr>`;
+  }});
+  html += '</tbody></table></div>';
+  document.getElementById('external-files').innerHTML = html;
+}}
+
+function renderLargeFiles(files) {{
+  if (!files || files.length === 0) {{
+    document.getElementById('large-files').innerHTML = '<p class="empty-state">No large files (&gt;10MB) detected.</p>';
+    return;
+  }}
+  let html = '<div class="file-table"><table><thead><tr><th>File</th><th>Size</th></tr></thead><tbody>';
+  files.forEach(lf => {{
+    html += `<tr><td>${{esc(lf.file||'')}}</td><td>${{Number(lf.size_mb||0).toFixed(2)}} MB</td></tr>`;
+  }});
+  html += '</tbody></table></div>';
+  document.getElementById('large-files').innerHTML = html;
+}}
+
+function renderCommunities() {{
+  const comms = INITIAL_DATA.community_stats;
+  const total = INITIAL_DATA.total_communities;
+  document.getElementById('communities-title').textContent = `Communities (${{total}})`;
+  let html = '';
+  comms.forEach(c => {{
+    const cohesionClass = c.cohesion >= 0.7 ? 'cohesion-high' : c.cohesion >= 0.4 ? 'cohesion-med' : 'cohesion-low';
+    const cohesionText = c.cohesion ? `Cohesion: ${{c.cohesion.toFixed(2)}}` : 'Cohesion: N/A';
+    const topNode = esc((c.top_node||'').slice(0,40));
+    const topSuffix = (c.top_node||'').length > 40 ? '...' : '';
+    html += `
+      <div class="community-card">
+        <div class="community-header">
+          <div class="community-dot" style="background:${{esc(c.color)}}"></div>
+          <div class="community-name">${{esc(c.label)}}</div>
+          <div class="community-count">${{esc(c.count)}} nodes</div>
+        </div>
+        <div class="community-meta">Top: ${{topNode}}${{topSuffix}}</div>
+        <span class="cohesion-badge ${{cohesionClass}}">${{esc(cohesionText)}}</span>
+      </div>
+    `;
+  }});
+  if (total > comms.length) {{
+    html += `<div class="community-card" style="display:flex;align-items:center;justify-content:center;color:#888;"><div>+${{total - comms.length}} more communities</div></div>`;
+  }}
+  document.getElementById('communities-grid').innerHTML = html;
+}}
+
+function renderGodNodes() {{
+  const gods = INITIAL_DATA.god_nodes;
+  let html = '';
+  gods.forEach((god, idx) => {{
+    html += `
+      <div class="god-node-item">
+        <div class="god-rank">${{idx+1}}</div>
+        <div class="god-info">
+          <div class="god-name">${{esc(god.label || 'Unknown')}}</div>
+          <div class="god-degree">${{esc(god.degree || 0)}} connections</div>
+        </div>
+      </div>
+    `;
+  }});
+  document.getElementById('god-nodes').innerHTML = html;
+}}
+
+function renderAuditTrail() {{
+  const trail = INITIAL_DATA.audit_trail;
+  let html = '';
+  trail.forEach(a => {{
+    html += `
+      <div class="audit-item">
+        <div class="audit-value ${{esc(a.type.toLowerCase())}}">${{esc(a.count)}}</div>
+        <div class="audit-label">${{esc(a.type)}}</div>
+        <div class="audit-pct">${{esc(a.pct)}}%</div>
+      </div>
+    `;
+  }});
+  document.getElementById('audit-trail').innerHTML = html;
+}}
+
+// --- Live polling for activity.json ---
+async function fetchActivity() {{
+  try {{
+    const resp = await fetch('activity.json', {{ cache: 'no-store' }});
+    if (!resp.ok) return null;
+    return await resp.json();
+  }} catch (e) {{
+    return null;
+  }}
+}}
+
+async function updateActivityFromJson() {{
+  const statusEl = document.getElementById('poll-status');
+  statusEl.textContent = 'Checking for updates...';
+  statusEl.className = 'poll-status updating';
+
+  const data = await fetchActivity();
+  if (!data) {{
+    statusEl.textContent = 'Live updates paused (refresh page for latest). Run `graphx serve` for live polling.';
+    statusEl.className = 'poll-status error';
+    return;
+  }}
+
+  const commits = data.commits || [];
+  // Only update if different from current embedded data
+  if (JSON.stringify(commits) !== JSON.stringify(currentActivity)) {{
+    currentActivity = commits;
+    renderActivityTimeline(commits);
+    // Also update related sections if present
+    if (data.hot_files) renderHotFiles(data.hot_files);
+    statusEl.textContent = `Updated ${{commits.length}} commits from activity.json`;
+    statusEl.className = 'poll-status';
+  }} else {{
+    statusEl.textContent = 'Up to date. Next check in 30s...';
+    statusEl.className = 'poll-status';
+  }}
+}}
+
+// --- Main render ---
+function renderAll() {{
+  renderGraphStatus();
+  renderOutputNav();
+  renderGitStatus();
+
+  const act = INITIAL_DATA.activity;
+  currentActivity = act.commits;
+  renderActivityTimeline(act.commits);
+  renderHotFiles(act.hot_files);
+  renderVelocity(act.velocity);
+  renderMergeCommits(act.merge_commits);
+  renderExternalFiles(act.external_files);
+  renderLargeFiles(act.large_files);
+
+  renderCommunities();
+  renderGodNodes();
+  renderAuditTrail();
+}}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {{
+  renderAll();
+  // Poll for live activity updates every 30 seconds
+  pollTimer = setInterval(updateActivityFromJson, 30000);
+  // First check after 2 seconds (give browser time to settle)
+  setTimeout(updateActivityFromJson, 2000);
+}});
+</script>
 </body>
 </html>
 """
-    
     (out / "index.html").write_text(html, encoding="utf-8")
 
 def to_canvas(
