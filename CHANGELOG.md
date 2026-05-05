@@ -31,15 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 - `skill.md` updated to document live activity tracking capability
 
-## [0.1.2] - 2026-05-05
-
-### Changed
-- **BREAKING**: Renamed package from `graphify` to `graphx` across the entire codebase
-- Updated all imports, tests, documentation, and asset references from `graphify` to `graphx`
-- Renamed environment variables: `GRAPHIFY_*` → `GRAPHX_*`
-- Regenerated knowledge graph outputs under `graphx-out/`
-- Updated `pyproject.toml` package name (`ai-graphx`), entry point, and project URLs
-
 ## [0.1.1] - 2026-04-04
 
 ### Added
