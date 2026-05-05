@@ -1,5 +1,9 @@
 # Changelog
 
+<p align="center">
+  <a href="docs/translations/CHANGELOG.ru-RU.md"><img src="https://img.shields.io/badge/🇷🇺%20Русский-blue?style=for-the-badge" alt="Russian"></a>
+</p>
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
