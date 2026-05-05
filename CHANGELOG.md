@@ -2,6 +2,13 @@
 
 Full release notes with details on each version: [GitHub Releases](https://github.com/safishamsi/graphx/releases)
 
+## 0.2.1 (2026-05-05)
+
+- **Feat**: OpenCode `/graphx` custom command — `graphx install --platform opencode` now registers a global `/graphx` command in `~/.config/opencode/commands/graphx.md`
+- **Feat**: `/graphx` command template executes `graphx $ARGUMENTS` — without args runs `graphx watch .`, with args passes them through (e.g., `/graphx status`, `/graphx query "..."`)
+- **Fix**: `graphx opencode uninstall` now removes the `/graphx` command file alongside the plugin
+- **Docs**: `skill-opencode.md` updated to document `/graphx` and `/graphx status`
+
 ## 0.2.0 (2026-05-05)
 
 - **Feat**: Live activity tracking dashboard — `graphx-out/activity.json` is generated from git history with AI vs human commit detection
