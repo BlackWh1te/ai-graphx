@@ -73,8 +73,7 @@ else
 fi
 "$PYTHON" -c "import graphx" 2>/dev/null || "$PYTHON" -m pip install graphx -q 2>/dev/null || "$PYTHON" -m pip install graphx -q --break-system-packages 2>&1 | tail -3
 # Write interpreter path for all subsequent steps
-mkdir -p graphx-out
-"$PYTHON" -c "import sys; open('graphx-out/.graphx_python', 'w').write(sys.executable)"
+"$PYTHON" -c "import sys, pathlib; pathlib.Path('graphx-out/.graphx_python').write_text(sys.executable, encoding='utf-8')"
 # Force UTF-8 I/O on Windows (prevents garbled CJK/non-ASCII output)
 export PYTHONUTF8=1
 ```
@@ -91,8 +90,8 @@ import json
 from graphx.detect import detect
 from pathlib import Path
 result = detect(Path('INPUT_PATH'))
-print(json.dumps(result))
-" > graphx-out/.graphx_detect.json
+Path('graphx-out/.graphx_detect.json').write_text(json.dumps(result, ), encoding='utf-8')
+\"
 ```
 
 Replace INPUT_PATH with the actual path the user provided. Do NOT cat or print the JSON - read it silently and present a clean summary instead:
@@ -141,7 +140,7 @@ import json, os
 from pathlib import Path
 from graphx.transcribe import transcribe_all
 
-detect = json.loads(Path('graphx-out/.graphx_detect.json').read_text())
+detect = json.loads(Path('graphx-out/.graphx_detect.json').read_text(encoding='utf-8'))
 video_files = detect.get('files', {}).get('video', [])
 prompt = os.environ.get('GRAPHX_WHISPER_PROMPT', 'Use proper punctuation and paragraph breaks.')
 
@@ -180,16 +179,16 @@ from pathlib import Path
 import json
 
 code_files = []
-detect = json.loads(Path('graphx-out/.graphx_detect.json').read_text())
+detect = json.loads(Path('graphx-out/.graphx_detect.json').read_text(encoding='utf-8'))
 for f in detect.get('files', {}).get('code', []):
     code_files.extend(collect_files(Path(f)) if Path(f).is_dir() else [Path(f)])
 
 if code_files:
     result = extract(code_files)
-    Path('graphx-out/.graphx_ast.json').write_text(json.dumps(result, indent=2))
-    print(f'AST: {len(result[\"nodes\"])} nodes, {len(result[\"edges\"])} edges')
+    Path('graphx-out/.graphx_ast.json').write_text(json.dumps(result, indent=2, ), encoding='utf-8')
+    print(f'AST: {len(result['nodes'])} nodes, {len(result['edges'])} edges')
 else:
-    Path('graphx-out/.graphx_ast.json').write_text(json.dumps({'nodes':[],'edges':[],'input_tokens':0,'output_tokens':0}))
+    Path('graphx-out/.graphx_ast.json').write_text(json.dumps({'nodes':[],'edges':[],'input_tokens':0,'output_tokens':0}, encoding='utf-8'))
     print('No code files - skipping AST extraction')
 "
 ```
@@ -216,14 +215,14 @@ import json
 from graphx.cache import check_semantic_cache
 from pathlib import Path
 
-detect = json.loads(Path('graphx-out/.graphx_detect.json').read_text())
+detect = json.loads(Path('graphx-out/.graphx_detect.json').read_text(encoding='utf-8'))
 all_files = [f for files in detect['files'].values() for f in files]
 
 cached_nodes, cached_edges, cached_hyperedges, uncached = check_semantic_cache(all_files)
 
 if cached_nodes or cached_edges or cached_hyperedges:
-    Path('graphx-out/.graphx_cached.json').write_text(json.dumps({'nodes': cached_nodes, 'edges': cached_edges, 'hyperedges': cached_hyperedges}))
-Path('graphx-out/.graphx_uncached.txt').write_text('\n'.join(uncached))
+    Path('graphx-out/.graphx_cached.json').write_text(json.dumps({'nodes': cached_nodes, 'edges': cached_edges, 'hyperedges': cached_hyperedges}, encoding='utf-8'))
+Path('graphx-out/.graphx_uncached.txt').write_text('\n'.join(uncached, encoding='utf-8'))
 print(f'Cache: {len(all_files)-len(uncached)} files hit, {len(uncached)} files need extraction')
 "
 ```
@@ -324,7 +323,7 @@ chunks = sorted(glob.glob('graphx-out/.graphx_chunk_*.json'))
 all_nodes, all_edges, all_hyperedges = [], [], []
 total_in, total_out = 0, 0
 for c in chunks:
-    d = json.loads(Path(c).read_text())
+    d = json.loads(Path(c).read_text(encoding='utf-8'))
     all_nodes += d.get('nodes', [])
     all_edges += d.get('edges', [])
     all_hyperedges += d.get('hyperedges', [])
@@ -333,7 +332,7 @@ for c in chunks:
 Path('graphx-out/.graphx_semantic_new.json').write_text(json.dumps({
     'nodes': all_nodes, 'edges': all_edges, 'hyperedges': all_hyperedges,
     'input_tokens': total_in, 'output_tokens': total_out,
-}, indent=2))
+}, indent=2), encoding='utf-8')
 print(f'Merged {len(chunks)} chunks: {total_in:,} in / {total_out:,} out tokens')
 "
 ```
@@ -345,7 +344,7 @@ import json
 from graphx.cache import save_semantic_cache
 from pathlib import Path
 
-new = json.loads(Path('graphx-out/.graphx_semantic_new.json').read_text()) if Path('graphx-out/.graphx_semantic_new.json').exists() else {'nodes':[],'edges':[],'hyperedges':[]}
+new = json.loads(Path('graphx-out/.graphx_semantic_new.json').read_text(encoding='utf-8')) if Path('graphx-out/.graphx_semantic_new.json').exists() else {'nodes':[],'edges':[],'hyperedges':[]}
 saved = save_semantic_cache(new.get('nodes', []), new.get('edges', []), new.get('hyperedges', []))
 print(f'Cached {saved} files')
 "
@@ -357,8 +356,8 @@ $(cat graphx-out/.graphx_python) -c "
 import json
 from pathlib import Path
 
-cached = json.loads(Path('graphx-out/.graphx_cached.json').read_text()) if Path('graphx-out/.graphx_cached.json').exists() else {'nodes':[],'edges':[],'hyperedges':[]}
-new = json.loads(Path('graphx-out/.graphx_semantic_new.json').read_text()) if Path('graphx-out/.graphx_semantic_new.json').exists() else {'nodes':[],'edges':[],'hyperedges':[]}
+cached = json.loads(Path('graphx-out/.graphx_cached.json').read_text(encoding='utf-8')) if Path('graphx-out/.graphx_cached.json').exists() else {'nodes':[],'edges':[],'hyperedges':[]}
+new = json.loads(Path('graphx-out/.graphx_semantic_new.json').read_text(encoding='utf-8')) if Path('graphx-out/.graphx_semantic_new.json').exists() else {'nodes':[],'edges':[],'hyperedges':[]}
 
 all_nodes = cached['nodes'] + new.get('nodes', [])
 all_edges = cached['edges'] + new.get('edges', [])
@@ -377,8 +376,8 @@ merged = {
     'input_tokens': new.get('input_tokens', 0),
     'output_tokens': new.get('output_tokens', 0),
 }
-Path('graphx-out/.graphx_semantic.json').write_text(json.dumps(merged, indent=2))
-print(f'Extraction complete - {len(deduped)} nodes, {len(all_edges)} edges ({len(cached[\"nodes\"])} from cache, {len(new.get(\"nodes\",[]))} new)')
+Path('graphx-out/.graphx_semantic.json').write_text(json.dumps(merged, indent=2, ), encoding='utf-8')
+print(f'Extraction complete - {len(deduped)} nodes, {len(all_edges)} edges ({len(cached['nodes'])} from cache, {len(new.get(\"nodes\",[]))} new)')
 "
 ```
 Clean up temp files: `rm -f graphx-out/.graphx_cached.json graphx-out/.graphx_uncached.txt graphx-out/.graphx_semantic_new.json`
@@ -390,8 +389,8 @@ $(cat graphx-out/.graphx_python) -c "
 import sys, json
 from pathlib import Path
 
-ast = json.loads(Path('graphx-out/.graphx_ast.json').read_text())
-sem = json.loads(Path('graphx-out/.graphx_semantic.json').read_text())
+ast = json.loads(Path('graphx-out/.graphx_ast.json').read_text(encoding='utf-8'))
+sem = json.loads(Path('graphx-out/.graphx_semantic.json').read_text(encoding='utf-8'))
 
 # Merge: AST nodes first, semantic nodes deduplicated by id
 seen = {n['id'] for n in ast['nodes']}
@@ -410,10 +409,10 @@ merged = {
     'input_tokens': sem.get('input_tokens', 0),
     'output_tokens': sem.get('output_tokens', 0),
 }
-Path('graphx-out/.graphx_extract.json').write_text(json.dumps(merged, indent=2))
+Path('graphx-out/.graphx_extract.json').write_text(json.dumps(merged, indent=2, ), encoding='utf-8')
 total = len(merged_nodes)
 edges = len(merged_edges)
-print(f'Merged: {total} nodes, {edges} edges ({len(ast[\"nodes\"])} AST + {len(sem[\"nodes\"])} semantic)')
+print(f'Merged: {total} nodes, {edges} edges ({len(ast['nodes'])} AST + {len(sem['nodes'])} semantic)')
 "
 ```
 
@@ -430,8 +429,8 @@ from graphx.report import generate
 from graphx.export import to_json
 from pathlib import Path
 
-extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
-detection  = json.loads(Path('graphx-out/.graphx_detect.json').read_text())
+extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
+detection  = json.loads(Path('graphx-out/.graphx_detect.json').read_text(encoding='utf-8'))
 
 G = build_from_json(extraction)
 communities = cluster(G)
@@ -444,7 +443,7 @@ labels = {cid: 'Community ' + str(cid) for cid in communities}
 questions = suggest_questions(G, communities, labels)
 
 report = generate(G, communities, cohesion, labels, gods, surprises, detection, tokens, 'INPUT_PATH', suggested_questions=questions)
-Path('graphx-out/GRAPH_REPORT.md').write_text(report)
+Path('graphx-out/GRAPH_REPORT.md').write_text(report, encoding='utf-8')
 to_json(G, communities, 'graphx-out/graph.json')
 
 analysis = {
@@ -454,7 +453,7 @@ analysis = {
     'surprises': surprises,
     'questions': questions,
 }
-Path('graphx-out/.graphx_analysis.json').write_text(json.dumps(analysis, indent=2))
+Path('graphx-out/.graphx_analysis.json').write_text(json.dumps(analysis, indent=2, ), encoding='utf-8')
 if G.number_of_nodes() == 0:
     print('ERROR: Graph is empty - extraction produced no nodes.')
     print('Possible causes: all files were skipped, binary-only corpus, or extraction failed.')
@@ -482,9 +481,9 @@ from graphx.analyze import god_nodes, surprising_connections, suggest_questions
 from graphx.report import generate
 from pathlib import Path
 
-extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
-detection  = json.loads(Path('graphx-out/.graphx_detect.json').read_text())
-analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text())
+extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
+detection  = json.loads(Path('graphx-out/.graphx_detect.json').read_text(encoding='utf-8'))
+analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text(encoding='utf-8'))
 
 G = build_from_json(extraction)
 communities = {int(k): v for k, v in analysis['communities'].items()}
@@ -498,8 +497,8 @@ labels = LABELS_DICT
 questions = suggest_questions(G, communities, labels)
 
 report = generate(G, communities, cohesion, labels, analysis['gods'], analysis['surprises'], detection, tokens, 'INPUT_PATH', suggested_questions=questions)
-Path('graphx-out/GRAPH_REPORT.md').write_text(report)
-Path('graphx-out/.graphx_labels.json').write_text(json.dumps({str(k): v for k, v in labels.items()}))
+Path('graphx-out/GRAPH_REPORT.md').write_text(report, encoding='utf-8')
+Path('graphx-out/.graphx_labels.json').write_text(json.dumps({str(k, encoding='utf-8'): v for k, v in labels.items()}))
 print('Report updated with community labels')
 "
 ```
@@ -520,9 +519,9 @@ from graphx.build import build_from_json
 from graphx.export import to_obsidian, to_canvas
 from pathlib import Path
 
-extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
-analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text())
-labels_raw = json.loads(Path('graphx-out/.graphx_labels.json').read_text()) if Path('graphx-out/.graphx_labels.json').exists() else {}
+extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
+analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text(encoding='utf-8'))
+labels_raw = json.loads(Path('graphx-out/.graphx_labels.json').read_text(encoding='utf-8')) if Path('graphx-out/.graphx_labels.json').exists() else {}
 
 G = build_from_json(extraction)
 communities = {int(k): v for k, v in analysis['communities'].items()}
@@ -551,9 +550,9 @@ from graphx.build import build_from_json
 from graphx.export import to_html
 from pathlib import Path
 
-extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
-analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text())
-labels_raw = json.loads(Path('graphx-out/.graphx_labels.json').read_text()) if Path('graphx-out/.graphx_labels.json').exists() else {}
+extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
+analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text(encoding='utf-8'))
+labels_raw = json.loads(Path('graphx-out/.graphx_labels.json').read_text(encoding='utf-8')) if Path('graphx-out/.graphx_labels.json').exists() else {}
 
 G = build_from_json(extraction)
 communities = {int(k): v for k, v in analysis['communities'].items()}
@@ -603,9 +602,9 @@ from graphx.wiki import to_wiki
 from graphx.analyze import god_nodes
 from pathlib import Path
 
-extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
-analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text())
-labels_raw = json.loads(Path('graphx-out/.graphx_labels.json').read_text()) if Path('graphx-out/.graphx_labels.json').exists() else {}
+extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
+analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text(encoding='utf-8'))
+labels_raw = json.loads(Path('graphx-out/.graphx_labels.json').read_text(encoding='utf-8')) if Path('graphx-out/.graphx_labels.json').exists() else {}
 
 G = build_from_json(extraction)
 communities = {int(k): v for k, v in analysis['communities'].items()}
@@ -630,7 +629,7 @@ from graphx.build import build_from_json
 from graphx.export import to_cypher
 from pathlib import Path
 
-G = build_from_json(json.loads(Path('graphx-out/.graphx_extract.json').read_text()))
+G = build_from_json(json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8')))
 to_cypher(G, 'graphx-out/cypher.txt')
 print('cypher.txt written - import with: cypher-shell < graphx-out/cypher.txt')
 "
@@ -646,13 +645,13 @@ from graphx.cluster import cluster
 from graphx.export import push_to_neo4j
 from pathlib import Path
 
-extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
-analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text())
+extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
+analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text(encoding='utf-8'))
 G = build_from_json(extraction)
 communities = {int(k): v for k, v in analysis['communities'].items()}
 
 result = push_to_neo4j(G, uri='NEO4J_URI', user='NEO4J_USER', password='NEO4J_PASSWORD', communities=communities)
-print(f'Pushed to Neo4j: {result[\"nodes\"]} nodes, {result[\"edges\"]} edges')
+print(f'Pushed to Neo4j: {result['nodes']} nodes, {result['edges']} edges')
 "
 ```
 
@@ -667,9 +666,9 @@ from graphx.build import build_from_json
 from graphx.export import to_svg
 from pathlib import Path
 
-extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
-analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text())
-labels_raw = json.loads(Path('graphx-out/.graphx_labels.json').read_text()) if Path('graphx-out/.graphx_labels.json').exists() else {}
+extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
+analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text(encoding='utf-8'))
+labels_raw = json.loads(Path('graphx-out/.graphx_labels.json').read_text(encoding='utf-8')) if Path('graphx-out/.graphx_labels.json').exists() else {}
 
 G = build_from_json(extraction)
 communities = {int(k): v for k, v in analysis['communities'].items()}
@@ -689,8 +688,8 @@ from graphx.build import build_from_json
 from graphx.export import to_graphml
 from pathlib import Path
 
-extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
-analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text())
+extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
+analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text(encoding='utf-8'))
 
 G = build_from_json(extraction)
 communities = {int(k): v for k, v in analysis['communities'].items()}
@@ -730,7 +729,7 @@ import json
 from graphx.benchmark import run_benchmark, print_benchmark
 from pathlib import Path
 
-detection = json.loads(Path('graphx-out/.graphx_detect.json').read_text())
+detection = json.loads(Path('graphx-out/.graphx_detect.json').read_text(encoding='utf-8'))
 result = run_benchmark('graphx-out/graph.json', corpus_words=detection['total_words'])
 print_benchmark(result)
 "
@@ -750,17 +749,17 @@ from datetime import datetime, timezone
 from graphx.detect import save_manifest
 
 # Save manifest for --update
-detect = json.loads(Path('graphx-out/.graphx_detect.json').read_text())
+detect = json.loads(Path('graphx-out/.graphx_detect.json').read_text(encoding='utf-8'))
 save_manifest(detect['files'])
 
 # Update cumulative cost tracker
-extract = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
+extract = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
 input_tok = extract.get('input_tokens', 0)
 output_tok = extract.get('output_tokens', 0)
 
 cost_path = Path('graphx-out/cost.json')
 if cost_path.exists():
-    cost = json.loads(cost_path.read_text())
+    cost = json.loads(cost_path.read_text(encoding='utf-8'))
 else:
     cost = {'runs': [], 'total_input_tokens': 0, 'total_output_tokens': 0}
 
@@ -772,13 +771,13 @@ cost['runs'].append({
 })
 cost['total_input_tokens'] += input_tok
 cost['total_output_tokens'] += output_tok
-cost_path.write_text(json.dumps(cost, indent=2))
+cost_path.write_text(json.dumps(cost, indent=2, encoding='utf-8'))
 
 print(f'This run: {input_tok:,} input tokens, {output_tok:,} output tokens')
 print(f'All time: {cost[\"total_input_tokens\"]:,} input, {cost[\"total_output_tokens\"]:,} output ({len(cost[\"runs\"])} runs)')
 "
 rm -f graphx-out/.graphx_detect.json graphx-out/.graphx_extract.json graphx-out/.graphx_ast.json graphx-out/.graphx_semantic.json graphx-out/.graphx_analysis.json graphx-out/.graphx_labels.json graphx-out/.graphx_chunk_*.json
-rm -f graphx-out/.needs_update 2>/dev/null || true
+Remove-Item -Force graphx-out/.needs_update -ErrorAction SilentlyContinue
 ```
 
 Tell the user (omit the obsidian line unless --obsidian was given):
@@ -825,7 +824,7 @@ from pathlib import Path
 result = detect_incremental(Path('INPUT_PATH'))
 new_total = result.get('new_total', 0)
 print(json.dumps(result, indent=2))
-Path('graphx-out/.graphx_incremental.json').write_text(json.dumps(result))
+Path('graphx-out/.graphx_incremental.json').write_text(json.dumps(result, encoding='utf-8'))
 if new_total == 0:
     print('No files changed since last run. Nothing to update.')
     raise SystemExit(0)
@@ -865,11 +864,11 @@ import networkx as nx
 from pathlib import Path
 
 # Load existing graph
-existing_data = json.loads(Path('graphx-out/graph.json').read_text())
+existing_data = json.loads(Path('graphx-out/graph.json').read_text(encoding='utf-8'))
 G_existing = json_graph.node_link_graph(existing_data, edges='links')
 
 # Load new extraction
-new_extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
+new_extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
 G_new = build_from_json(new_extraction)
 
 # Merge: new nodes/edges into existing graph
@@ -892,8 +891,8 @@ import networkx as nx
 from pathlib import Path
 
 # Load old graph (before update) from backup written before merge
-old_data = json.loads(Path('graphx-out/.graphx_old.json').read_text()) if Path('graphx-out/.graphx_old.json').exists() else None
-new_extract = json.loads(Path('graphx-out/.graphx_extract.json').read_text())
+old_data = json.loads(Path('graphx-out/.graphx_old.json').read_text(encoding='utf-8')) if Path('graphx-out/.graphx_old.json').exists() else None
+new_extract = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
 G_new = build_from_json(new_extract)
 
 if old_data:
@@ -927,7 +926,7 @@ from networkx.readwrite import json_graph
 import networkx as nx
 from pathlib import Path
 
-data = json.loads(Path('graphx-out/graph.json').read_text())
+data = json.loads(Path('graphx-out/graph.json').read_text(encoding='utf-8'))
 G = json_graph.node_link_graph(data, edges='links')
 
 detection = {'total_files': 0, 'total_words': 99999, 'needs_graph': True, 'warning': None,
@@ -941,7 +940,7 @@ surprises = surprising_connections(G, communities)
 labels = {cid: 'Community ' + str(cid) for cid in communities}
 
 report = generate(G, communities, cohesion, labels, gods, surprises, detection, tokens, '.')
-Path('graphx-out/GRAPH_REPORT.md').write_text(report)
+Path('graphx-out/GRAPH_REPORT.md').write_text(report, encoding='utf-8')
 to_json(G, communities, 'graphx-out/graph.json')
 
 analysis = {
@@ -950,7 +949,7 @@ analysis = {
     'gods': gods,
     'surprises': surprises,
 }
-Path('graphx-out/.graphx_analysis.json').write_text(json.dumps(analysis, indent=2))
+Path('graphx-out/.graphx_analysis.json').write_text(json.dumps(analysis, indent=2, ), encoding='utf-8')
 print(f'Re-clustered: {len(communities)} communities')
 "
 ```
@@ -994,7 +993,7 @@ from networkx.readwrite import json_graph
 import networkx as nx
 from pathlib import Path
 
-data = json.loads(Path('graphx-out/graph.json').read_text())
+data = json.loads(Path('graphx-out/graph.json').read_text(encoding='utf-8'))
 G = json_graph.node_link_graph(data, edges='links')
 
 question = 'QUESTION'
@@ -1058,7 +1057,7 @@ def relevance(nid):
 
 ranked_nodes = sorted(subgraph_nodes, key=relevance, reverse=True)
 
-lines = [f'Traversal: {mode.upper()} | Start: {[G.nodes[n].get(\"label\",n) for n in start_nodes]} | {len(subgraph_nodes)} nodes']
+lines = [f'Traversal: {mode.upper()} | Start: {[G.nodes[n].get('label', n) for n in start_nodes]} | {len(subgraph_nodes)} nodes']
 for nid in ranked_nodes:
     d = G.nodes[nid]
     lines.append(f'  NODE {d.get(\"label\", nid)} [src={d.get(\"source_file\",\"\")} loc={d.get(\"source_location\",\"\")}]')
@@ -1108,7 +1107,7 @@ import networkx as nx
 from networkx.readwrite import json_graph
 from pathlib import Path
 
-data = json.loads(Path('graphx-out/graph.json').read_text())
+data = json.loads(Path('graphx-out/graph.json').read_text(encoding='utf-8'))
 G = json_graph.node_link_graph(data, edges='links')
 
 a_term = 'NODE_A'
@@ -1181,7 +1180,7 @@ import networkx as nx
 from networkx.readwrite import json_graph
 from pathlib import Path
 
-data = json.loads(Path('graphx-out/graph.json').read_text())
+data = json.loads(Path('graphx-out/graph.json').read_text(encoding='utf-8'))
 G = json_graph.node_link_graph(data, edges='links')
 
 term = 'NODE_NAME'

@@ -17,7 +17,7 @@ class Changelog:
         """Load changelog from file, or create empty structure."""
         if self.file.exists():
             try:
-                return json.loads(self.file.read_text())
+                return json.loads(self.file.read_text(encoding="utf-8"))
             except (json.JSONDecodeError, IOError):
                 # If file is corrupted, start fresh
                 return {"sessions": []}
@@ -26,7 +26,7 @@ class Changelog:
     def _save(self):
         """Save changelog to file."""
         self.file.parent.mkdir(parents=True, exist_ok=True)
-        self.file.write_text(json.dumps(self.data, indent=2))
+        self.file.write_text(json.dumps(self.data, indent=2), encoding="utf-8")
     
     def add_session(
         self,

@@ -2261,9 +2261,9 @@ def main() -> None:
         cohesion = None
         gods = None
         if labels_path.exists():
-            labels = {int(k): v for k, v in json.loads(labels_path.read_text()).items()}
+            labels = {int(k): v for k, v in json.loads(labels_path.read_text(encoding="utf-8")).items()}
         if analysis_path.exists():
-            analysis = json.loads(analysis_path.read_text())
+            analysis = json.loads(analysis_path.read_text(encoding="utf-8"))
             cohesion = {int(k): v for k, v in analysis.get("cohesion", {}).items()}
             gods = analysis.get("gods", [])
         else:
