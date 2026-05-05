@@ -1,9 +1,9 @@
 import json
 from pathlib import Path
-from graphify.build import build_from_json
-from graphify.cluster import cluster, score_all
-from graphify.analyze import god_nodes, surprising_connections
-from graphify.report import generate
+from graphx.build import build_from_json
+from graphx.cluster import cluster, score_all
+from graphx.analyze import god_nodes, surprising_connections
+from graphx.report import generate
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

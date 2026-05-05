@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/safishamsi/graphify/v4/docs/logo-text.svg" width="260" height="64" alt="Graphify"/>
+  <img src="https://raw.githubusercontent.com/safishamsi/graphx/v4/docs/logo-text.svg" width="260" height="64" alt="GraphX"/>
 </p>
 
 <p align="center">
@@ -7,24 +7,24 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/safishamsi/graphify/actions/workflows/ci.yml"><img src="https://github.com/safishamsi/graphify/actions/workflows/ci.yml/badge.svg?branch=v4" alt="CI"/></a>
-  <a href="https://pypi.org/project/graphifyy/"><img src="https://img.shields.io/pypi/v/graphifyy" alt="PyPI"/></a>
-  <a href="https://pepy.tech/project/graphifyy"><img src="https://static.pepy.tech/badge/graphifyy" alt="Downloads"/></a>
+  <a href="https://github.com/safishamsi/graphx/actions/workflows/ci.yml"><img src="https://github.com/safishamsi/graphx/actions/workflows/ci.yml/badge.svg?branch=v4" alt="CI"/></a>
+  <a href="https://pypi.org/project/graphx/"><img src="https://img.shields.io/pypi/v/graphx" alt="PyPI"/></a>
+  <a href="https://pepy.tech/project/graphx"><img src="https://static.pepy.tech/badge/graphx" alt="Downloads"/></a>
   <a href="https://github.com/sponsors/safishamsi"><img src="https://img.shields.io/badge/sponsor-safishamsi-ea4aaa?logo=github-sponsors" alt="Sponsor"/></a>
 </p>
 
-**Taito tekoälykoodiavustajille.** Kirjoita `/graphify` Claude Codessa, Codexissa, OpenCodessa, Cursorissa, Gemini CLI:ssä, GitHub Copilot CLI:ssä, VS Code Copilot Chatissa, Aiderissa, OpenClawissa, Factory Droidissa, Traessa, Hermeksessä, Kirossa tai Google Antigravityssa — se lukee tiedostosi, rakentaa tietograafin ja palauttaa sinulle rakenteen, jota et tiennyt olevan. Ymmärrä koodikanta nopeammin. Löydä arkkitehtuuripäätösten taustalla oleva "miksi".
+**Taito tekoälykoodiavustajille.** Kirjoita `/graphx` Claude Codessa, Codexissa, OpenCodessa, Cursorissa, Gemini CLI:ssä, GitHub Copilot CLI:ssä, VS Code Copilot Chatissa, Aiderissa, OpenClawissa, Factory Droidissa, Traessa, Hermeksessä, Kirossa tai Google Antigravityssa — se lukee tiedostosi, rakentaa tietograafin ja palauttaa sinulle rakenteen, jota et tiennyt olevan. Ymmärrä koodikanta nopeammin. Löydä arkkitehtuuripäätösten taustalla oleva "miksi".
 
-Täysin multimodaalinen. Lisää koodia, PDF:iä, markdownia, kuvakaappauksia, kaavioita, liitutaulun valokuvia, muilla kielillä olevia kuvia tai video- ja äänitiedostoja — graphify poimii käsitteitä ja suhteita kaikesta ja yhdistää ne yhdeksi graafaksi. Videot litteroidaan paikallisesti Whisperillä. Tukee 25 ohjelmointikieltä tree-sitter AST:n kautta.
+Täysin multimodaalinen. Lisää koodia, PDF:iä, markdownia, kuvakaappauksia, kaavioita, liitutaulun valokuvia, muilla kielillä olevia kuvia tai video- ja äänitiedostoja — graphx poimii käsitteitä ja suhteita kaikesta ja yhdistää ne yhdeksi graafaksi. Videot litteroidaan paikallisesti Whisperillä. Tukee 25 ohjelmointikieltä tree-sitter AST:n kautta.
 
-> Andrej Karpathy ylläpitää `/raw`-kansiota, johon hän tallentaa papereita, tviittejä, kuvakaappauksia ja muistiinpanoja. graphify on vastaus tähän ongelmaan — **71,5x** vähemmän tokeneita kyselyä kohden verrattuna raakatiedostojen lukemiseen, pysyvä istuntojen välillä.
-
-```
-/graphify .
-```
+> Andrej Karpathy ylläpitää `/raw`-kansiota, johon hän tallentaa papereita, tviittejä, kuvakaappauksia ja muistiinpanoja. graphx on vastaus tähän ongelmaan — **71,5x** vähemmän tokeneita kyselyä kohden verrattuna raakatiedostojen lukemiseen, pysyvä istuntojen välillä.
 
 ```
-graphify-out/
+/graphx .
+```
+
+```
+graphx-out/
 ├── graph.html       interaktiivinen graafi — avaa missä tahansa selaimessa
 ├── GRAPH_REPORT.md  jumalsolmut, yllättävät yhteydet, ehdotetut kysymykset
 ├── graph.json       pysyvä graafi — kyselytavissa viikkojen kuluttua
@@ -33,7 +33,7 @@ graphify-out/
 
 ## Miten se toimii
 
-graphify toimii kolmessa läpiajossa. Ensin deterministinen AST-läpiajo poimii rakenteen kooditiedostoista ilman LLM:ää. Sitten video- ja äänitiedostot litteroidaan paikallisesti faster-whisperillä. Lopuksi Clauden ala-agentit suoritetaan rinnakkain asiakirjoissa, papereissa, kuvissa ja litteroinneissa. Tulokset yhdistetään NetworkX-graafiin, klusteroidaan Leidenillä ja viedään interaktiivisena HTML:nä, kyselytavissa olevana JSON:na ja tarkastusraporttina.
+graphx toimii kolmessa läpiajossa. Ensin deterministinen AST-läpiajo poimii rakenteen kooditiedostoista ilman LLM:ää. Sitten video- ja äänitiedostot litteroidaan paikallisesti faster-whisperillä. Lopuksi Clauden ala-agentit suoritetaan rinnakkain asiakirjoissa, papereissa, kuvissa ja litteroinneissa. Tulokset yhdistetään NetworkX-graafiin, klusteroidaan Leidenillä ja viedään interaktiivisena HTML:nä, kyselytavissa olevana JSON:na ja tarkastusraporttina.
 
 Jokainen suhde on merkitty `EXTRACTED`, `INFERRED` (luottamuspisteineen) tai `AMBIGUOUS`.
 
@@ -42,24 +42,24 @@ Jokainen suhde on merkitty `EXTRACTED`, `INFERRED` (luottamuspisteineen) tai `AM
 **Vaatimukset:** Python 3.10+ ja jokin seuraavista: [Claude Code](https://claude.ai/code), [Codex](https://openai.com/codex), [OpenCode](https://opencode.ai), [Cursor](https://cursor.com) ja muut.
 
 ```bash
-uv tool install graphifyy && graphify install
+uv tool install graphx && graphx install
 # tai pipx:llä
-pipx install graphifyy && graphify install
+pipx install graphx && graphx install
 # tai pip
-pip install graphifyy && graphify install
+pip install graphx && graphx install
 ```
 
-> **Virallinen paketti:** PyPI-paketti on nimeltään `graphifyy`. Ainoa virallinen repositorio on [safishamsi/graphify](https://github.com/safishamsi/graphify).
+> **Virallinen paketti:** PyPI-paketti on nimeltään `graphx`. Ainoa virallinen repositorio on [safishamsi/graphx](https://github.com/safishamsi/graphx).
 
 ## Käyttö
 
 ```
-/graphify .
-/graphify ./raw --update
-/graphify query "mikä yhdistää Attentionin optimizeriin?"
-/graphify path "DigestAuth" "Response"
-graphify hook install
-graphify update ./src
+/graphx .
+/graphx ./raw --update
+/graphx query "mikä yhdistää Attentionin optimizeriin?"
+/graphx path "DigestAuth" "Response"
+graphx hook install
+graphx update ./src
 ```
 
 ## Mitä saat
@@ -70,8 +70,8 @@ graphify update ./src
 
 Kooditiedostot käsitellään paikallisesti tree-sitter AST:n kautta. Videot litteroidaan paikallisesti faster-whisperillä. Ei telemetriaa.
 
-## Rakennettu graphifyn päälle — Penpax
+## Rakennettu graphxn päälle — Penpax
 
-[**Penpax**](https://safishamsi.github.io/penpax.ai) on graphifyn päälle rakennettu yritystaso. **Ilmainen kokeilujakso tulossa pian.** [Liity odotuslistalle →](https://safishamsi.github.io/penpax.ai)
+[**Penpax**](https://safishamsi.github.io/penpax.ai) on graphxn päälle rakennettu yritystaso. **Ilmainen kokeilujakso tulossa pian.** [Liity odotuslistalle →](https://safishamsi.github.io/penpax.ai)
 
-[![Star History Chart](https://api.star-history.com/svg?repos=safishamsi/graphify&type=Date)](https://star-history.com/#safishamsi/graphify&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=safishamsi/graphx&type=Date)](https://star-history.com/#safishamsi/graphx&Date)

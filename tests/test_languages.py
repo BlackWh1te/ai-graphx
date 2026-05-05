@@ -2,7 +2,7 @@
 from __future__ import annotations
 from pathlib import Path
 import pytest
-from graphify.extract import (
+from graphx.extract import (
     extract_java, extract_c, extract_cpp, extract_ruby,
     extract_csharp, extract_kotlin, extract_scala, extract_php,
     extract_swift, extract_go, extract_julia, extract_js,
@@ -261,7 +261,7 @@ def test_kotlin_finds_function():
 
 def test_kotlin_emits_in_file_calls():
     """Regression test for the call-walker `simple_identifier` /
-    `identifier` rename — see graphify-kmp's PythonParityTest."""
+    `identifier` rename — see graphx-kmp's PythonParityTest."""
     r = extract_kotlin(FIXTURES / "sample.kt")
     calls = _calls(r)
     # In sample.kt: get() and post() both call buildRequest(), and
@@ -532,7 +532,7 @@ def test_swift_call_edges_have_call_context():
 
 # ── Elixir ────────────────────────────────────────────────────────────────────
 
-from graphify.extract import extract_elixir
+from graphx.extract import extract_elixir
 
 def test_elixir_finds_module():
     r = extract_elixir(FIXTURES / "sample.ex")
@@ -579,7 +579,7 @@ def test_elixir_method_edges():
 
 
 # ── Objective-C ──────────────────────────────────────────────────────────────
-from graphify.extract import extract_objc
+from graphx.extract import extract_objc
 
 
 def test_objc_finds_interface():

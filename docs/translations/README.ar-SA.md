@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/safishamsi/graphify/v4/docs/logo-text.svg" width="260" height="64" alt="Graphify"/>
+  <img src="https://raw.githubusercontent.com/safishamsi/graphx/v4/docs/logo-text.svg" width="260" height="64" alt="GraphX"/>
 </p>
 
 <p align="center">
@@ -7,29 +7,29 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/safishamsi/graphify/actions/workflows/ci.yml"><img src="https://github.com/safishamsi/graphify/actions/workflows/ci.yml/badge.svg?branch=v4" alt="CI"/></a>
-  <a href="https://pypi.org/project/graphifyy/"><img src="https://img.shields.io/pypi/v/graphifyy" alt="PyPI"/></a>
-  <a href="https://pepy.tech/project/graphifyy"><img src="https://static.pepy.tech/badge/graphifyy" alt="Downloads"/></a>
+  <a href="https://github.com/safishamsi/graphx/actions/workflows/ci.yml"><img src="https://github.com/safishamsi/graphx/actions/workflows/ci.yml/badge.svg?branch=v4" alt="CI"/></a>
+  <a href="https://pypi.org/project/graphx/"><img src="https://img.shields.io/pypi/v/graphx" alt="PyPI"/></a>
+  <a href="https://pepy.tech/project/graphx"><img src="https://static.pepy.tech/badge/graphx" alt="Downloads"/></a>
   <a href="https://github.com/sponsors/safishamsi"><img src="https://img.shields.io/badge/sponsor-safishamsi-ea4aaa?logo=github-sponsors" alt="Sponsor"/></a>
   <a href="https://www.linkedin.com/in/safi-shamsi"><img src="https://img.shields.io/badge/LinkedIn-Safi%20Shamsi-0077B5?logo=linkedin" alt="LinkedIn"/></a>
 </p>
 
 <div dir="rtl">
 
-**مهارة لمساعد برمجة الذكاء الاصطناعي.** اكتب `/graphify` في Claude Code أو Codex أو OpenCode أو Cursor أو Gemini CLI أو GitHub Copilot CLI أو VS Code Copilot Chat أو Aider أو OpenClaw أو Factory Droid أو Trae أو Hermes أو Kiro أو Google Antigravity — يقرأ ملفاتك ويبني رسماً بيانياً للمعرفة ويعيد إليك البنية التي لم تكن تعلم بوجودها. افهم قاعدة الكود بشكل أسرع. اكتشف "السبب" وراء القرارات المعمارية.
+**مهارة لمساعد برمجة الذكاء الاصطناعي.** اكتب `/graphx` في Claude Code أو Codex أو OpenCode أو Cursor أو Gemini CLI أو GitHub Copilot CLI أو VS Code Copilot Chat أو Aider أو OpenClaw أو Factory Droid أو Trae أو Hermes أو Kiro أو Google Antigravity — يقرأ ملفاتك ويبني رسماً بيانياً للمعرفة ويعيد إليك البنية التي لم تكن تعلم بوجودها. افهم قاعدة الكود بشكل أسرع. اكتشف "السبب" وراء القرارات المعمارية.
 
-متعدد الوسائط بالكامل. أضف كوداً أو ملفات PDF أو markdown أو لقطات شاشة أو رسوماً بيانية أو صور سبورة أو صوراً بلغات أخرى أو ملفات فيديو وصوت — يستخرج graphify المفاهيم والعلاقات من كل ذلك ويربطها في رسم بياني واحد. يتم نسخ مقاطع الفيديو محلياً باستخدام Whisper. يدعم 25 لغة برمجة عبر tree-sitter AST (Python, JS, TS, Go, Rust, Java, C, C++, Ruby, C#, Kotlin, Scala, PHP, Swift, Lua, Zig, PowerShell, Elixir, Objective-C, Julia, Verilog, SystemVerilog, Vue, Svelte, Dart).
+متعدد الوسائط بالكامل. أضف كوداً أو ملفات PDF أو markdown أو لقطات شاشة أو رسوماً بيانية أو صور سبورة أو صوراً بلغات أخرى أو ملفات فيديو وصوت — يستخرج graphx المفاهيم والعلاقات من كل ذلك ويربطها في رسم بياني واحد. يتم نسخ مقاطع الفيديو محلياً باستخدام Whisper. يدعم 25 لغة برمجة عبر tree-sitter AST (Python, JS, TS, Go, Rust, Java, C, C++, Ruby, C#, Kotlin, Scala, PHP, Swift, Lua, Zig, PowerShell, Elixir, Objective-C, Julia, Verilog, SystemVerilog, Vue, Svelte, Dart).
 
-> يحتفظ Andrej Karpathy بمجلد `/raw` يضع فيه الأوراق البحثية والتغريدات ولقطات الشاشة والملاحظات. graphify هو الإجابة على تلك المشكلة — **71.5 مرة** أقل في الرموز لكل استعلام مقارنةً بقراءة الملفات الخام، مستمر عبر الجلسات، صادق حول ما تم العثور عليه مقابل ما تم استنتاجه.
+> يحتفظ Andrej Karpathy بمجلد `/raw` يضع فيه الأوراق البحثية والتغريدات ولقطات الشاشة والملاحظات. graphx هو الإجابة على تلك المشكلة — **71.5 مرة** أقل في الرموز لكل استعلام مقارنةً بقراءة الملفات الخام، مستمر عبر الجلسات، صادق حول ما تم العثور عليه مقابل ما تم استنتاجه.
 
 </div>
 
 ```
-/graphify .                        # يعمل مع أي مجلد — الكود، الملاحظات، الأوراق البحثية، كل شيء
+/graphx .                        # يعمل مع أي مجلد — الكود، الملاحظات، الأوراق البحثية، كل شيء
 ```
 
 ```
-graphify-out/
+graphx-out/
 ├── graph.html       رسم بياني تفاعلي — افتحه في أي متصفح، انقر على العقد، ابحث، صفّ
 ├── GRAPH_REPORT.md  عقد الإله، الاتصالات المفاجئة، الأسئلة المقترحة
 ├── graph.json       رسم بياني دائم — استعلم بعد أسابيع دون إعادة القراءة
@@ -38,12 +38,12 @@ graphify-out/
 
 <div dir="rtl">
 
-أضف ملف `.graphifyignore` لاستبعاد المجلدات:
+أضف ملف `.graphxignore` لاستبعاد المجلدات:
 
 </div>
 
 ```
-# .graphifyignore
+# .graphxignore
 vendor/
 node_modules/
 dist/
@@ -56,7 +56,7 @@ dist/
 
 ## كيف يعمل
 
-يعمل graphify في ثلاث مراحل. أولاً، تمريرة AST حتمية تستخرج البنية من ملفات الكود (الفئات، الدوال، الاستيرادات، رسوم بيانية الاستدعاء، docstrings، تعليقات المبرر) — دون الحاجة إلى LLM. ثانياً، يتم نسخ ملفات الفيديو والصوت محلياً باستخدام faster-whisper. ثالثاً، تعمل عوامل Claude الفرعية بالتوازي على المستندات والأوراق البحثية والصور والنصوص المكتوبة لاستخراج المفاهيم والعلاقات ومبررات التصميم. يتم دمج النتائج في رسم بياني NetworkX وتجميعها باستخدام Leiden وتصديرها كـ HTML تفاعلي وJSON قابل للاستعلام وتقرير تدقيق بلغة طبيعية.
+يعمل graphx في ثلاث مراحل. أولاً، تمريرة AST حتمية تستخرج البنية من ملفات الكود (الفئات، الدوال، الاستيرادات، رسوم بيانية الاستدعاء، docstrings، تعليقات المبرر) — دون الحاجة إلى LLM. ثانياً، يتم نسخ ملفات الفيديو والصوت محلياً باستخدام faster-whisper. ثالثاً، تعمل عوامل Claude الفرعية بالتوازي على المستندات والأوراق البحثية والصور والنصوص المكتوبة لاستخراج المفاهيم والعلاقات ومبررات التصميم. يتم دمج النتائج في رسم بياني NetworkX وتجميعها باستخدام Leiden وتصديرها كـ HTML تفاعلي وJSON قابل للاستعلام وتقرير تدقيق بلغة طبيعية.
 
 **التجميع مبني على طوبولوجيا الرسم البياني — بدون embeddings.** يجد Leiden المجتمعات بواسطة كثافة الحواف. حواف التشابه الدلالي التي يستخرجها Claude (`semantically_similar_to`، مصنفة INFERRED) موجودة بالفعل في الرسم البياني. بنية الرسم البياني هي إشارة التشابه — لا حاجة لخطوة embedding منفصلة أو قاعدة بيانات متجهية.
 
@@ -70,70 +70,70 @@ dist/
 
 ```bash
 # موصى به — يعمل على Mac وLinux دون إعداد PATH
-uv tool install graphifyy && graphify install
+uv tool install graphx && graphx install
 # أو مع pipx
-pipx install graphifyy && graphify install
+pipx install graphx && graphx install
 # أو pip العادي
-pip install graphifyy && graphify install
+pip install graphx && graphx install
 ```
 
 <div dir="rtl">
 
-> **الحزمة الرسمية:** اسم حزمة PyPI هو `graphifyy` (تثبيت بـ `pip install graphifyy`). الحزم الأخرى المسماة `graphify*` على PyPI ليست تابعة لهذا المشروع. المستودع الرسمي الوحيد هو [safishamsi/graphify](https://github.com/safishamsi/graphify).
+> **الحزمة الرسمية:** اسم حزمة PyPI هو `graphx` (تثبيت بـ `pip install graphx`). الحزم الأخرى المسماة `graphx*` على PyPI ليست تابعة لهذا المشروع. المستودع الرسمي الوحيد هو [safishamsi/graphx](https://github.com/safishamsi/graphx).
 
 ### دعم المنصات
 
 | المنصة | أمر التثبيت |
 |--------|-------------|
-| Claude Code (Linux/Mac) | `graphify install` |
-| Claude Code (Windows) | `graphify install` (كشف تلقائي) أو `graphify install --platform windows` |
-| Codex | `graphify install --platform codex` |
-| OpenCode | `graphify install --platform opencode` |
-| GitHub Copilot CLI | `graphify install --platform copilot` |
-| VS Code Copilot Chat | `graphify vscode install` |
-| Aider | `graphify install --platform aider` |
-| OpenClaw | `graphify install --platform claw` |
-| Factory Droid | `graphify install --platform droid` |
-| Trae | `graphify install --platform trae` |
-| Gemini CLI | `graphify install --platform gemini` |
-| Hermes | `graphify install --platform hermes` |
-| Kiro IDE/CLI | `graphify kiro install` |
-| Cursor | `graphify cursor install` |
-| Google Antigravity | `graphify antigravity install` |
+| Claude Code (Linux/Mac) | `graphx install` |
+| Claude Code (Windows) | `graphx install` (كشف تلقائي) أو `graphx install --platform windows` |
+| Codex | `graphx install --platform codex` |
+| OpenCode | `graphx install --platform opencode` |
+| GitHub Copilot CLI | `graphx install --platform copilot` |
+| VS Code Copilot Chat | `graphx vscode install` |
+| Aider | `graphx install --platform aider` |
+| OpenClaw | `graphx install --platform claw` |
+| Factory Droid | `graphx install --platform droid` |
+| Trae | `graphx install --platform trae` |
+| Gemini CLI | `graphx install --platform gemini` |
+| Hermes | `graphx install --platform hermes` |
+| Kiro IDE/CLI | `graphx kiro install` |
+| Cursor | `graphx cursor install` |
+| Google Antigravity | `graphx antigravity install` |
 
 افتح مساعد الكود الذكاء الاصطناعي واكتب:
 
 </div>
 
 ```
-/graphify .
+/graphx .
 ```
 
 <div dir="rtl">
 
-ملاحظة: يستخدم Codex `$` بدلاً من `/` للمهارات، لذا اكتب `$graphify .`.
+ملاحظة: يستخدم Codex `$` بدلاً من `/` للمهارات، لذا اكتب `$graphx .`.
 
 ## الاستخدام
 
 </div>
 
 ```
-/graphify                          # المجلد الحالي
-/graphify ./raw                    # مجلد محدد
-/graphify ./raw --update           # إعادة استخراج الملفات المتغيرة فقط
-/graphify ./raw --directed         # رسم بياني موجّه
-/graphify ./raw --no-viz           # تقرير + JSON فقط، بدون HTML
-/graphify ./raw --obsidian         # إنشاء Obsidian vault
+/graphx                          # المجلد الحالي
+/graphx ./raw                    # مجلد محدد
+/graphx ./raw --update           # إعادة استخراج الملفات المتغيرة فقط
+/graphx ./raw --directed         # رسم بياني موجّه
+/graphx ./raw --no-viz           # تقرير + JSON فقط، بدون HTML
+/graphx ./raw --obsidian         # إنشاء Obsidian vault
 
-/graphify add https://arxiv.org/abs/1706.03762   # جلب ورقة بحثية
-/graphify add <video-url>                         # تحميل صوت، نسخ، إضافة
-/graphify query "ما الذي يربط Attention بالمحسِّن؟"
-/graphify path "DigestAuth" "Response"
-/graphify explain "SwinTransformer"
+/graphx add https://arxiv.org/abs/1706.03762   # جلب ورقة بحثية
+/graphx add <video-url>                         # تحميل صوت، نسخ، إضافة
+/graphx query "ما الذي يربط Attention بالمحسِّن؟"
+/graphx path "DigestAuth" "Response"
+/graphx explain "SwinTransformer"
 
-graphify hook install              # تثبيت Git hooks
-graphify update ./src              # إعادة استخراج ملفات الكود، بدون LLM
-graphify watch ./src               # تحديث تلقائي للرسم البياني
+graphx hook install              # تثبيت Git hooks
+graphx update ./src              # إعادة استخراج ملفات الكود، بدون LLM
+graphx watch ./src               # تحديث تلقائي للرسم البياني
 ```
 
 <div dir="rtl">
@@ -154,19 +154,19 @@ graphify watch ./src               # تحديث تلقائي للرسم البي
 
 **المزامنة التلقائية** (`--watch`) — يحدّث الرسم البياني تلقائياً عند تغيير الكود.
 
-**Git hooks** (`graphify hook install`) — يثبّت خطافات post-commit وpost-checkout.
+**Git hooks** (`graphx hook install`) — يثبّت خطافات post-commit وpost-checkout.
 
 ## الخصوصية
 
-يرسل graphify محتوى الملفات إلى API نموذج مساعد الذكاء الاصطناعي الخاص بك للاستخراج الدلالي من المستندات والأوراق البحثية والصور. تتم معالجة ملفات الكود محلياً عبر tree-sitter AST. يتم نسخ ملفات الفيديو والصوت محلياً باستخدام faster-whisper. لا قياس عن بُعد، لا تتبع للاستخدام.
+يرسل graphx محتوى الملفات إلى API نموذج مساعد الذكاء الاصطناعي الخاص بك للاستخراج الدلالي من المستندات والأوراق البحثية والصور. تتم معالجة ملفات الكود محلياً عبر tree-sitter AST. يتم نسخ ملفات الفيديو والصوت محلياً باستخدام faster-whisper. لا قياس عن بُعد، لا تتبع للاستخدام.
 
 ## المكدس التقني
 
 NetworkX + Leiden (graspologic) + tree-sitter + vis.js. استخراج دلالي عبر Claude أو GPT-4 أو نموذج منصتك. نسخ الفيديو عبر faster-whisper + yt-dlp (اختياري).
 
-## مبني على graphify — Penpax
+## مبني على graphx — Penpax
 
-[**Penpax**](https://safishamsi.github.io/penpax.ai) هو الطبقة المؤسسية فوق graphify. حيث يحوّل graphify مجلداً من الملفات إلى رسم بياني للمعرفة، يطبّق Penpax نفس الرسم البياني على حياتك المهنية بأكملها — باستمرار.
+[**Penpax**](https://safishamsi.github.io/penpax.ai) هو الطبقة المؤسسية فوق graphx. حيث يحوّل graphx مجلداً من الملفات إلى رسم بياني للمعرفة، يطبّق Penpax نفس الرسم البياني على حياتك المهنية بأكملها — باستمرار.
 
 **نسخة تجريبية مجانية قريباً.** [انضم إلى قائمة الانتظار →](https://safishamsi.github.io/penpax.ai)
 
@@ -174,4 +174,4 @@ NetworkX + Leiden (graspologic) + tree-sitter + vis.js. استخراج دلال�
 
 </div>
 
-[![Star History Chart](https://api.star-history.com/svg?repos=safishamsi/graphify&type=Date)](https://star-history.com/#safishamsi/graphify&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=safishamsi/graphx&type=Date)](https://star-history.com/#safishamsi/graphx&Date)

@@ -4,7 +4,7 @@ import pytest
 import networkx as nx
 from networkx.readwrite import json_graph
 
-from graphify.serve import (
+from graphx.serve import (
     _communities_from_graph,
     _score_nodes,
     _bfs,
@@ -192,7 +192,7 @@ def test_load_graph_roundtrip(tmp_path):
     assert G2.number_of_edges() == G.number_of_edges()
 
 def test_load_graph_missing_file(tmp_path):
-    graphify_dir = tmp_path / "graphify-out"
-    graphify_dir.mkdir()
+    graphx_dir = tmp_path / "graphx-out"
+    graphx_dir.mkdir()
     with pytest.raises(SystemExit):
-        _load_graph(str(graphify_dir / "nonexistent.json"))
+        _load_graph(str(graphx_dir / "nonexistent.json"))

@@ -2,9 +2,9 @@
 import json
 import networkx as nx
 from pathlib import Path
-from graphify.build import build_from_json
-from graphify.cluster import cluster
-from graphify.analyze import god_nodes, surprising_connections, _is_concept_node, graph_diff, _surprise_score, _file_category
+from graphx.build import build_from_json
+from graphx.cluster import cluster
+from graphx.analyze import god_nodes, surprising_connections, _is_concept_node, graph_diff, _surprise_score, _file_category
 
 FIXTURES = Path(__file__).parent / "fixtures"
 

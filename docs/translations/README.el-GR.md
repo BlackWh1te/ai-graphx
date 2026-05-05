@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="https://raw.githubusercontent.com/safishamsi/graphify/v4/docs/logo-text.svg" width="260" height="64" alt="Graphify"/>
+  <img src="https://raw.githubusercontent.com/safishamsi/graphx/v4/docs/logo-text.svg" width="260" height="64" alt="GraphX"/>
 </p>
 
 <p align="center">
@@ -7,24 +7,24 @@
 </p>
 
 <p align="center">
-  <a href="https://github.com/safishamsi/graphify/actions/workflows/ci.yml"><img src="https://github.com/safishamsi/graphify/actions/workflows/ci.yml/badge.svg?branch=v4" alt="CI"/></a>
-  <a href="https://pypi.org/project/graphifyy/"><img src="https://img.shields.io/pypi/v/graphifyy" alt="PyPI"/></a>
-  <a href="https://pepy.tech/project/graphifyy"><img src="https://static.pepy.tech/badge/graphifyy" alt="Downloads"/></a>
+  <a href="https://github.com/safishamsi/graphx/actions/workflows/ci.yml"><img src="https://github.com/safishamsi/graphx/actions/workflows/ci.yml/badge.svg?branch=v4" alt="CI"/></a>
+  <a href="https://pypi.org/project/graphx/"><img src="https://img.shields.io/pypi/v/graphx" alt="PyPI"/></a>
+  <a href="https://pepy.tech/project/graphx"><img src="https://static.pepy.tech/badge/graphx" alt="Downloads"/></a>
   <a href="https://github.com/sponsors/safishamsi"><img src="https://img.shields.io/badge/sponsor-safishamsi-ea4aaa?logo=github-sponsors" alt="Sponsor"/></a>
 </p>
 
-**Μια δεξιότητα για βοηθούς κώδικα AI.** Πληκτρολογήστε `/graphify` στο Claude Code, Codex, OpenCode, Cursor, Gemini CLI, GitHub Copilot CLI, VS Code Copilot Chat, Aider, OpenClaw, Factory Droid, Trae, Hermes, Kiro ή Google Antigravity — διαβάζει τα αρχεία σας, δημιουργεί ένα γράφο γνώσης και σας επιστρέφει δομή που δεν ξέρατε ότι υπήρχε. Κατανοήστε μια βάση κώδικα γρηγορότερα. Βρείτε το «γιατί» πίσω από αρχιτεκτονικές αποφάσεις.
+**Μια δεξιότητα για βοηθούς κώδικα AI.** Πληκτρολογήστε `/graphx` στο Claude Code, Codex, OpenCode, Cursor, Gemini CLI, GitHub Copilot CLI, VS Code Copilot Chat, Aider, OpenClaw, Factory Droid, Trae, Hermes, Kiro ή Google Antigravity — διαβάζει τα αρχεία σας, δημιουργεί ένα γράφο γνώσης και σας επιστρέφει δομή που δεν ξέρατε ότι υπήρχε. Κατανοήστε μια βάση κώδικα γρηγορότερα. Βρείτε το «γιατί» πίσω από αρχιτεκτονικές αποφάσεις.
 
-Πλήρως πολυτροπικό. Προσθέστε κώδικα, PDF, markdown, στιγμιότυπα οθόνης, διαγράμματα, φωτογραφίες πίνακα, εικόνες σε άλλες γλώσσες ή αρχεία βίντεο και ήχου — το graphify εξάγει έννοιες και σχέσεις από όλα και τα συνδέει σε ένα ενιαίο γράφο. Τα βίντεο μεταγράφονται τοπικά με το Whisper. Υποστηρίζει 25 γλώσσες προγραμματισμού μέσω tree-sitter AST.
+Πλήρως πολυτροπικό. Προσθέστε κώδικα, PDF, markdown, στιγμιότυπα οθόνης, διαγράμματα, φωτογραφίες πίνακα, εικόνες σε άλλες γλώσσες ή αρχεία βίντεο και ήχου — το graphx εξάγει έννοιες και σχέσεις από όλα και τα συνδέει σε ένα ενιαίο γράφο. Τα βίντεο μεταγράφονται τοπικά με το Whisper. Υποστηρίζει 25 γλώσσες προγραμματισμού μέσω tree-sitter AST.
 
-> Ο Andrej Karpathy διατηρεί ένα φάκελο `/raw` όπου αποθηκεύει εργασίες, tweets, στιγμιότυπα και σημειώσεις. Το graphify είναι η απάντηση σε αυτό το πρόβλημα — **71,5x** λιγότερα token ανά ερώτημα σε σύγκριση με την ανάγνωση αρχείων, επίμονο μεταξύ συνεδριών.
-
-```
-/graphify .
-```
+> Ο Andrej Karpathy διατηρεί ένα φάκελο `/raw` όπου αποθηκεύει εργασίες, tweets, στιγμιότυπα και σημειώσεις. Το graphx είναι η απάντηση σε αυτό το πρόβλημα — **71,5x** λιγότερα token ανά ερώτημα σε σύγκριση με την ανάγνωση αρχείων, επίμονο μεταξύ συνεδριών.
 
 ```
-graphify-out/
+/graphx .
+```
+
+```
+graphx-out/
 ├── graph.html       διαδραστικός γράφος — ανοίξτε σε οποιοδήποτε πρόγραμμα περιήγησης
 ├── GRAPH_REPORT.md  κόμβοι-θεοί, εκπληκτικές συνδέσεις, προτεινόμενες ερωτήσεις
 ├── graph.json       επίμονος γράφος — μπορεί να υποβληθεί σε ερωτήματα εβδομάδες αργότερα
@@ -33,7 +33,7 @@ graphify-out/
 
 ## Πώς λειτουργεί
 
-Το graphify λειτουργεί σε τρεις διελεύσεις. Πρώτα, μια ντετερμινιστική διέλευση AST εξάγει δομή από αρχεία κώδικα χωρίς LLM. Στη συνέχεια, τα αρχεία βίντεο και ήχου μεταγράφονται τοπικά με faster-whisper. Τέλος, οι υπο-πράκτορες Claude εκτελούνται παράλληλα σε έγγραφα, εργασίες, εικόνες και μεταγραφές. Τα αποτελέσματα συγχωνεύονται σε ένα γράφο NetworkX, ομαδοποιούνται με Leiden και εξάγονται ως διαδραστική HTML, JSON για ερωτήματα και αναφορά ελέγχου.
+Το graphx λειτουργεί σε τρεις διελεύσεις. Πρώτα, μια ντετερμινιστική διέλευση AST εξάγει δομή από αρχεία κώδικα χωρίς LLM. Στη συνέχεια, τα αρχεία βίντεο και ήχου μεταγράφονται τοπικά με faster-whisper. Τέλος, οι υπο-πράκτορες Claude εκτελούνται παράλληλα σε έγγραφα, εργασίες, εικόνες και μεταγραφές. Τα αποτελέσματα συγχωνεύονται σε ένα γράφο NetworkX, ομαδοποιούνται με Leiden και εξάγονται ως διαδραστική HTML, JSON για ερωτήματα και αναφορά ελέγχου.
 
 Κάθε σχέση επισημαίνεται ως `EXTRACTED`, `INFERRED` (με βαθμολογία εμπιστοσύνης) ή `AMBIGUOUS`.
 
@@ -42,24 +42,24 @@ graphify-out/
 **Απαιτήσεις:** Python 3.10+ και ένα από: [Claude Code](https://claude.ai/code), [Codex](https://openai.com/codex), [OpenCode](https://opencode.ai), [Cursor](https://cursor.com) και άλλα.
 
 ```bash
-uv tool install graphifyy && graphify install
+uv tool install graphx && graphx install
 # ή με pipx
-pipx install graphifyy && graphify install
+pipx install graphx && graphx install
 # ή pip
-pip install graphifyy && graphify install
+pip install graphx && graphx install
 ```
 
-> **Επίσημο πακέτο:** Το πακέτο PyPI ονομάζεται `graphifyy`. Το μοναδικό επίσημο αποθετήριο είναι το [safishamsi/graphify](https://github.com/safishamsi/graphify).
+> **Επίσημο πακέτο:** Το πακέτο PyPI ονομάζεται `graphx`. Το μοναδικό επίσημο αποθετήριο είναι το [safishamsi/graphx](https://github.com/safishamsi/graphx).
 
 ## Χρήση
 
 ```
-/graphify .
-/graphify ./raw --update
-/graphify query "τι συνδέει το Attention με τον optimizer;"
-/graphify path "DigestAuth" "Response"
-graphify hook install
-graphify update ./src
+/graphx .
+/graphx ./raw --update
+/graphx query "τι συνδέει το Attention με τον optimizer;"
+/graphx path "DigestAuth" "Response"
+graphx hook install
+graphx update ./src
 ```
 
 ## Τι λαμβάνετε
@@ -70,8 +70,8 @@ graphify update ./src
 
 Τα αρχεία κώδικα επεξεργάζονται τοπικά μέσω tree-sitter AST. Τα βίντεο μεταγράφονται τοπικά με faster-whisper. Χωρίς τηλεμετρία.
 
-## Δημιουργήθηκε στο graphify — Penpax
+## Δημιουργήθηκε στο graphx — Penpax
 
-Το [**Penpax**](https://safishamsi.github.io/penpax.ai) είναι το εταιρικό επίπεδο πάνω από το graphify. **Δωρεάν δοκιμή σύντομα.** [Εγγραφείτε στη λίστα αναμονής →](https://safishamsi.github.io/penpax.ai)
+Το [**Penpax**](https://safishamsi.github.io/penpax.ai) είναι το εταιρικό επίπεδο πάνω από το graphx. **Δωρεάν δοκιμή σύντομα.** [Εγγραφείτε στη λίστα αναμονής →](https://safishamsi.github.io/penpax.ai)
 
-[![Star History Chart](https://api.star-history.com/svg?repos=safishamsi/graphify&type=Date)](https://star-history.com/#safishamsi/graphify&Date)
+[![Star History Chart](https://api.star-history.com/svg?repos=safishamsi/graphx&type=Date)](https://star-history.com/#safishamsi/graphx&Date)
