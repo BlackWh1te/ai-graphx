@@ -8,7 +8,7 @@ Full release notes with details on each version: [GitHub Releases](https://githu
 - Updated all imports, tests, documentation, and asset references from `graphify` to `graphx`
 - Renamed environment variables: `GRAPHIFY_*` → `GRAPHX_*`
 - Regenerated knowledge graph outputs under `graphx-out/`
-- Updated `pyproject.toml` package name, entry point, and project URLs
+- Updated `pyproject.toml` package name (`ai-graphx`), entry point, and project URLs
 
 ## 0.6.9 (2026-05-03)
 
