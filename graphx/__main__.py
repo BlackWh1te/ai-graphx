@@ -1956,9 +1956,26 @@ def main() -> None:
                 print(f"Skipped graph.html: {viz_err}")
                 print(f"Done — {len(communities)} communities. GRAPH_REPORT.md and graph.json updated.")
         
-        # Generate index.html dashboard
+        # Generate activity.json for live dashboard polling
         try:
-            to_index_html(G, communities, str(out), community_labels=labels or None, cohesion=cohesion, god_nodes_data=gods)
+            from graphx.activity import save_activity
+            activity_path = save_activity(str(watch_path), str(out), limit=50)
+            print(f"activity.json written - live commit tracking")
+        except Exception as act_err:
+            print(f"Skipped activity.json: {act_err}")
+
+        # Generate index.html dashboard with status data
+        try:
+            from graphx.status import generate_status_report
+            status_report = generate_status_report(watch_path)
+            to_index_html(
+                G, communities, str(out),
+                community_labels=labels or None,
+                cohesion=cohesion,
+                god_nodes_data=gods,
+                status_report=status_report,
+                project_name=watch_path.name,
+            )
             print(f"index.html written - dashboard for all outputs")
         except Exception as idx_err:
             print(f"Skipped index.html: {idx_err}")

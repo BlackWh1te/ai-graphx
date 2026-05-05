@@ -209,13 +209,26 @@ def get_merge_commits(repo_path, limit=20):
     return merge_commits
 
 def load_commits(repo_path):
-    """Load commits from commits.json."""
+    """Load commits from commits.json, falling back to activity.json."""
     commits_file = Path(repo_path) / 'graphx-out' / 'commits.json'
     if commits_file.exists():
         try:
-            return json.loads(commits_file.read_text())['commits']
+            data = json.loads(commits_file.read_text())
+            commits = data.get('commits', [])
+            if commits:
+                return commits
         except:
-            return []
+            pass
+
+    # Fallback: activity.json has full git history from save_activity()
+    activity_file = Path(repo_path) / 'graphx-out' / 'activity.json'
+    if activity_file.exists():
+        try:
+            data = json.loads(activity_file.read_text())
+            return data.get('commits', [])
+        except:
+            pass
+
     return []
 
 def group_commits_by_source(commits, days=7):
@@ -370,7 +383,7 @@ def generate_status_report(repo_path):
 
     return {
         'repo_path': str(repo_path),
-        'is_git_repo': Path(repo_path / '.git').exists(),
+        'is_git_repo': (Path(repo_path) / '.git').exists(),
         'commits': commits,
         'grouped_commits': grouped_commits,
         'external_files': external_files,

@@ -83,11 +83,27 @@ def get_recent_activity(repo_path: str, limit: int = 50) -> dict:
     try:
         for commit in repo.iter_commits("HEAD", max_count=limit):
             stats = commit.stats
+            # Build a map of file -> change_type from diff for accurate action labels
+            action_map: dict[str, str] = {}
+            try:
+                diff_list = commit.diff(commit.parents[0]) if commit.parents else commit.diff(git.NULL_TREE)
+                for d in diff_list:
+                    path = d.a_path or d.b_path
+                    if not path:
+                        continue
+                    # git diff change_type: 'A'=added, 'D'=deleted, 'M'=modified, 'R'=renamed, 'T'=type change
+                    ctype = d.change_type or "M"
+                    action_map[path] = {"A": "added", "D": "deleted", "R": "renamed", "T": "modified", "M": "modified"}.get(ctype, "modified")
+            except Exception:
+                pass  # fall back to stats-only (no action/size)
+
             files_changed = []
             for file_path, file_stats in stats.files.items():
                 files_changed.append(
                     {
                         "file": file_path,
+                        "action": action_map.get(file_path, "modified"),
+                        "size": file_stats.get("lines", 0) * 50,  # rough bytes estimate from line count
                         "insertions": file_stats.get("insertions", 0),
                         "deletions": file_stats.get("deletions", 0),
                         "lines": file_stats.get("lines", 0),
