@@ -159,9 +159,15 @@ def _get_staged_changes(repo_path: str) -> list:
                 continue
             ctype = change.change_type or "M"
             action = {"A": "added", "D": "deleted", "R": "renamed", "T": "modified", "M": "modified"}.get(ctype, "modified")
+            
+            # Get file size
+            full_path = Path(repo_path) / path
+            file_size = full_path.stat().st_size if full_path.exists() else 0
+
             staged.append({
                 "file": path,
                 "action": action,
+                "size": file_size,
                 "date": datetime.now(timezone.utc).isoformat(),
                 "source": "user"
             })

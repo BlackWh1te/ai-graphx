@@ -150,7 +150,7 @@ def get_staged_changes(repo_path):
     
     try:
         # Get staged changes
-        diff = repo.index.diff(None)
+        diff = repo.index.diff("HEAD")
         
         for change in diff:
             file_path = change.a_path if change.a_path else change.b_path

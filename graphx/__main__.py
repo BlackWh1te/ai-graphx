@@ -13,7 +13,7 @@ try:
     from graphx import __version__ as _graphx_version
     __version__ = _graphx_version
 except:
-    __version__ = "0.1.0"
+    __version__ = "0.2.2"
 
 # Output directory — override with GRAPHX_OUT env var for worktrees or shared-output setups.
 # Accepts a relative name ("graphx-out-feature") or an absolute path ("/shared/graphx-out").
@@ -1503,6 +1503,7 @@ def main() -> None:
         print("    --output DIR            output directory (default: same as graph.json)")
         print("    --name NAME             project name for the dashboard title")
         print("  status [path]            show project status dashboard")
+        print("  graphx-status [path]     alias for status")
         print("    Shows: Graph health (nodes, edges, communities, last build),")
         print("           AI vs User vs External changes, external files, branch status,")
         print("           merge commits, large files, staged changes, hot files, velocity")
@@ -2280,6 +2281,16 @@ def main() -> None:
             communities.setdefault(cid, []).append(nid)
         
         to_index_html(G, communities, str(output_dir), community_labels=labels, cohesion=cohesion, god_nodes_data=gods, project_name=project_name)
+        
+        # Also update activity.json for the live dashboard
+        try:
+            from graphx.activity import save_activity
+            repo_path = output_dir.parent
+            save_activity(str(repo_path), str(output_dir), limit=50)
+            print(f"activity.json updated")
+        except Exception:
+            pass
+
         print(f"index.html written to {output_dir / 'index.html'}")
         sys.exit(0)
 
@@ -2294,11 +2305,20 @@ def main() -> None:
             print("[graphx] No commit to capture or git repository not found")
         sys.exit(0)
 
-    elif cmd == "status":
+    elif cmd in ["status", "graphx-status"]:
         from graphx.status import generate_status_report, print_status_dashboard
         repo_path = Path(sys.argv[2]) if len(sys.argv) > 2 else Path(".")
         report = generate_status_report(repo_path)
         print_status_dashboard(report)
+        
+        # Also update activity.json for the live dashboard
+        try:
+            from graphx.activity import save_activity
+            out = repo_path / "graphx-out"
+            save_activity(str(repo_path), str(out), limit=50)
+        except Exception:
+            pass
+            
         sys.exit(0)
 
     elif cmd == "merge-graphs":

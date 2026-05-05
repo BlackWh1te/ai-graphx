@@ -653,19 +653,19 @@ else:
 "
 ```
 
-### Step 6b - Wiki (only if --wiki flag)
+### Step 6c - Dashboard
 
-**Only run this step if `--wiki` was explicitly given in the original command.**
-
-Run this before Step 9 (cleanup) so `.graphx_labels.json` is still available.
+Generate `activity.json` and `index.html` for the project health dashboard.
 
 ```bash
 $(cat graphx-out/.graphx_python) -c "
 import json
-from graphx.build import build_from_json
-from graphx.wiki import to_wiki
-from graphx.analyze import god_nodes
 from pathlib import Path
+from graphx.build import build_from_json
+from graphx.activity import save_activity
+from graphx.status import generate_status_report
+from graphx.export import to_index_html
+from graphx.analyze import god_nodes
 
 extraction = json.loads(Path('graphx-out/.graphx_extract.json').read_text(encoding='utf-8'))
 analysis   = json.loads(Path('graphx-out/.graphx_analysis.json').read_text(encoding='utf-8'))
@@ -673,13 +673,26 @@ labels_raw = json.loads(Path('graphx-out/.graphx_labels.json').read_text(encodin
 
 G = build_from_json(extraction)
 communities = {int(k): v for k, v in analysis['communities'].items()}
-cohesion = {int(k): v for k, v in analysis['cohesion'].items()}
+cohesion = {int(k): v for k, v in analysis.get('cohesion', {}).items()}
 labels = {int(k): v for k, v in labels_raw.items()}
-gods = god_nodes(G)
+gods = analysis.get('gods') or god_nodes(G)
 
-n = to_wiki(G, communities, 'graphx-out/wiki', community_labels=labels or None, cohesion=cohesion, god_nodes_data=gods)
-print(f'Wiki: {n} articles written to graphx-out/wiki/')
-print('  graphx-out/wiki/index.md  ->  agent entry point')
+# 1. Generate activity.json
+out = Path('graphx-out')
+save_activity('.', str(out), limit=50)
+print('activity.json written - live commit tracking')
+
+# 2. Generate index.html dashboard
+status_report = generate_status_report(Path('.'))
+to_index_html(
+    G, communities, str(out),
+    community_labels=labels or None,
+    cohesion=cohesion,
+    god_nodes_data=gods,
+    status_report=status_report,
+    project_name=Path('.').resolve().name,
+)
+print('index.html written - health dashboard')
 "
 ```
 
