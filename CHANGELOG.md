@@ -2,6 +2,14 @@
 
 Full release notes with details on each version: [GitHub Releases](https://github.com/safishamsi/graphx/releases)
 
+## 0.1.2 (2026-05-05)
+
+- **BREAKING**: Renamed package from `graphify` to `graphx` across the entire codebase
+- Updated all imports, tests, documentation, and asset references from `graphify` to `graphx`
+- Renamed environment variables: `GRAPHIFY_*` → `GRAPHX_*`
+- Regenerated knowledge graph outputs under `graphx-out/`
+- Updated `pyproject.toml` package name, entry point, and project URLs
+
 ## 0.6.9 (2026-05-03)
 
 - Fix: `source_file` path separators normalized to forward slashes at graph ingestion — same physical file emitted with backslashes (Windows AST extractor) and forward slashes (semantic subagents) now merges into one node instead of splitting into two disconnected components (#683)
