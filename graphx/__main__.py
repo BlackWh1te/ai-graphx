@@ -879,10 +879,23 @@ export const GraphXPlugin = async ({ directory }) => {
 
 _OPENCODE_PLUGIN_PATH = Path(".opencode") / "plugins" / "graphx.js"
 _OPENCODE_CONFIG_PATH = Path(".opencode") / "opencode.json"
+_OPENCODE_COMMAND_PATH = Path.home() / ".config" / "opencode" / "commands" / "graphx.md"
+
+_OPENCODE_COMMAND_MD = """\
+---
+description: Build or query the Ai-GraphX knowledge graph
+---
+
+Load and use the graphx skill. Execute `graphx $ARGUMENTS` in the terminal.
+If no arguments are given, run `graphx watch .` to build or update the knowledge graph
+for the current project. Then read `graphx-out/GRAPH_REPORT.md` for architecture context
+and report key findings. Use `graphx-out/index.html` for the live activity dashboard
+with real-time commit tracking.
+"""
 
 
 def _install_opencode_plugin(project_dir: Path) -> None:
-    """Write graphx.js plugin and register it in opencode.json."""
+    """Write graphx.js plugin, register it in opencode.json, and add /graphx custom command."""
     plugin_file = project_dir / _OPENCODE_PLUGIN_PATH
     plugin_file.parent.mkdir(parents=True, exist_ok=True)
     plugin_file.write_text(_OPENCODE_PLUGIN_JS, encoding="utf-8")
@@ -906,9 +919,15 @@ def _install_opencode_plugin(project_dir: Path) -> None:
     else:
         print(f"  {_OPENCODE_CONFIG_PATH}  ->  plugin already registered (no change)")
 
+    # Register global /graphx custom command
+    _OPENCODE_COMMAND_PATH.parent.mkdir(parents=True, exist_ok=True)
+    _OPENCODE_COMMAND_PATH.write_text(_OPENCODE_COMMAND_MD, encoding="utf-8")
+    cmd_path = Path("~/.config/opencode/commands/graphx.md").expanduser()
+    print(f"  {cmd_path}  ->  /graphx custom command registered")
+
 
 def _uninstall_opencode_plugin(project_dir: Path) -> None:
-    """Remove graphx.js plugin and deregister from opencode.json."""
+    """Remove graphx.js plugin, deregister from opencode.json, and remove /graphx command."""
     plugin_file = project_dir / _OPENCODE_PLUGIN_PATH
     if plugin_file.exists():
         plugin_file.unlink()
@@ -929,6 +948,12 @@ def _uninstall_opencode_plugin(project_dir: Path) -> None:
             config.pop("plugin")
         config_file.write_text(json.dumps(config, indent=2), encoding="utf-8")
         print(f"  {_OPENCODE_CONFIG_PATH}  ->  plugin deregistered")
+
+    # Remove global /graphx custom command
+    if _OPENCODE_COMMAND_PATH.exists():
+        _OPENCODE_COMMAND_PATH.unlink()
+        cmd_path = Path("~/.config/opencode/commands/graphx.md").expanduser()
+        print(f"  {cmd_path}  ->  /graphx custom command removed")
 
 
 _CODEX_HOOK = {

@@ -12,7 +12,8 @@ Turn any folder of files into a navigable knowledge graph with community detecti
 ## Usage
 
 ```
-/graphx                                             # full pipeline on current directory → Obsidian vault
+/graphx                                             # full pipeline on current directory → builds graph + live dashboard
+/graphx status                                      # show project health, activity timeline, hot files
 /graphx <path>                                      # full pipeline on specific path
 /graphx <path> --mode deep                          # thorough extraction, richer INFERRED edges
 /graphx <path> --update                             # incremental - re-extract only new/changed files
