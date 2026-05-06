@@ -13,7 +13,7 @@ try:
     from graphx import __version__ as _graphx_version
     __version__ = _graphx_version
 except:
-    __version__ = "0.2.2"
+    __version__ = "0.2.6"
 
 # Output directory — override with GRAPHX_OUT env var for worktrees or shared-output setups.
 # Accepts a relative name ("graphx-out-feature") or an absolute path ("/shared/graphx-out").
@@ -1381,10 +1381,326 @@ def _check_any_skills_installed() -> bool:
     return False
 
 
+_KNOWN_COMMANDS = {
+    "--version",
+    "install",
+    "uninstall",
+    "path",
+    "explain",
+    "clone",
+    "merge-graphs",
+    "add",
+    "watch",
+    "update",
+    "cluster-only",
+    "query",
+    "save-result",
+    "check-update",
+    "log",
+    "tree",
+    "index",
+    "status",
+    "graphx-status",
+    "capture-commit",
+    "benchmark",
+    "hook",
+    "hook-check",
+    "gemini",
+    "cursor",
+    "claude",
+    "codex",
+    "opencode",
+    "aider",
+    "copilot",
+    "vscode",
+    "claw",
+    "droid",
+    "trae",
+    "trae-cn",
+    "antigravity",
+    "hermes",
+    "kiro",
+    "pi",
+    "qwen",
+    "ci",
+    "serve",
+}
+
+
+def _arg_value(args: list[str], flag: str) -> str | None:
+    for i, arg in enumerate(args):
+        if arg == flag and i + 1 < len(args):
+            return args[i + 1]
+        if arg.startswith(flag + "="):
+            return arg.split("=", 1)[1]
+    return None
+
+
+def _output_dir_for(root: Path) -> Path:
+    out = Path(_GRAPHX_OUT)
+    return out if out.is_absolute() else root / out
+
+
+def _local_community_labels(G, communities: dict[int, list[str]]) -> dict[int, str]:
+    """Create deterministic community labels without another LLM call."""
+    from graphx.analyze import _is_file_node
+
+    labels: dict[int, str] = {}
+    degree = dict(G.degree())
+    for cid, nodes in communities.items():
+        names: list[str] = []
+        ranked = sorted(nodes, key=lambda n: degree.get(n, 0), reverse=True)
+        for nid in ranked:
+            if _is_file_node(G, nid):
+                continue
+            label = str(G.nodes[nid].get("label", nid)).strip()
+            label = label.strip(".")
+            if label.endswith("()"):
+                label = label[:-2]
+            if not label or len(label) > 48:
+                continue
+            if label not in names:
+                names.append(label)
+            if len(names) == 2:
+                break
+        labels[cid] = " / ".join(names) if names else f"Community {cid}"
+    return labels
+
+
+def _run_ollama_build(args: list[str]) -> int:
+    """Build graphx-out locally using Ollama semantic extraction.
+
+    Public syntax:
+        graphx ./my-project --ollama --model "llama3.2:3b"
+    """
+    if not args or args[0].startswith("-"):
+        print('Usage: graphx <path> --ollama --model "llama3.2:3b"', file=sys.stderr)
+        return 1
+
+    model = _arg_value(args, "--model")
+    if not model:
+        print('error: --model is required for --ollama, e.g. --model "llama3.2:3b"', file=sys.stderr)
+        return 1
+
+    root = Path(args[0]).resolve()
+    if not root.exists():
+        print(f"error: path not found: {root}", file=sys.stderr)
+        return 1
+    if not root.is_dir():
+        print(f"error: path must be a directory: {root}", file=sys.stderr)
+        return 1
+
+    no_viz = "--no-viz" in args
+    wiki = "--wiki" in args
+    directed = "--directed" in args
+    token_budget = int(_arg_value(args, "--token-budget") or os.environ.get("GRAPHX_OLLAMA_TOKEN_BUDGET", "8000"))
+    max_concurrency = int(_arg_value(args, "--concurrency") or os.environ.get("GRAPHX_OLLAMA_CONCURRENCY", "1"))
+    min_community_size = int(_arg_value(args, "--min-community-size") or "3")
+
+    out = _output_dir_for(root)
+    out.mkdir(parents=True, exist_ok=True)
+    (out / ".graphx_root").write_text(str(root), encoding="utf-8")
+    (out / ".graphx_version").write_text(__version__, encoding="utf-8")
+
+    from graphx.detect import detect, save_manifest
+
+    print(f"Detecting files in {root}...")
+    detection = detect(root)
+    (out / ".graphx_detect.json").write_text(json.dumps(detection, indent=2), encoding="utf-8")
+
+    print(f"Corpus: {detection['total_files']} files · ~{detection['total_words']:,} words")
+    for kind in ("code", "document", "paper", "image", "video"):
+        count = len(detection.get("files", {}).get(kind, []))
+        if count:
+            print(f"  {kind}: {count} files")
+    if detection.get("skipped_sensitive"):
+        print(f"Skipped {len(detection['skipped_sensitive'])} sensitive file(s).")
+    if detection.get("warning"):
+        print(f"Warning: {detection['warning']}")
+    if detection["total_files"] == 0:
+        print(f"No supported files found in {root}.", file=sys.stderr)
+        return 1
+
+    from graphx.extract import extract
+
+    code_files = [Path(f) for f in detection.get("files", {}).get("code", [])]
+    if code_files:
+        print(f"AST extraction: {len(code_files)} code file(s)")
+        ast = extract(code_files, cache_root=root)
+    else:
+        print("AST extraction: no code files")
+        ast = {"nodes": [], "edges": [], "input_tokens": 0, "output_tokens": 0}
+    (out / ".graphx_ast.json").write_text(json.dumps(ast, indent=2), encoding="utf-8")
+
+    semantic_paths = [
+        Path(f)
+        for kind in ("code", "document", "paper")
+        for f in detection.get("files", {}).get(kind, [])
+    ]
+    skipped_media = len(detection.get("files", {}).get("image", [])) + len(detection.get("files", {}).get("video", []))
+    if skipped_media:
+        print("Ollama local mode skips image/video semantic extraction. Use /graphx in an assistant for vision or transcription.")
+
+    sem = {"nodes": [], "edges": [], "hyperedges": [], "input_tokens": 0, "output_tokens": 0}
+    if semantic_paths:
+        from graphx.cache import check_semantic_cache, save_semantic_cache
+        from graphx.llm import extract_corpus_parallel
+
+        model_cache_key = re.sub(r"[^a-zA-Z0-9_.-]+", "_", model).strip("._") or "model"
+        cache_kind = f"semantic_ollama_{model_cache_key[:80]}"
+        cached_nodes, cached_edges, cached_hyperedges, uncached = check_semantic_cache(
+            [str(p) for p in semantic_paths],
+            root=root,
+            kind=cache_kind,
+        )
+        if cached_nodes or cached_edges or cached_hyperedges:
+            print(f"Semantic cache: {len(semantic_paths) - len(uncached)} file(s) hit")
+            sem["nodes"].extend(cached_nodes)
+            sem["edges"].extend(cached_edges)
+            sem["hyperedges"].extend(cached_hyperedges)
+        if uncached:
+            print(
+                f"Ollama semantic extraction: {len(uncached)} text file(s), "
+                f"model={model}, token_budget={token_budget}, concurrency={max_concurrency}"
+            )
+            new_sem = extract_corpus_parallel(
+                [Path(p) for p in uncached],
+                backend="ollama",
+                model=model,
+                root=root,
+                token_budget=token_budget,
+                max_concurrency=max_concurrency,
+            )
+            saved = save_semantic_cache(
+                new_sem.get("nodes", []),
+                new_sem.get("edges", []),
+                new_sem.get("hyperedges", []),
+                root=root,
+                kind=cache_kind,
+            )
+            if saved:
+                print(f"Semantic cache: saved {saved} file(s)")
+            sem["nodes"].extend(new_sem.get("nodes", []))
+            sem["edges"].extend(new_sem.get("edges", []))
+            sem["hyperedges"].extend(new_sem.get("hyperedges", []))
+            sem["input_tokens"] += new_sem.get("input_tokens", 0)
+            sem["output_tokens"] += new_sem.get("output_tokens", 0)
+    else:
+        print("Ollama semantic extraction: no text-readable files")
+    (out / ".graphx_semantic.json").write_text(json.dumps(sem, indent=2), encoding="utf-8")
+
+    extraction = {
+        "nodes": ast.get("nodes", []) + sem.get("nodes", []),
+        "edges": ast.get("edges", []) + sem.get("edges", []),
+        "hyperedges": sem.get("hyperedges", []),
+        "input_tokens": ast.get("input_tokens", 0) + sem.get("input_tokens", 0),
+        "output_tokens": ast.get("output_tokens", 0) + sem.get("output_tokens", 0),
+    }
+    (out / ".graphx_extract.json").write_text(json.dumps(extraction, indent=2), encoding="utf-8")
+
+    from graphx.analyze import god_nodes, surprising_connections, suggest_questions
+    from graphx.build import build_from_json
+    from graphx.cluster import cluster, score_all
+    from graphx.export import to_html, to_index_html, to_json
+    from graphx.report import generate
+
+    G = build_from_json(extraction, directed=directed)
+    if G.number_of_nodes() == 0:
+        print("ERROR: Graph is empty - extraction produced no nodes.", file=sys.stderr)
+        return 1
+
+    communities = cluster(G)
+    cohesion = score_all(G, communities)
+    gods = god_nodes(G)
+    surprises = surprising_connections(G, communities)
+    labels = _local_community_labels(G, communities)
+    questions = suggest_questions(G, communities, labels)
+    tokens = {"input": extraction.get("input_tokens", 0), "output": extraction.get("output_tokens", 0)}
+    report = generate(
+        G,
+        communities,
+        cohesion,
+        labels,
+        gods,
+        surprises,
+        detection,
+        tokens,
+        str(root),
+        suggested_questions=questions,
+        min_community_size=min_community_size,
+    )
+    (out / "GRAPH_REPORT.md").write_text(report, encoding="utf-8")
+    (out / ".graphx_analysis.json").write_text(
+        json.dumps(
+            {
+                "communities": {str(k): v for k, v in communities.items()},
+                "cohesion": {str(k): v for k, v in cohesion.items()},
+                "gods": gods,
+                "surprises": surprises,
+                "questions": questions,
+            },
+            indent=2,
+        ),
+        encoding="utf-8",
+    )
+    (out / ".graphx_labels.json").write_text(json.dumps({str(k): v for k, v in labels.items()}, indent=2), encoding="utf-8")
+    if not to_json(G, communities, str(out / "graph.json"), force=True):
+        return 1
+
+    save_manifest(detection["files"], manifest_path=str(out / "manifest.json"))
+
+    if no_viz:
+        html_target = out / "graph.html"
+        if html_target.exists():
+            html_target.unlink()
+    else:
+        try:
+            to_html(G, communities, str(out / "graph.html"), community_labels=labels)
+            print("graph.html written")
+        except ValueError as viz_err:
+            print(f"Skipped graph.html: {viz_err}")
+
+    if wiki:
+        from graphx.wiki import to_wiki
+
+        article_count = to_wiki(G, communities, out / "wiki", community_labels=labels, cohesion=cohesion, god_nodes_data=gods)
+        print(f"wiki written: {article_count} article(s)")
+
+    try:
+        from graphx.activity import save_activity
+
+        save_activity(str(root), str(out), limit=50)
+    except Exception as act_err:
+        print(f"Skipped activity.json: {act_err}")
+
+    try:
+        from graphx.status import generate_status_report
+
+        status_report = generate_status_report(root)
+        to_index_html(
+            G,
+            communities,
+            str(out),
+            community_labels=labels,
+            cohesion=cohesion,
+            god_nodes_data=gods,
+            status_report=status_report,
+            project_name=root.name,
+        )
+        print("index.html written")
+    except Exception as idx_err:
+        print(f"Skipped index.html: {idx_err}")
+
+    print(f"Done: {G.number_of_nodes()} nodes, {G.number_of_edges()} edges, {len(communities)} communities")
+    print(f"Output: {out}")
+    return 0
+
+
 def main() -> None:
     # Parse global flags before command
     args = sys.argv[1:]
     skip_auto_install = "--no-auto-install" in args
+    is_ollama_build = "--ollama" in args and args and args[0] not in _KNOWN_COMMANDS
     # Remove the flag from args so command parsing works
     if skip_auto_install:
         sys.argv = [sys.argv[0]] + [arg for arg in args if arg != "--no-auto-install"]
@@ -1393,6 +1709,7 @@ def main() -> None:
     # Skip if: install/uninstall commands, --no-auto-install flag, or GRAPHX_NO_AUTO_INSTALL env var
     should_auto_install = (
         not skip_auto_install
+        and not is_ollama_build
         and not os.environ.get("GRAPHX_NO_AUTO_INSTALL")
         and not any(arg in ("install", "uninstall") for arg in sys.argv)
     )
@@ -1451,6 +1768,8 @@ def main() -> None:
         print()
         print("Commands:")
         print("  --version               show installed graphx version")
+        print("  <path> --ollama --model M")
+        print("                          build graphx-out locally with Ollama (no assistant/API key)")
         print("  install [--platform P]  auto-detect AI assistants and install to all (or one)")
         print("                          omit --platform to scan home dir and install everywhere found")
         print("                          --platform P installs to a specific assistant only")
@@ -1550,6 +1869,8 @@ def main() -> None:
         return
 
     cmd = sys.argv[1]
+    if "--ollama" in sys.argv[2:] and cmd not in _KNOWN_COMMANDS:
+        sys.exit(_run_ollama_build(sys.argv[1:]))
     if cmd == "--version":
         print(f"graphx {__version__}")
         sys.exit(0)
@@ -2294,16 +2615,75 @@ def main() -> None:
         print(f"index.html written to {output_dir / 'index.html'}")
         sys.exit(0)
 
-    elif cmd == "capture-commit":
-        from graphx.hooks import capture_commit
-        repo_path = Path('.')
-        commit_data = capture_commit(repo_path)
-        if commit_data:
-            print(f"[graphx] Captured commit: {commit_data['hash']} by {commit_data['author']} ({commit_data['source']})")
-            print(f"[graphx] Files changed: {len(commit_data['files_changed'])}")
-        else:
-            print("[graphx] No commit to capture or git repository not found")
+    elif cmd == "ci":
+        if len(sys.argv) < 3:
+            print("Usage: graphx ci <baseline_graph.json> [current_graph.json]", file=sys.stderr)
+            sys.exit(1)
+        from graphx.ci import generate_ci_report
+        from networkx.readwrite import json_graph as _jg
+        
+        base_path = Path(sys.argv[2])
+        curr_path = Path(sys.argv[3]) if len(sys.argv) > 3 else Path("graphx-out/graph.json")
+        
+        def load_g(p):
+            data = json.loads(p.read_text(encoding="utf-8"))
+            try: return _jg.node_link_graph(data, edges="links")
+            except TypeError: return _jg.node_link_graph(data)
+            
+        G_old = load_g(base_path)
+        G_new = load_g(curr_path)
+        print(generate_ci_report(G_old, G_new))
         sys.exit(0)
+
+    elif cmd == "serve":
+        # Start a simple HTTP server for the index.html dashboard
+        import http.server
+        import socketserver
+        import webbrowser
+        import threading
+        import time
+
+        graph_path = Path(_GRAPHX_OUT) / "graph.json"
+        dashboard_dir = graph_path.parent
+        port = 8000
+        
+        args = sys.argv[2:]
+        i_arg = 0
+        while i_arg < len(args):
+            a = args[i_arg]
+            if a == "--port" and i_arg + 1 < len(args):
+                port = int(args[i_arg + 1]); i_arg += 2
+            elif a in ("-h", "--help"):
+                print("Usage: graphx serve [--port N]")
+                print("  --port N             port to run on (default 8000)")
+                return
+            else:
+                i_arg += 1
+
+        if not (dashboard_dir / "index.html").exists():
+            print(f"error: index.html not found in {dashboard_dir}. Run 'graphx index' first.", file=sys.stderr)
+            sys.exit(1)
+
+        class MyHandler(http.server.SimpleHTTPRequestHandler):
+            def __init__(self, *args, **kwargs):
+                super().__init__(*args, directory=str(dashboard_dir), **kwargs)
+
+        with socketserver.TCPServer(("", port), MyHandler) as httpd:
+            print(f"Serving dashboard at http://localhost:{port}")
+            print(f"Press Ctrl+C to stop")
+            
+            # Open browser in a separate thread
+            def open_browser():
+                time.sleep(1)
+                webbrowser.open(f"http://localhost:{port}")
+            
+            threading.Thread(target=open_browser, daemon=True).start()
+            
+            try:
+                httpd.serve_forever()
+            except KeyboardInterrupt:
+                print("\nServer stopped")
+                sys.exit(0)
 
     elif cmd in ["status", "graphx-status"]:
         from graphx.status import generate_status_report, print_status_dashboard

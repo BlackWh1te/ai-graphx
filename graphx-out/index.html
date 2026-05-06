@@ -14,7 +14,8 @@
     line-height: 1.6;
   }
   .container { max-width: 1400px; margin: 0 auto; padding: 20px; }
-  
+
+  /* Header */
   .header {
     display: flex;
     justify-content: space-between;
@@ -33,7 +34,30 @@
     background-clip: text;
   }
   .header-stats { font-size: 0.9rem; color: #888; }
-  
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(46,204,113,0.1);
+    color: #2ecc71;
+    padding: 4px 12px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+  }
+  .live-dot {
+    width: 8px; height: 8px;
+    background: #2ecc71;
+    border-radius: 50%;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(1.2); }
+    100% { opacity: 1; transform: scale(1); }
+  }
+
+  /* Section */
   .section { margin-bottom: 40px; }
   .section h2 {
     font-size: 1.3rem;
@@ -47,30 +71,31 @@
   }
   .section h2::before {
     content: '';
-    width: 4px;
-    height: 24px;
+    width: 4px; height: 24px;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     border-radius: 2px;
   }
-  
-  .build-info-grid {
+
+  /* Build info */
+  .info-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;
     margin-bottom: 20px;
   }
-  .build-card {
+  .info-card {
     background: rgba(255,255,255,0.03);
     border: 1px solid #1a1a2e;
     border-radius: 10px;
     padding: 16px;
     text-align: center;
   }
-  .build-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .build-value { font-size: 1.4rem; font-weight: 700; color: #fff; }
+  .info-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .info-value { font-size: 1.4rem; font-weight: 700; color: #fff; }
   .status-ok { color: #2ecc71; }
   .status-warn { color: #f39c12; }
-  
+
+  /* Nav cards */
   .nav-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -91,60 +116,8 @@
   .nav-card.disabled { opacity: 0.4; pointer-events: none; }
   .nav-card h3 { font-size: 1rem; margin-bottom: 6px; color: #fff; }
   .nav-card p { font-size: 0.8rem; color: #888; }
-  
-  .git-status-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 12px;
-    margin-bottom: 20px;
-  }
-  .git-card {
-    background: rgba(255,255,255,0.03);
-    border: 1px solid #1a1a2e;
-    border-radius: 10px;
-    padding: 16px;
-    text-align: center;
-  }
-  .git-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
-  .git-value { font-size: 1.3rem; font-weight: 700; color: #fff; }
-  .git-value.branch { color: #667eea; }
-  .staged-yes { color: #f39c12; }
-  .staged-no { color: #2ecc71; }
-  
-  .staged-list, .untracked-list {
-    background: rgba(255,255,255,0.02);
-    border: 1px solid #1a1a2e;
-    border-radius: 10px;
-    padding: 16px;
-    margin-top: 12px;
-  }
-  .staged-list h4, .untracked-list h4 { font-size: 0.9rem; color: #aaa; margin-bottom: 12px; }
-  .staged-item, .untracked-item {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 6px 0;
-    font-size: 0.85rem;
-    border-bottom: 1px solid #1a1a2e;
-  }
-  .staged-item:last-child, .untracked-item:last-child { border-bottom: none; }
-  .staged-action {
-    padding: 2px 8px;
-    border-radius: 4px;
-    font-size: 0.65rem;
-    text-transform: uppercase;
-    font-weight: 700;
-    min-width: 60px;
-    text-align: center;
-  }
-  .staged-action.added { background: #2ecc71; color: #fff; }
-  .staged-action.modified { background: #f39c12; color: #fff; }
-  .staged-action.deleted { background: #e74c3c; color: #fff; }
-  .staged-path { flex: 1; font-family: monospace; font-size: 0.8rem; color: #ccc; }
-  .staged-size { color: #666; font-size: 0.75rem; }
-  .untracked-commits { color: #666; font-size: 0.8rem; }
-  .staged-more { color: #888; font-size: 0.8rem; margin-top: 8px; font-style: italic; }
-  
+
+  /* Activity timeline */
   .timeline {
     position: relative;
     max-width: 1200px;
@@ -155,8 +128,7 @@
     position: absolute;
     width: 3px;
     background: #1a1a2e;
-    top: 0;
-    bottom: 0;
+    top: 0; bottom: 0;
     left: 50%;
     margin-left: -1.5px;
   }
@@ -170,8 +142,7 @@
   .timeline-item::after {
     content: '';
     position: absolute;
-    width: 16px;
-    height: 16px;
+    width: 16px; height: 16px;
     right: -8px;
     background: #667eea;
     border: 3px solid #0a0a12;
@@ -226,8 +197,7 @@
   }
   .tl-file:last-child { border-bottom: none; }
   .tl-action {
-    width: 20px;
-    height: 20px;
+    width: 20px; height: 20px;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -242,7 +212,8 @@
   .tl-action.deleted { background: #e74c3c; }
   .tl-fpath { font-family: monospace; color: #bbb; flex: 1; overflow: hidden; text-overflow: ellipsis; }
   .tl-more { color: #888; font-size: 0.75rem; font-style: italic; }
-  
+
+  /* Hot files */
   .hot-files-list { display: flex; flex-direction: column; gap: 8px; }
   .hot-file-item {
     display: flex;
@@ -256,8 +227,7 @@
   }
   .hot-file-item:hover { border-color: #667eea; }
   .hot-rank {
-    width: 32px;
-    height: 32px;
+    width: 32px; height: 32px;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
@@ -270,7 +240,8 @@
   .hot-info { flex: 1; }
   .hot-path { font-family: monospace; font-size: 0.85rem; color: #ccc; }
   .hot-meta { font-size: 0.75rem; color: #888; margin-top: 2px; }
-  
+
+  /* File tables */
   .file-table { overflow-x: auto; }
   .file-table table {
     width: 100%;
@@ -295,7 +266,8 @@
     font-size: 0.8rem;
   }
   .file-table tr:hover td { background: rgba(255,255,255,0.02); }
-  
+
+  /* Velocity */
   .velocity-chart { display: flex; flex-direction: column; gap: 8px; }
   .velocity-row {
     display: flex;
@@ -327,7 +299,8 @@
     color: #aaa;
     text-align: center;
   }
-  
+
+  /* Merge commits */
   .merge-list { display: flex; flex-direction: column; gap: 8px; }
   .merge-item {
     padding: 12px;
@@ -349,7 +322,59 @@
   .merge-date { color: #888; margin-left: 8px; font-size: 0.8rem; }
   .merge-msg { color: #ccc; margin-top: 6px; word-break: break-word; }
   .merge-parents { color: #666; font-size: 0.75rem; margin-top: 4px; font-family: monospace; }
-  
+
+  /* Git status */
+  .git-status-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-bottom: 20px;
+  }
+  .git-card {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    padding: 16px;
+    text-align: center;
+  }
+  .git-label { font-size: 0.75rem; color: #888; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .git-value { font-size: 1.3rem; font-weight: 700; color: #fff; }
+  .git-value.branch { color: #667eea; }
+  .staged-yes { color: #f39c12; }
+  .staged-no { color: #2ecc71; }
+  .staged-list {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    padding: 16px;
+    margin-top: 12px;
+  }
+  .staged-list h4 { font-size: 0.9rem; color: #aaa; margin-bottom: 12px; }
+  .staged-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    font-size: 0.85rem;
+    border-bottom: 1px solid #1a1a2e;
+  }
+  .staged-item:last-child { border-bottom: none; }
+  .staged-action {
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.65rem;
+    text-transform: uppercase;
+    font-weight: 700;
+    min-width: 60px;
+    text-align: center;
+  }
+  .staged-action.added { background: #2ecc71; color: #fff; }
+  .staged-action.modified { background: #f39c12; color: #fff; }
+  .staged-action.deleted { background: #e74c3c; color: #fff; }
+  .staged-path { flex: 1; font-family: monospace; font-size: 0.8rem; color: #ccc; }
+  .staged-size { color: #666; font-size: 0.75rem; }
+
+  /* Communities */
   .communities-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -383,7 +408,8 @@
   .cohesion-high { background: rgba(46,204,113,0.15); color: #2ecc71; }
   .cohesion-med { background: rgba(241,196,15,0.15); color: #f1c40f; }
   .cohesion-low { background: rgba(231,76,60,0.15); color: #e74c3c; }
-  
+
+  /* God nodes */
   .god-nodes-list { display: flex; flex-direction: column; gap: 8px; }
   .god-node-item {
     display: flex;
@@ -397,8 +423,7 @@
   }
   .god-node-item:hover { border-color: #667eea; }
   .god-rank {
-    width: 28px;
-    height: 28px;
+    width: 28px; height: 28px;
     border-radius: 50%;
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
     display: flex;
@@ -411,7 +436,8 @@
   .god-info { flex: 1; }
   .god-name { font-weight: 600; color: #fff; font-size: 0.9rem; }
   .god-degree { font-size: 0.8rem; color: #888; }
-  
+
+  /* Audit trail */
   .audit-trail {
     display: flex;
     gap: 12px;
@@ -432,7 +458,8 @@
   .audit-value.ambiguous { color: #e74c3c; }
   .audit-label { font-size: 0.8rem; color: #888; text-transform: uppercase; letter-spacing: 1px; }
   .audit-pct { font-size: 0.75rem; color: #666; margin-top: 4px; }
-  
+
+  /* Empty state */
   .empty-state {
     color: #666;
     font-style: italic;
@@ -440,7 +467,19 @@
     padding: 30px;
     font-size: 0.9rem;
   }
-  
+
+  /* Polling status */
+  .poll-status {
+    text-align: center;
+    padding: 8px;
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 10px;
+  }
+  .poll-status.updating { color: #667eea; }
+  .poll-status.error { color: #e74c3c; }
+
+  /* Footer */
   .footer {
     text-align: center;
     padding: 30px 20px;
@@ -451,7 +490,7 @@
   }
   .footer a { color: #667eea; text-decoration: none; }
   .footer a:hover { text-decoration: underline; }
-  
+
   @media (max-width: 768px) {
     .timeline::after { left: 20px; }
     .timeline-item { width: 100%; padding-left: 50px; padding-right: 10px; }
@@ -460,7 +499,7 @@
     .header { flex-direction: column; align-items: flex-start; gap: 10px; }
     .nav-grid { grid-template-columns: 1fr; }
     .git-status-grid { grid-template-columns: repeat(2, 1fr); }
-    .build-info-grid { grid-template-columns: repeat(2, 1fr); }
+    .info-grid { grid-template-columns: repeat(2, 1fr); }
     .communities-grid { grid-template-columns: 1fr; }
     .audit-trail { flex-direction: column; }
   }
@@ -470,387 +509,484 @@
 <div class="container">
 
   <div class="header">
-    <h1>GraphX Dashboard</h1>
-    <div class="header-stats">2699 nodes &middot; 4424 edges &middot; 259 communities &middot; Branch: main</div>
-  </div>
-  
-  <div class="section">
-    <h2>&#128202; Graph Status</h2>
-    
-    <div class="build-info-grid">
-      <div class="build-card">
-        <div class="build-label">Status</div>
-        <div class="build-value status-ok">OK</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Nodes</div>
-        <div class="build-value">2699</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Edges</div>
-        <div class="build-value">4424</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Communities</div>
-        <div class="build-value">259</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Total Runs</div>
-        <div class="build-value">1</div>
-      </div>
-      <div class="build-card">
-        <div class="build-label">Last Build</div>
-        <div class="build-value">2026-05-05 07:48</div>
-      </div>
-    </div>
-    
-    <div class="nav-grid">
-      <a href="graph.html" class="nav-card">
-        <h3>&#128376; Interactive Graph</h3>
-        <p>Force-directed visualization with search and filters</p>
-      </a>
-      <a href="GRAPH_TREE.html" class="nav-card disabled">
-        <h3>&#127795; Tree View</h3>
-        <p>Collapsible directory tree with symbol hierarchy</p>
-      </a>
-      <a href="wiki/index.md" class="nav-card disabled">
-        <h3>&#128218; Knowledge Wiki</h3>
-        <p>Wikipedia-style articles for each community</p>
-      </a>
-      <a href="GRAPH_REPORT.md" class="nav-card">
-        <h3>&#128203; Audit Report</h3>
-        <p>God nodes, surprising connections, questions</p>
-      </a>
-      <a href="graph.json" class="nav-card" download>
-        <h3>&#128230; Raw Graph JSON</h3>
-        <p>Download complete graph data</p>
-      </a>
-      <a href="graph.svg" class="nav-card disabled" download>
-        <h3>&#128444; SVG Export</h3>
-        <p>Vector graphic for documents</p>
-      </a>
+    <h1 id="page-title">GraphX Dashboard</h1>
+    <div style="display:flex;align-items:center;gap:12px;">
+      <span class="live-badge"><span class="live-dot"></span>Live</span>
+      <div class="header-stats" id="header-stats">loading...</div>
     </div>
   </div>
-  
+
   <div class="section">
-    <h2>&#127807; Git Status</h2>
-    
-    <div class="git-status-grid">
-      <div class="git-card">
-        <div class="git-label">Current Branch</div>
-        <div class="git-value branch">main</div>
-      </div>
-      <div class="git-card">
-        <div class="git-label">Total Branches</div>
-        <div class="git-value">1</div>
-      </div>
-      <div class="git-card">
-        <div class="git-label">Untracked Branches</div>
-        <div class="git-value">0</div>
-      </div>
-      <div class="git-card">
-        <div class="git-label">Staged Changes</div>
-        <div class="git-value staged-yes">7</div>
-      </div>
-    </div>
-        <div class="staged-list"><h4>Staged Files (Not Committed)</h4><div class="staged-item"><span class="staged-action modified">MODIFIED</span> <span class="staged-path">graphx-out/GRAPH_REPORT.md</span> <span class="staged-size">62,592 bytes</span></div><div class="staged-item"><span class="staged-action modified">MODIFIED</span> <span class="staged-path">graphx-out/graph.html</span> <span class="staged-size">2,184,983 bytes</span></div><div class="staged-item"><span class="staged-action modified">MODIFIED</span> <span class="staged-path">graphx-out/graph.json</span> <span class="staged-size">2,343,991 bytes</span></div><div class="staged-item"><span class="staged-action modified">MODIFIED</span> <span class="staged-path">graphx-out/index.html</span> <span class="staged-size">30,367 bytes</span></div><div class="staged-item"><span class="staged-action modified">MODIFIED</span> <span class="staged-path">graphx-out/manifest.json</span> <span class="staged-size">29,552 bytes</span></div><div class="staged-item"><span class="staged-action modified">MODIFIED</span> <span class="staged-path">graphx/export.py</span> <span class="staged-size">85,149 bytes</span></div><div class="staged-item"><span class="staged-action modified">MODIFIED</span> <span class="staged-path">graphx/watch.py</span> <span class="staged-size">12,203 bytes</span></div></div>
+    <h2>Graph Status</h2>
+    <div class="info-grid" id="graph-status-grid"></div>
+    <div class="nav-grid" id="output-nav"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128220; Activity Timeline</h2>
-    <div class="timeline">
-        <div class="timeline-item left">
-          <div class="timeline-dot"></div>
-          <div class="timeline-card">
-            <div class="tl-header">
-              <span class="tl-hash">93ac74d</span>
-              <span class="tl-source ai-badge">AI</span>
-              <span class="tl-date">2026-05-04 23:11</span>
-            </div>
-            <div class="tl-author">BlackWh1te</div>
-            <div class="tl-msg">Add function3 to hot test</div>
-            <div class="tl-files"><div class="tl-file"><span class="tl-action modified">M</span><span class="tl-fpath">hot_test.py</span></div></div>
-          </div>
-        </div>
-            
-        <div class="timeline-item right">
-          <div class="timeline-dot"></div>
-          <div class="timeline-card">
-            <div class="tl-header">
-              <span class="tl-hash">343fbe0</span>
-              <span class="tl-source ai-badge">AI</span>
-              <span class="tl-date">2026-05-04 23:10</span>
-            </div>
-            <div class="tl-author">BlackWh1te</div>
-            <div class="tl-msg">Modify test file 1</div>
-            <div class="tl-files"><div class="tl-file"><span class="tl-action modified">M</span><span class="tl-fpath">test_file1.txt</span></div></div>
-          </div>
-        </div>
-            </div>
+    <h2>Git Status</h2>
+    <div class="git-status-grid" id="git-status-grid"></div>
+    <div id="staged-files"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128293; Hot Files (Most Changed)</h2>
-    <p class="empty-state">No hot files detected yet.</p>
+    <h2>Activity Timeline</h2>
+    <div id="activity-timeline"></div>
+    <div class="poll-status" id="poll-status">Auto-refreshing every 30s...</div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128200; Change Velocity (Last 7 Days)</h2>
-    <div class="velocity-chart">
-      <div class="velocity-row">
-        <div class="velocity-date">2026-05-04</div>
-        <div class="velocity-bar-wrap"><div class="velocity-bar" style="width:100%"></div></div>
-        <div class="velocity-count">2</div>
-      </div>
-            </div><div class="velocity-summary">Total: 2 commits &middot; Avg: 2.0/day</div>
+    <h2>Hot Files (Most Changed)</h2>
+    <div id="hot-files"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128256; Recent Merge Commits</h2>
-    <p class="empty-state">No merge commits found.</p>
+    <h2>Change Velocity (Last 7 Days)</h2>
+    <div id="velocity-chart"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128206; External Files (Untracked)</h2>
-    <div class="file-table"><table><thead><tr><th>File</th><th>Created</th><th>Modified</th><th>Size</th></tr></thead><tbody><tr><td>graphx\skill-windows.md</td><td>2026-05-04 20:29</td><td>2026-05-04 20:29</td><td>0.05 MB</td></tr><tr><td>graphx\skill-vscode.md</td><td>2026-05-04 20:29</td><td>2026-05-04 20:29</td><td>0.01 MB</td></tr><tr><td>graphx\security.py</td><td>2026-05-04 15:30</td><td>2026-05-04 20:22</td><td>0.01 MB</td></tr><tr><td>graphx\detect.py</td><td>2026-05-04 15:30</td><td>2026-05-04 20:22</td><td>0.03 MB</td></tr><tr><td>docs\translations\README.el-GR.md</td><td>2026-05-04 20:29</td><td>2026-05-05 06:18</td><td>0.01 MB</td></tr><tr><td>docs\logo-text.svg</td><td>2026-05-04 20:22</td><td>2026-05-05 06:19</td><td>0.00 MB</td></tr><tr><td>worked\karpathy-repos\README.md</td><td>2026-05-04 20:29</td><td>2026-05-05 06:18</td><td>0.00 MB</td></tr><tr><td>tests\fixtures\sample.swift</td><td>2026-05-04 20:22</td><td>2026-05-04 20:22</td><td>0.00 MB</td></tr><tr><td>.github\FUNDING.yml</td><td>2026-05-04 20:22</td><td>2026-05-04 20:27</td><td>0.00 MB</td></tr><tr><td>docs\translations\README.cs-CZ.md</td><td>2026-05-04 20:29</td><td>2026-05-05 06:18</td><td>0.01 MB</td></tr></tbody></table></div>
+    <h2>Recent Merge Commits</h2>
+    <div id="merge-commits"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128230; Large Files (&gt;10MB)</h2>
-    <p class="empty-state">No large files (&gt;10MB) detected.</p>
+    <h2>External Files (Untracked)</h2>
+    <div id="external-files"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#127912; Communities (259)</h2>
-    <div class="communities-grid">
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #4E79A7"></div>
-          <div class="community-name">Community 0</div>
-          <div class="community-count">73 nodes</div>
-        </div>
-        <div class="community-meta">Top: test_security.py</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.05</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #F28E2B"></div>
-          <div class="community-name">Community 1</div>
-          <div class="community-count">62 nodes</div>
-        </div>
-        <div class="community-meta">Top: generate()</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.05</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #E15759"></div>
-          <div class="community-name">Community 2</div>
-          <div class="community-count">61 nodes</div>
-        </div>
-        <div class="community-meta">Top: test_multilang.py</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.06</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #76B7B2"></div>
-          <div class="community-name">Community 3</div>
-          <div class="community-count">58 nodes</div>
-        </div>
-        <div class="community-meta">Top: test_cache.py</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.05</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #59A14F"></div>
-          <div class="community-name">Community 4</div>
-          <div class="community-count">55 nodes</div>
-        </div>
-        <div class="community-meta">Top: graphify</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.07</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #EDC948"></div>
-          <div class="community-name">Community 5</div>
-          <div class="community-count">54 nodes</div>
-        </div>
-        <div class="community-meta">Top: __main__.py</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.06</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #B07AA1"></div>
-          <div class="community-name">Community 6</div>
-          <div class="community-count">48 nodes</div>
-        </div>
-        <div class="community-meta">Top: test_install.py</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.06</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #FF9DA7"></div>
-          <div class="community-name">Community 7</div>
-          <div class="community-count">48 nodes</div>
-        </div>
-        <div class="community-meta">Top: main()</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.07</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #9C755F"></div>
-          <div class="community-name">Community 8</div>
-          <div class="community-count">47 nodes</div>
-        </div>
-        <div class="community-meta">Top: test_serve.py</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.10</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #BAB0AC"></div>
-          <div class="community-name">Community 9</div>
-          <div class="community-count">47 nodes</div>
-        </div>
-        <div class="community-meta">Top: extract_python()</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.07</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #4E79A7"></div>
-          <div class="community-name">Community 10</div>
-          <div class="community-count">45 nodes</div>
-        </div>
-        <div class="community-meta">Top: detect.py</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.07</span>
-      </div>
-
-      <div class="community-card">
-        <div class="community-header">
-          <div class="community-dot" style="background: #F28E2B"></div>
-          <div class="community-name">Community 11</div>
-          <div class="community-count">41 nodes</div>
-        </div>
-        <div class="community-meta">Top: extract.py</div>
-        <span class="cohesion-badge cohesion-low">Cohesion: 0.09</span>
-      </div>
-
-      <div class="community-card" style="display: flex; align-items: center; justify-content: center; color: #888;">
-        <div>+247 more communities</div>
-      </div>
-
-    </div>
+    <h2>Large Files (&gt;10MB)</h2>
+    <div id="large-files"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#11088; God Nodes (Top Connected)</h2>
-    <div class="god-nodes-list">
-
-      <div class="god-node-item">
-        <div class="god-rank">1</div>
-        <div class="god-info">
-          <div class="god-name">graphify</div>
-          <div class="god-degree">53 connections</div>
-        </div>
-      </div>
-
-      <div class="god-node-item">
-        <div class="god-rank">2</div>
-        <div class="god-info">
-          <div class="god-name">main()</div>
-          <div class="god-degree">41 connections</div>
-        </div>
-      </div>
-
-      <div class="god-node-item">
-        <div class="god-rank">3</div>
-        <div class="god-info">
-          <div class="god-name">_make_id()</div>
-          <div class="god-degree">34 connections</div>
-        </div>
-      </div>
-
-      <div class="god-node-item">
-        <div class="god-rank">4</div>
-        <div class="god-info">
-          <div class="god-name">_labels()</div>
-          <div class="god-degree">34 connections</div>
-        </div>
-      </div>
-
-      <div class="god-node-item">
-        <div class="god-rank">5</div>
-        <div class="god-info">
-          <div class="god-name">detect()</div>
-          <div class="god-degree">32 connections</div>
-        </div>
-      </div>
-
-      <div class="god-node-item">
-        <div class="god-rank">6</div>
-        <div class="god-info">
-          <div class="god-name">_make_id()</div>
-          <div class="god-degree">31 connections</div>
-        </div>
-      </div>
-
-      <div class="god-node-item">
-        <div class="god-rank">7</div>
-        <div class="god-info">
-          <div class="god-name">NetworkX</div>
-          <div class="god-degree">29 connections</div>
-        </div>
-      </div>
-
-      <div class="god-node-item">
-        <div class="god-rank">8</div>
-        <div class="god-info">
-          <div class="god-name">Client</div>
-          <div class="god-degree">27 connections</div>
-        </div>
-      </div>
-
-    </div>
+    <h2 id="communities-title">Communities</h2>
+    <div class="communities-grid" id="communities-grid"></div>
   </div>
-  
+
   <div class="section">
-    <h2>&#128269; Audit Trail</h2>
-    <div class="audit-trail">
-
-      <div class="audit-item">
-        <div class="audit-value extracted">3426</div>
-        <div class="audit-label">EXTRACTED</div>
-        <div class="audit-pct">77%</div>
-      </div>
-
-      <div class="audit-item">
-        <div class="audit-value inferred">998</div>
-        <div class="audit-label">INFERRED</div>
-        <div class="audit-pct">23%</div>
-      </div>
-
-      <div class="audit-item">
-        <div class="audit-value ambiguous">0</div>
-        <div class="audit-label">AMBIGUOUS</div>
-        <div class="audit-pct">0%</div>
-      </div>
-
-    </div>
+    <h2>God Nodes (Top Connected)</h2>
+    <div class="god-nodes-list" id="god-nodes"></div>
   </div>
-  
+
+  <div class="section">
+    <h2>Audit Trail</h2>
+    <div class="audit-trail" id="audit-trail"></div>
+  </div>
+
   <div class="footer">
-    <p>Generated by <a href="https://pypi.org/project/ai-graphx/" target="_blank">Ai-GraphX</a> &middot; Knowledge Graph Dashboard</p>
+    <p>Generated by <a href="https://pypi.org/project/ai-graphx/" target="_blank">Ai-GraphX</a> &middot; <a href="#" onclick="location.reload();return false;">Refresh Dashboard</a></p>
   </div>
 </div>
 
+<script>
+// Embedded initial data from graph generation
+const INITIAL_DATA = {"project_name": "GraphX", "graph": {"nodes": 1753, "edges": 3155, "communities": 100, "last_build": "2026-05-06 00:02", "total_runs": 2, "needs_update": false}, "branch": "main", "git": {"current_branch": "main", "total_branches": 1, "untracked_branches": 0, "staged_count": 0, "staged": [], "is_git_repo": true}, "activity": {"commits": [{"hash": "93ac74d", "full_hash": "93ac74d342cbfbc04559c395b3ce77bf3f0219c7", "author": "BlackWh1te", "email": "rukojonlajntema@gmail.com", "date": "2026-05-04T23:11:05+04:00", "message": "Add function3 to hot test", "source": "ai", "files_changed": [{"file": "hot_test.py", "action": "modified", "size": 115}], "branch": "v6", "is_merge": false, "parents": ["4c3fc56"]}, {"hash": "343fbe0", "full_hash": "343fbe0fa7e0410dc68009ab9666437817b1d478", "author": "BlackWh1te", "email": "rukojonlajntema@gmail.com", "date": "2026-05-04T23:10:37+04:00", "message": "Modify test file 1", "source": "ai", "files_changed": [{"file": "test_file1.txt", "action": "modified", "size": 97}], "branch": "v6", "is_merge": false, "parents": ["e9022aa"]}], "merge_commits": [], "hot_files": [], "external_files": [{"file": "worked\\httpx\\raw\\client.py", "size": 5394, "created": "2026-05-04T20:22:14.385657+00:00", "modified": "2026-05-04T20:22:14.385657+00:00"}, {"file": "dist\\ai_graphx-0.2.4-py3-none-any.whl", "size": 350592, "created": "2026-05-05T14:34:06.380870+00:00", "modified": "2026-05-05T14:34:06.407606+00:00"}, {"file": "graphx.egg-info\\top_level.txt", "size": 7, "created": "2026-05-04T16:53:11.393792+00:00", "modified": "2026-05-05T06:23:50.097097+00:00"}, {"file": "ai_graphx.egg-info\\entry_points.txt", "size": 48, "created": "2026-05-05T06:43:44.268612+00:00", "modified": "2026-05-06T00:02:37.169737+00:00"}, {"file": "worked\\mixed-corpus\\raw\\attention_notes.md", "size": 3303, "created": "2026-05-04T20:29:54.292996+00:00", "modified": "2026-05-04T20:29:54.294293+00:00"}, {"file": "tests\\fixtures\\sample.c", "size": 518, "created": "2026-05-04T20:22:14.371460+00:00", "modified": "2026-05-04T20:22:14.372536+00:00"}, {"file": "graphx\\build.py", "size": 10988, "created": "2026-05-04T15:30:32.109686+00:00", "modified": "2026-05-04T20:22:14.355791+00:00"}, {"file": "graphx\\cache.py", "size": 8708, "created": "2026-05-04T15:30:32.109686+00:00", "modified": "2026-05-05T23:42:12.203030+00:00"}, {"file": "graphx\\__init__.py", "size": 1317, "created": "2026-05-04T15:30:32.108677+00:00", "modified": "2026-05-06T00:02:16.618073+00:00"}, {"file": "graphx\\__main__.py", "size": 119891, "created": "2026-05-04T15:30:32.109686+00:00", "modified": "2026-05-06T00:02:16.618073+00:00"}], "large_files": [], "velocity": {"daily_counts": {"2026-05-04": 2}, "total_commits": 2, "average_per_day": 2.0}}, "community_stats": [{"cid": 0, "label": "Community 0", "count": 73, "color": "#4E79A7", "cohesion": 0.05, "top_node": "test_security.py"}, {"cid": 1, "label": "Community 1", "count": 58, "color": "#F28E2B", "cohesion": 0.05, "top_node": "test_cache.py"}, {"cid": 2, "label": "Community 2", "count": 47, "color": "#E15759", "cohesion": 0.1, "top_node": "test_serve.py"}, {"cid": 3, "label": "Community 3", "count": 47, "color": "#76B7B2", "cohesion": 0.07, "top_node": "generate()"}, {"cid": 4, "label": "Community 4", "count": 47, "color": "#59A14F", "cohesion": 0.07, "top_node": "extract_python()"}, {"cid": 5, "label": "Community 5", "count": 44, "color": "#EDC948", "cohesion": 0.07, "top_node": "test_install.py"}, {"cid": 6, "label": "Community 6", "count": 44, "color": "#B07AA1", "cohesion": 0.07, "top_node": "main()"}, {"cid": 7, "label": "Community 7", "count": 40, "color": "#FF9DA7", "cohesion": 0.1, "top_node": "test_multilang.py"}, {"cid": 8, "label": "Community 8", "count": 39, "color": "#9C755F", "cohesion": 0.1, "top_node": "extract.py"}, {"cid": 9, "label": "Community 9", "count": 37, "color": "#BAB0AC", "cohesion": 0.08, "top_node": "test_transcribe.py"}, {"cid": 10, "label": "Community 10", "count": 37, "color": "#4E79A7", "cohesion": 0.08, "top_node": "_rebuild_code()"}, {"cid": 11, "label": "Community 11", "count": 36, "color": "#F28E2B", "cohesion": 0.08, "top_node": "validate_extraction()"}], "total_communities": 100, "god_nodes": [{"id": "graphx_main_main", "label": "main()", "degree": 43}, {"id": "graphx_extract_make_id", "label": "_make_id()", "degree": 34}, {"id": "tests_test_languages_labels", "label": "_labels()", "degree": 34}, {"id": "graphx_detect_detect", "label": "detect()", "degree": 33}, {"id": "raw_client_client", "label": "Client", "degree": 27}, {"id": "raw_client_asyncclient", "label": "AsyncClient", "degree": 26}, {"id": "raw_models_response", "label": "Response", "degree": 26}, {"id": "graphx_extract_extract_swift", "label": "extract_swift()", "degree": 25}], "audit_trail": [{"type": "EXTRACTED", "count": 2383, "pct": 76}, {"type": "INFERRED", "count": 772, "pct": 24}, {"type": "AMBIGUOUS", "count": 0, "pct": 0}], "outputs_exist": {"graph.html": true, "GRAPH_TREE.html": false, "wiki": false, "GRAPH_REPORT.md": true, "graph.json": true, "graph.svg": false, "graph.graphml": false}};
+
+// State for live updates
+let currentActivity = null;
+let pollTimer = null;
+
+// --- Utility functions ---
+function esc(s) {
+  const div = document.createElement('div');
+  div.textContent = String(s);
+  return div.innerHTML;
+}
+
+function fmtDate(isoStr) {
+  if (!isoStr || isoStr === 'N/A') return 'N/A';
+  try {
+    const d = new Date(isoStr);
+    if (isNaN(d)) return isoStr.slice(0,16);
+    return d.toISOString().slice(0,16).replace('T',' ');
+  } catch(e) { return isoStr.slice(0,16); }
+}
+
+function timeAgo(isoStr) {
+  if (!isoStr) return '';
+  try {
+    const d = new Date(isoStr);
+    const now = new Date();
+    const diff = Math.floor((now - d) / 1000);
+    if (diff < 60) return 'just now';
+    if (diff < 3600) return Math.floor(diff/60) + 'm ago';
+    if (diff < 86400) return Math.floor(diff/3600) + 'h ago';
+    return Math.floor(diff/86400) + 'd ago';
+  } catch(e) { return ''; }
+}
+
+// --- Renderers ---
+function renderGraphStatus() {
+  const g = INITIAL_DATA.graph;
+  const statusClass = g.needs_update ? 'status-warn' : 'status-ok';
+  const statusText = g.needs_update ? 'NEEDS UPDATE' : 'OK';
+  const html = `
+    <div class="info-card"><div class="info-label">Status</div><div class="info-value ${statusClass}">${esc(statusText)}</div></div>
+    <div class="info-card"><div class="info-label">Nodes</div><div class="info-value">${esc(g.nodes)}</div></div>
+    <div class="info-card"><div class="info-label">Edges</div><div class="info-value">${esc(g.edges)}</div></div>
+    <div class="info-card"><div class="info-label">Communities</div><div class="info-value">${esc(g.communities)}</div></div>
+    <div class="info-card"><div class="info-label">Total Runs</div><div class="info-value">${esc(g.total_runs)}</div></div>
+    <div class="info-card"><div class="info-label">Last Build</div><div class="info-value">${esc(g.last_build)}</div></div>
+  `;
+  document.getElementById('graph-status-grid').innerHTML = html;
+  document.getElementById('header-stats').textContent = `${g.nodes} nodes · ${g.edges} edges · ${g.communities} communities · Branch: ${esc(INITIAL_DATA.branch)}`;
+}
+
+function renderOutputNav() {
+  const o = INITIAL_DATA.outputs_exist;
+  const items = [
+    {key:'graph.html', icon:'🕸', title:'Interactive Graph', desc:'Force-directed visualization'},
+    {key:'GRAPH_TREE.html', icon:'🌳', title:'Tree View', desc:'Collapsible directory tree'},
+    {key:'wiki', icon:'📚', title:'Knowledge Wiki', desc:'Wikipedia-style articles'},
+    {key:'GRAPH_REPORT.md', icon:'📋', title:'Audit Report', desc:'God nodes, connections'},
+    {key:'graph.json', icon:'📦', title:'Raw Graph JSON', desc:'Download complete data', dl:true},
+    {key:'graph.svg', icon:'🖼', title:'SVG Export', desc:'Vector graphic', dl:true},
+  ];
+  const html = items.map(item => {
+    const disabled = !o[item.key] ? 'disabled' : '';
+    const dl = item.dl ? 'download' : '';
+    const href = item.key === 'wiki' ? 'wiki/index.md' : item.key;
+    return `<a href="${esc(href)}" class="nav-card ${disabled}" ${dl}><h3>${item.icon} ${esc(item.title)}</h3><p>${esc(item.desc)}</p></a>`;
+  }).join('');
+  document.getElementById('output-nav').innerHTML = html;
+}
+
+function renderGitStatus() {
+  const g = INITIAL_DATA.git;
+  if (!g.is_git_repo) {
+    document.getElementById('git-status-grid').innerHTML = '<p class="empty-state">Not a git repository.</p>';
+    document.getElementById('staged-files').innerHTML = '';
+    return;
+  }
+  const stagedClass = g.staged_count > 0 ? 'staged-yes' : 'staged-no';
+  let html = `
+    <div class="git-card"><div class="git-label">Current Branch</div><div class="git-value branch">${esc(g.current_branch)}</div></div>
+    <div class="git-card"><div class="git-label">Total Branches</div><div class="git-value">${esc(g.total_branches)}</div></div>
+    <div class="git-card"><div class="git-label">Untracked Branches</div><div class="git-value">${esc(g.untracked_branches)}</div></div>
+    <div class="git-card"><div class="git-label">Staged Changes</div><div class="git-value ${stagedClass}">${esc(g.staged_count)}</div></div>
+  `;
+  document.getElementById('git-status-grid').innerHTML = html;
+
+  if (g.staged && g.staged.length > 0) {
+    let stagedHtml = '<div class="staged-list"><h4>Staged Files (Not Committed)</h4>';
+    g.staged.forEach(s => {
+      stagedHtml += `<div class="staged-item"><span class="staged-action ${esc(s.action||'modified')}">${esc((s.action||'modified').toUpperCase())}</span> <span class="staged-path">${esc(s.file)}</span> <span class="staged-size">${Number(s.size||0).toLocaleString()} bytes</span></div>`;
+    });
+    stagedHtml += '</div>';
+    document.getElementById('staged-files').innerHTML = stagedHtml;
+  } else {
+    document.getElementById('staged-files').innerHTML = '';
+  }
+}
+
+function renderActivityTimeline(commits, staged) {
+  const timelineEl = document.getElementById('activity-timeline');
+  if ((!commits || commits.length === 0) && (!staged || staged.length === 0)) {
+    timelineEl.innerHTML = '<p class="empty-state">No activity found.</p>';
+    return;
+  }
+  
+  let html = '<div class="timeline">';
+  
+  // Render staged changes at the top
+  if (staged && staged.length > 0) {
+    html += `
+      <div class="timeline-item left">
+        <div class="timeline-dot" style="background:#f39c12;"></div>
+        <div class="timeline-card" style="border-left: 4px solid #f39c12;">
+          <div class="tl-header">
+            <span class="tl-hash" style="color:#f39c12; background:rgba(243,156,18,0.1);">STAGED</span>
+            <span class="tl-source user-badge">USER</span>
+            <span class="tl-date">Current Session</span>
+          </div>
+          <div class="tl-author">Uncommitted Changes</div>
+          <div class="tl-msg">Real-time local workspace activity</div>
+          <div class="tl-files">
+            ${staged.slice(0,10).map(s => `
+              <div class="tl-file">
+                <span class="tl-action ${esc(s.action)}">${esc(s.action.charAt(0).toUpperCase())}</span>
+                <span class="tl-fpath">${esc(s.file)}</span>
+              </div>
+            `).join('')}
+            ${staged.length > 10 ? `<div class="tl-file"><span class="tl-more">+${staged.length - 10} more files</span></div>` : ''}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  commits.forEach((commit, i) => {
+    const side = (staged && staged.length > 0 ? i + 1 : i) % 2 === 0 ? 'left' : 'right';
+    const hash = esc(commit.short_hash || (commit.hash||'').slice(0,7) || '?');
+    const author = esc(commit.author || 'Unknown');
+    const date = fmtDate(commit.date);
+    const msg = esc((commit.message||'').slice(0,80));
+    const source = commit.source === 'ai' ? 'ai' : 'user';
+    const badgeClass = source === 'ai' ? 'ai-badge' : 'user-badge';
+    const badgeLabel = source === 'ai' ? 'AI' : 'USER';
+    const files = commit.files_changed || [];
+    let filesHtml = '';
+    files.slice(0,8).forEach(fc => {
+      const action = fc.action || 'modified';
+      filesHtml += `<div class="tl-file"><span class="tl-action ${esc(action)}">${esc(action.charAt(0).toUpperCase())}</span><span class="tl-fpath">${esc(fc.file)}</span></div>`;
+    });
+    if (files.length > 8) {
+      filesHtml += `<div class="tl-file"><span class="tl-more">+${files.length - 8} more files</span></div>`;
+    }
+    html += `
+      <div class="timeline-item ${side}">
+        <div class="timeline-dot"></div>
+        <div class="timeline-card">
+          <div class="tl-header">
+            <span class="tl-hash">${hash}</span>
+            <span class="tl-source ${badgeClass}">${badgeLabel}</span>
+            <span class="tl-date">${date}</span>
+          </div>
+          <div class="tl-author">${author}</div>
+          <div class="tl-msg">${msg}</div>
+          <div class="tl-files">${filesHtml}</div>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  document.getElementById('activity-timeline').innerHTML = html;
+}
+
+function renderHotFiles(hotFiles) {
+  if (!hotFiles || hotFiles.length === 0) {
+    document.getElementById('hot-files').innerHTML = '<p class="empty-state">No hot files detected yet.</p>';
+    return;
+  }
+  let html = '<div class="hot-files-list">';
+  hotFiles.forEach(hf => {
+    const fpath = esc(hf.file || '?');
+    const count = hf.commit_count || 0;
+    const last = hf.last_commit || {};
+    const lastHash = esc((last.hash||'').slice(0,7) || '?');
+    const lastDate = fmtDate(last.date);
+    const srcIcon = last.source === 'ai' ? '&#129302;' : '&#128100;';
+    html += `
+      <div class="hot-file-item">
+        <div class="hot-rank">${esc(count)}</div>
+        <div class="hot-info">
+          <div class="hot-path">${fpath}</div>
+          <div class="hot-meta">Last: ${lastHash} &middot; ${lastDate} &middot; ${srcIcon}</div>
+        </div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  document.getElementById('hot-files').innerHTML = html;
+}
+
+function renderVelocity(velocity) {
+  const daily = velocity.daily_counts || {};
+  const entries = Object.entries(daily).sort().reverse().slice(0,14);
+  if (entries.length === 0) {
+    document.getElementById('velocity-chart').innerHTML = '<p class="empty-state">No velocity data available.</p>';
+    return;
+  }
+  const maxCount = Math.max(...entries.map(e => e[1]), 1);
+  let html = '<div class="velocity-chart">';
+  entries.forEach(([date, count]) => {
+    const pct = (count / maxCount * 100).toFixed(0);
+    html += `
+      <div class="velocity-row">
+        <div class="velocity-date">${esc(date)}</div>
+        <div class="velocity-bar-wrap"><div class="velocity-bar" style="width:${pct}%"></div></div>
+        <div class="velocity-count">${esc(count)}</div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  html += `<div class="velocity-summary">Total: ${esc(velocity.total_commits||0)} commits &middot; Avg: ${Number(velocity.average_per_day||0).toFixed(1)}/day</div>`;
+  document.getElementById('velocity-chart').innerHTML = html;
+}
+
+function renderMergeCommits(merges) {
+  if (!merges || merges.length === 0) {
+    document.getElementById('merge-commits').innerHTML = '<p class="empty-state">No merge commits found.</p>';
+    return;
+  }
+  let html = '<div class="merge-list">';
+  merges.forEach(mc => {
+    const hash = esc(mc.hash || '?');
+    const author = esc(mc.author || '?');
+    const date = fmtDate(mc.date);
+    const msg = esc((mc.message||'').slice(0,60));
+    const parents = (mc.parents || []).join(', ');
+    html += `
+      <div class="merge-item">
+        <span class="merge-hash">${hash}</span>
+        <span class="merge-author">${author}</span>
+        <span class="merge-date">${date}</span>
+        <div class="merge-msg">${msg}</div>
+        <div class="merge-parents">merged: ${esc(parents)}</div>
+      </div>
+    `;
+  });
+  html += '</div>';
+  document.getElementById('merge-commits').innerHTML = html;
+}
+
+function renderExternalFiles(files) {
+  if (!files || files.length === 0) {
+    document.getElementById('external-files').innerHTML = '<p class="empty-state">No external (untracked) files detected.</p>';
+    return;
+  }
+  let html = '<div class="file-table"><table><thead><tr><th>File</th><th>Created</th><th>Modified</th><th>Size</th></tr></thead><tbody>';
+  files.forEach(ef => {
+    const size = Number(ef.size || 0) / (1024*1024);
+    html += `<tr><td>${esc(ef.file||'')}</td><td>${fmtDate(ef.created)}</td><td>${fmtDate(ef.modified)}</td><td>${size.toFixed(2)} MB</td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('external-files').innerHTML = html;
+}
+
+function renderLargeFiles(files) {
+  if (!files || files.length === 0) {
+    document.getElementById('large-files').innerHTML = '<p class="empty-state">No large files (&gt;10MB) detected.</p>';
+    return;
+  }
+  let html = '<div class="file-table"><table><thead><tr><th>File</th><th>Size</th></tr></thead><tbody>';
+  files.forEach(lf => {
+    html += `<tr><td>${esc(lf.file||'')}</td><td>${Number(lf.size_mb||0).toFixed(2)} MB</td></tr>`;
+  });
+  html += '</tbody></table></div>';
+  document.getElementById('large-files').innerHTML = html;
+}
+
+function renderCommunities() {
+  const comms = INITIAL_DATA.community_stats;
+  const total = INITIAL_DATA.total_communities;
+  document.getElementById('communities-title').textContent = `Communities (${total})`;
+  let html = '';
+  comms.forEach(c => {
+    const cohesionClass = c.cohesion >= 0.7 ? 'cohesion-high' : c.cohesion >= 0.4 ? 'cohesion-med' : 'cohesion-low';
+    const cohesionText = c.cohesion ? `Cohesion: ${c.cohesion.toFixed(2)}` : 'Cohesion: N/A';
+    const topNode = esc((c.top_node||'').slice(0,40));
+    const topSuffix = (c.top_node||'').length > 40 ? '...' : '';
+    html += `
+      <div class="community-card">
+        <div class="community-header">
+          <div class="community-dot" style="background:${esc(c.color)}"></div>
+          <div class="community-name">${esc(c.label)}</div>
+          <div class="community-count">${esc(c.count)} nodes</div>
+        </div>
+        <div class="community-meta">Top: ${topNode}${topSuffix}</div>
+        <span class="cohesion-badge ${cohesionClass}">${esc(cohesionText)}</span>
+      </div>
+    `;
+  });
+  if (total > comms.length) {
+    html += `<div class="community-card" style="display:flex;align-items:center;justify-content:center;color:#888;"><div>+${total - comms.length} more communities</div></div>`;
+  }
+  document.getElementById('communities-grid').innerHTML = html;
+}
+
+function renderGodNodes() {
+  const gods = INITIAL_DATA.god_nodes;
+  let html = '';
+  gods.forEach((god, idx) => {
+    html += `
+      <div class="god-node-item">
+        <div class="god-rank">${idx+1}</div>
+        <div class="god-info">
+          <div class="god-name">${esc(god.label || 'Unknown')}</div>
+          <div class="god-degree">${esc(god.degree || 0)} connections</div>
+        </div>
+      </div>
+    `;
+  });
+  document.getElementById('god-nodes').innerHTML = html;
+}
+
+function renderAuditTrail() {
+  const trail = INITIAL_DATA.audit_trail;
+  let html = '';
+  trail.forEach(a => {
+    html += `
+      <div class="audit-item">
+        <div class="audit-value ${esc(a.type.toLowerCase())}">${esc(a.count)}</div>
+        <div class="audit-label">${esc(a.type)}</div>
+        <div class="audit-pct">${esc(a.pct)}%</div>
+      </div>
+    `;
+  });
+  document.getElementById('audit-trail').innerHTML = html;
+}
+
+// --- Live polling for activity.json ---
+async function fetchActivity() {
+  try {
+    const resp = await fetch('activity.json', { cache: 'no-store' });
+    if (!resp.ok) return null;
+    return await resp.json();
+  } catch (e) {
+    return null;
+  }
+}
+
+async function updateActivityFromJson() {
+  const statusEl = document.getElementById('poll-status');
+  statusEl.textContent = 'Checking for updates...';
+  statusEl.className = 'poll-status updating';
+
+  const data = await fetchActivity();
+  if (!data) {
+    statusEl.textContent = 'Live updates paused (refresh page for latest). Run `graphx serve` for live polling.';
+    statusEl.className = 'poll-status error';
+    return;
+  }
+
+  const commits = data.commits || [];
+  const staged = data.staged || [];
+  // Only update if different from current embedded data
+  if (JSON.stringify(commits) !== JSON.stringify(currentActivity) || JSON.stringify(staged) !== JSON.stringify(currentStaged)) {
+    currentActivity = commits;
+    currentStaged = staged;
+    renderActivityTimeline(commits, staged);
+    // Also update related sections if present
+    if (data.hot_files) renderHotFiles(data.hot_files);
+    statusEl.textContent = `Updated ${commits.length} commits and ${staged.length} staged changes from activity.json`;
+    statusEl.className = 'poll-status';
+  } else {
+    statusEl.textContent = 'Up to date. Next check in 30s...';
+    statusEl.className = 'poll-status';
+  }
+}
+
+// --- Main render ---
+function renderAll() {
+  renderGraphStatus();
+  renderOutputNav();
+  renderGitStatus();
+
+  const act = INITIAL_DATA.activity;
+  currentActivity = act.commits;
+  currentStaged = act.staged || [];
+  renderActivityTimeline(act.commits, currentStaged);
+  renderHotFiles(act.hot_files);
+  renderVelocity(act.velocity);
+  renderMergeCommits(act.merge_commits);
+  renderExternalFiles(act.external_files);
+  renderLargeFiles(act.large_files);
+
+  renderCommunities();
+  renderGodNodes();
+  renderAuditTrail();
+}
+
+// Initialize
+document.addEventListener('DOMContentLoaded', () => {
+  renderAll();
+  // Poll for live activity updates every 30 seconds
+  pollTimer = setInterval(updateActivityFromJson, 30000);
+  // First check after 2 seconds (give browser time to settle)
+  setTimeout(updateActivityFromJson, 2000);
+});
+</script>
 </body>
 </html>

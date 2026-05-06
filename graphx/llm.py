@@ -1,5 +1,6 @@
-# Direct LLM backend for semantic extraction — supports Claude and Kimi K2.6.
-# Used by `graphx . --backend kimi` and the benchmark scripts.
+# Direct LLM backend for semantic extraction.
+# Supports Claude, Kimi K2.6, and local Ollama models.
+# Used by local CLI generation paths and benchmark scripts.
 # The default graphx pipeline uses Claude Code subagents via skill.md;
 # this module provides a direct API path for non-Claude-Code environments.
 from __future__ import annotations
@@ -58,6 +59,13 @@ BACKENDS: dict[str, dict] = {
         "pricing": {"input": 0.74, "output": 4.66},  # USD per 1M tokens
         "temperature": None,  # kimi-k2.6 enforces its own fixed temperature; sending any value raises 400
     },
+    "ollama": {
+        "base_url": "http://localhost:11434",
+        "default_model": "llama3.2:3b",
+        "env_key": None,
+        "pricing": {"input": 0.0, "output": 0.0},
+        "temperature": 0,
+    },
 }
 
 _EXTRACTION_SYSTEM = """\
@@ -86,8 +94,15 @@ def _read_files(paths: list[Path], root: Path) -> str:
         except ValueError:
             rel = p
         try:
-            content = p.read_text(encoding="utf-8", errors="replace")
+            if p.suffix.lower() == ".pdf":
+                from graphx.detect import extract_pdf_text
+
+                content = extract_pdf_text(p)
+            else:
+                content = p.read_text(encoding="utf-8", errors="replace")
         except OSError:
+            continue
+        if not content.strip():
             continue
         parts.append(f"=== {rel} ===\n{content[:20000]}")
     return "\n\n".join(parts)
@@ -177,6 +192,81 @@ def _call_claude(api_key: str, model: str, user_message: str) -> dict:
     return result
 
 
+def _ollama_host() -> str:
+    """Return the Ollama host root, honoring OLLAMA_HOST when set."""
+    from urllib.parse import urlsplit, urlunsplit
+
+    host = os.environ.get("OLLAMA_HOST") or BACKENDS["ollama"]["base_url"]
+    host = host.rstrip("/")
+    if "://" not in host:
+        host = f"http://{host}"
+    parsed = urlsplit(host)
+    netloc = parsed.netloc
+    if netloc and ":" not in netloc:
+        netloc = f"{netloc}:11434"
+    if netloc.startswith("0.0.0.0:"):
+        netloc = "127.0.0.1:" + netloc.split(":", 1)[1]
+    elif netloc == "0.0.0.0":
+        netloc = "127.0.0.1:11434"
+    host = urlunsplit((parsed.scheme, netloc, parsed.path, "", "")).rstrip("/")
+    if host.endswith("/v1"):
+        host = host[:-3]
+    if host.endswith("/api"):
+        host = host[:-4]
+    return host.rstrip("/")
+
+
+def _call_ollama(model: str, user_message: str, temperature: float | None = 0) -> dict:
+    """Call a local Ollama server using its native chat API."""
+    import urllib.error
+    import urllib.request
+
+    payload: dict = {
+        "model": model,
+        "messages": [
+            {"role": "system", "content": _EXTRACTION_SYSTEM},
+            {"role": "user", "content": user_message},
+        ],
+        "stream": False,
+        "format": "json",
+    }
+    if temperature is not None:
+        payload["options"] = {"temperature": temperature}
+
+    url = f"{_ollama_host()}/api/chat"
+    req = urllib.request.Request(
+        url,
+        data=json.dumps(payload).encode("utf-8"),
+        headers={"Content-Type": "application/json"},
+        method="POST",
+    )
+    timeout = float(os.environ.get("GRAPHX_OLLAMA_TIMEOUT", "300"))
+    try:
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # nosec B310 - local Ollama endpoint
+            data = json.loads(resp.read().decode("utf-8"))
+    except urllib.error.HTTPError as exc:
+        body = exc.read().decode("utf-8", errors="replace")
+        raise RuntimeError(f"Ollama request failed ({exc.code}): {body}") from exc
+    except urllib.error.URLError as exc:
+        raise RuntimeError(
+            "Ollama request failed. Is Ollama running? "
+            f"Tried {url}. Start it with `ollama serve` and pull the model "
+            f"with `ollama pull {model}`."
+        ) from exc
+
+    if data.get("error"):
+        raise RuntimeError(f"Ollama request failed: {data['error']}")
+
+    content = (data.get("message") or {}).get("content", "")
+    result = _parse_llm_json(content or "{}")
+    result["input_tokens"] = data.get("prompt_eval_count", 0)
+    result["output_tokens"] = data.get("eval_count", 0)
+    result["model"] = model
+    done_reason = data.get("done_reason") or "stop"
+    result["finish_reason"] = "length" if done_reason in {"length", "num_ctx", "context_length"} else "stop"
+    return result
+
+
 def extract_files_direct(
     files: list[Path],
     backend: str = "kimi",
@@ -193,14 +283,19 @@ def extract_files_direct(
         raise ValueError(f"Unknown backend {backend!r}. Available: {sorted(BACKENDS)}")
 
     cfg = BACKENDS[backend]
-    key = api_key or os.environ.get(cfg["env_key"], "")
+    mdl = model or cfg["default_model"]
+    user_msg = _read_files(files, root)
+
+    if backend == "ollama":
+        return _call_ollama(mdl, user_msg, temperature=cfg.get("temperature", 0))
+
+    env_key = cfg.get("env_key")
+    key = api_key or (os.environ.get(env_key, "") if env_key else "")
     if not key:
         raise ValueError(
             f"No API key for backend '{backend}'. "
-            f"Set {cfg['env_key']} or pass api_key=."
+            f"Set {env_key} or pass api_key=."
         )
-    mdl = model or cfg["default_model"]
-    user_msg = _read_files(files, root)
 
     if backend == "claude":
         return _call_claude(key, mdl, user_msg)

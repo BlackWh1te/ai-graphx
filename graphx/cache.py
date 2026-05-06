@@ -153,10 +153,10 @@ def cached_files(root: Path = Path(".")) -> set[str]:
     if base.is_dir():
         hashes.update(p.stem for p in base.glob("*.json"))
     # Namespaced entries
-    for kind in ("ast", "semantic"):
-        d = base / kind
-        if d.is_dir():
-            hashes.update(p.stem for p in d.glob("*.json"))
+    if base.is_dir():
+        for d in base.iterdir():
+            if d.is_dir() and (d.name in {"ast", "semantic"} or d.name.startswith("semantic_")):
+                hashes.update(p.stem for p in d.glob("*.json"))
     return hashes
 
 
@@ -168,16 +168,17 @@ def clear_cache(root: Path = Path(".")) -> None:
         for f in base.glob("*.json"):
             f.unlink()
     # Namespaced entries
-    for kind in ("ast", "semantic"):
-        d = base / kind
-        if d.is_dir():
-            for f in d.glob("*.json"):
-                f.unlink()
+    if base.is_dir():
+        for d in base.iterdir():
+            if d.is_dir() and (d.name in {"ast", "semantic"} or d.name.startswith("semantic_")):
+                for f in d.glob("*.json"):
+                    f.unlink()
 
 
 def check_semantic_cache(
     files: list[str],
     root: Path = Path("."),
+    kind: str = "semantic",
 ) -> tuple[list[dict], list[dict], list[dict], list[str]]:
     """Check semantic extraction cache for a list of absolute file paths.
 
@@ -190,7 +191,7 @@ def check_semantic_cache(
     uncached: list[str] = []
 
     for fpath in files:
-        result = load_cached(Path(fpath), root, kind="semantic")
+        result = load_cached(Path(fpath), root, kind=kind)
         if result is not None:
             cached_nodes.extend(result.get("nodes", []))
             cached_edges.extend(result.get("edges", []))
@@ -206,6 +207,7 @@ def save_semantic_cache(
     edges: list[dict],
     hyperedges: list[dict] | None = None,
     root: Path = Path("."),
+    kind: str = "semantic",
 ) -> int:
     """Save semantic extraction results to cache, keyed by source_file.
 
@@ -236,6 +238,6 @@ def save_semantic_cache(
         if not p.is_absolute():
             p = Path(root) / p
         if p.is_file():
-            save_cached(p, result, root, kind="semantic")
+            save_cached(p, result, root, kind=kind)
             saved += 1
     return saved

@@ -1,0 +1,10 @@
+## graphx
+
+This project has a graphx knowledge graph at graphx-out/.
+
+Rules:
+- Before answering architecture or codebase questions, read graphx-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphx-out/wiki/index.md exists, navigate it instead of reading raw files
+- For cross-module "how does X relate to Y" questions, prefer `graphx query "<question>"`, `graphx path "<A>" "<B>"`, or `graphx explain "<concept>"` over grep — these traverse the graph's EXTRACTED + INFERRED edges instead of scanning files
+- After modifying code files in this session, run `graphx update .` to keep the graph current (AST-only, no API cost)
+- To pull latest changes from git before updating, run `graphx update . --pull`

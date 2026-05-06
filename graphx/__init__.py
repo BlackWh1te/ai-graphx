@@ -1,6 +1,6 @@
 """graphx - extract · build · cluster · analyze · report."""
 
-__version__ = "0.2.2"
+__version__ = "0.2.6"
 
 
 def __getattr__(name):

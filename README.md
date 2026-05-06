@@ -149,7 +149,13 @@ Uninstall with the matching command (e.g. `graphx claude uninstall`).
 | Video / Audio | `.mp4 .mov .mp3 .wav` and more (requires `pip install ai-graphx[video]`) |
 | YouTube / URLs | any video URL (requires `pip install ai-graphx[video]`) |
 
-Code is extracted locally with no API calls (AST via tree-sitter). Everything else goes through your AI assistant's model API.
+Code is extracted locally with no API calls (AST via tree-sitter). Everything else goes through your AI assistant's model API, unless you use local Ollama mode:
+
+```bash
+graphx ./my-project --ollama --model "llama3.2:3b"
+```
+
+Ollama mode writes the same `graphx-out/` files locally. It is useful for private/offline graph generation, but small local models usually produce weaker semantic relationships than `/graphx` inside a frontier-model assistant.
 
 ---
 
@@ -161,6 +167,8 @@ Code is extracted locally with no API calls (AST via tree-sitter). Everything el
 /graphx . --cluster-only         # rerun clustering without re-extracting
 /graphx . --no-viz               # skip the HTML, just the report + JSON
 /graphx . --wiki                 # build a markdown wiki from the graph
+
+graphx ./my-project --ollama --model "llama3.2:3b"  # local/private build with Ollama
 
 /graphx query "what connects auth to the database?"
 /graphx path "UserService" "DatabasePool"

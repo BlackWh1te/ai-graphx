@@ -44,6 +44,7 @@ Turn any folder of files into a navigable knowledge graph with community detecti
 /graphx path "AuthModule" "Database"                # shortest path between two concepts
 /graphx explain "SwinTransformer"                   # plain-language explanation of a node
 /graphx status [path]                                # show project health dashboard
+/graphx-status [path]                                # alias for status dashboard
 ```
 
 ## What graphx is for
